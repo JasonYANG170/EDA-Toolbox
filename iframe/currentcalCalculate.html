@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电流计算器</title>
-	<link rel="stylesheet" href="/iframe/my.css">
+	<link rel="stylesheet" href="/iframe/toolbox.css">
 </head>
 <body>
 <div class="container">
@@ -41,14 +41,14 @@
     <input type="number" id="temperature" placeholder="输入温升 (℃)" min="0" required>
 
     <!-- 计算按钮 -->
-    <button class="calculate" onclick="calculateCurrent()">计算电流</button>
+    <button class="calculate" onclick="currentcalCalculate()">计算电流</button>
     <button class="clear" onclick="clearFields()">清空</button>
 
     <div class="result" id="result"></div>
 </div>
 
 <script>
-    function calculateCurrent() {
+    function currentcalCalculate() {
         const K = parseFloat(document.getElementById('layer').value); // 选择铜箔位置的修正系数
         const width = parseFloat(document.getElementById('width').value); // 铜条宽度
         const widthUnit = document.getElementById('widthUnit').value; // 选择的单位

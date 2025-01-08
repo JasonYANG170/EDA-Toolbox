@@ -29,35 +29,38 @@ export function home_update(): void {
 export function home_help(): void {
 	eda.sys_IFrame.openIFrame('/iframe/home.html', 550, 550);
 }
+export function home_game(): void {
+	eda.sys_IFrame.openIFrame('/iframe/game.html', 300, 550);
+}
 export function sch_oumut(): void {
-	eda.sys_IFrame.openIFrame('/iframe/oumu.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/ohmCalculate.html', 300, 550);
 }
 export function sch_fenya(): void {
-	eda.sys_IFrame.openIFrame('/iframe/fenya.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/voltageDividerCalculator.html', 300, 550);
 }
 export function sch_dianchi(): void {
-	eda.sys_IFrame.openIFrame('/iframe/dianchi.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/batteryCalculate.html', 300, 550);
 }
 export function sch_dianzu(): void {
-	eda.sys_IFrame.openIFrame('/iframe/dianzu.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/resistorCalculate.html', 300, 550);
 }
 export function sch_led(): void {
-	eda.sys_IFrame.openIFrame('/iframe/led.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/ledResistorCalculate.html', 300, 550);
 }
 export function sch_lm317(): void {
-	eda.sys_IFrame.openIFrame('/iframe/lm317.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/lm317VoltagecCalculate.html', 300, 550);
 }
 export function sch_555(): void {
-	eda.sys_IFrame.openIFrame('/iframe/555.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 300, 550);
 }
 export function sch_dianrong(): void {
-	eda.sys_IFrame.openIFrame('/iframe/dianrong.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 300, 550);
 }
 export function sch_dianliu(): void {
-	eda.sys_IFrame.openIFrame('/iframe/dianliu.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 300, 550);
 }
 export function pcb_sehuan(): void{
-	eda.sys_IFrame.openIFrame('/iframe/sehuan.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 300, 550);
 }
 
 

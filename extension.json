@@ -3,7 +3,7 @@
 	"uuid": "f306c3c4639f4378b5dc194976524205",
 	"displayName": "EDA-Toolbox",
 	"description": "嘉立创EDA & EasyEDA 专业版工具箱",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "JasonYANG170",
 	"engines": {
 		"eda": "^2.2.32"
@@ -33,6 +33,10 @@
 						"id": "Help",
 						"title": "使用说明",
 						"registerFn": "home_help"
+					},{
+						"id": "Game",
+						"title": "摸摸小鱼",
+						"registerFn": "home_game"
 					},
 					{
 						"id": "update",

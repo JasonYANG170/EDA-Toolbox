@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>分压计算器</title>
-	<link rel="stylesheet" href="/iframe/my.css">
+	<link rel="stylesheet" href="/iframe/toolbox.css">
 </head>
 <body>
 
@@ -29,12 +29,12 @@
 		<label for="Vout">输出电压 (V<sub>out</sub>):</label>
 		<input type="number" id="Vout" placeholder="输出电压" step="any">
 
-		<button class="calculate" onclick="calculate()">计算</button>
+		<button class="calculate" onclick="voltageDividerCalculator()">计算</button>
 		<button class="clear" onclick="clearFields()">清空</button>
 
 
 	<script>
-		function calculate() {
+		function voltageDividerCalculator() {
 			const Vin = parseFloat(document.getElementById('Vin').value);
 			const R1 = parseFloat(document.getElementById('R1').value);
 			const R2 = parseFloat(document.getElementById('R2').value);
