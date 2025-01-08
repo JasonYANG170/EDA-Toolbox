@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>串联和并联电阻计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+<div class="container">
+	<h1>串联和并联电阻计算器</h1>
+
+	<!-- 公式展示 -->
+	<div class="formula">
+		<p><strong>串联计算公式：</strong>R_total = R1 + R2 + ... + Rn</p>
+		<p><strong>并联计算公式：</strong>1 / R_total = 1 / R1 + 1 / R2 + ... + 1 / Rn</p>
+	</div>
+
+	<label for="mode">计算模式：</label>
+	<select id="mode">
+		<option value="series">串联</option>
+		<option value="parallel">并联</option>
+	</select>
+
+	<div id="resistor-inputs">
+		<div class="resistor-group">
+			<label for="resistor1">电阻 1 (Ω):</label>
+			<input type="number" class="resistor" placeholder="请输入电阻值">
+		</div>
+	</div>
+
+	<div class="add-remove-container">
+		<div class="add-button" onclick="addResistor()">+</div>
+		<div class="remove-button" onclick="removeResistor()">-</div>
+	</div>
+
+	<label for="total">总电阻 (Ω):</label>
+	<input type="number" id="total" placeholder="计算结果将在此显示" readonly>
+
+	<div id="error-message" class="alert" style="display: none;">请输入有效的电阻值！</div>
+
+	<button class="calculate" onclick="resistorCalculate()">计算</button>
+	<button class="clear" onclick="resistorClear()">清空</button>
+</div>
+
+<script>
+	function addResistor() {
+		const resistorGroup = document.createElement('div');
+		resistorGroup.className = 'resistor-group';
+
+		const label = document.createElement('label');
+		label.textContent = `电阻 ${document.querySelectorAll('.resistor-group').length + 1} (Ω):`;
+		resistorGroup.appendChild(label);
+
+		const input = document.createElement('input');
+		input.type = 'number';
+		input.className = 'resistor';
+		input.placeholder = '请输入电阻值';
+		resistorGroup.appendChild(input);
+
+		document.getElementById('resistor-inputs').appendChild(resistorGroup);
+	}
+
+	function removeResistor() {
+		const allResistorGroups = document.querySelectorAll('.resistor-group');
+		if (allResistorGroups.length > 1) {
+			allResistorGroups[allResistorGroups.length - 1].remove();
+		}
+	}
+
+	function resistorCalculate() {
+		const mode = document.getElementById('mode').value;
+		const resistors = Array.from(document.querySelectorAll('.resistor')).map(input => parseFloat(input.value)).filter(r => !isNaN(r));
+
+		// 错误提示显示
+		const errorMessage = document.getElementById('error-message');
+		if (resistors.length > 0) {
+			let totalResistance = 0;
+			if (mode === 'series') {
+				// 串联计算
+				totalResistance = resistors.reduce((a, b) => a + b, 0);
+			} else if (mode === 'parallel') {
+				// 并联计算
+				totalResistance = 1 / resistors.reduce((a, b) => a + (1 / b), 0);
+			}
+
+			document.getElementById('total').value = totalResistance.toFixed(2);
+
+			// 隐藏错误提示
+			errorMessage.style.display = 'none';
+		} else {
+			// 显示错误提示
+			errorMessage.style.display = 'block';
+		}
+	}
+
+	function resistorClear() {
+		document.getElementById('resistor-inputs').innerHTML = `
+        <div class="resistor-group">
+            <label for="resistor1">电阻 1 (Ω):</label>
+            <input type="number" class="resistor" placeholder="请输入电阻值">
+        </div>
+    `;
+		document.getElementById('total').value = '';
+		document.getElementById('error-message').style.display = 'none';
+	}
+</script>
+</body>
+</html>

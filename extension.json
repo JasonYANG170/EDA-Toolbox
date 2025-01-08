@@ -1,0 +1,117 @@
+{
+	"name": "EDA-Toolbox",
+	"uuid": "f306c3c4639f4378b5dc194976524205",
+	"displayName": "EDA-Toolbox",
+	"description": "嘉立创EDA & EasyEDA 专业版工具箱",
+	"version": "1.0.0",
+	"publisher": "JasonYANG170",
+	"engines": {
+		"eda": "^2.2.32"
+	},
+	"license": "Apache License",
+	"repository": {
+		"type": "EDA-Toolbox",
+		"url": "https://github.com/JasonYANG170/EDA-Toolbox"
+	},
+	"categories": "Other",
+	"keywords": ["SDK"],
+	"images": {
+		"logo": "./images/toolbox.jpg"
+	},
+	"homepage": "https://github.com/JasonYANG170",
+	"bugs": "https://github.com/JasonYANG170/eda-toolbox/issues",
+	"activationEvents": {},
+	"entry": "./dist/index",
+	"dependentExtensions": {},
+	"headerMenus": {
+		"home": [
+			{
+				"id": "score",
+				"title": "EDA工具箱",
+				"menuItems": [
+					{
+						"id": "Help",
+						"title": "使用说明",
+						"registerFn": "home_help"
+					},
+					{
+						"id": "update",
+						"title": "检测更新",
+						"registerFn": "home_update"
+					}
+				]
+			}
+		],
+		"sch": [
+			{
+				"id": "sch score",
+				"title": "原理图工具箱",
+				"menuItems": [
+
+					{
+						"id": "fenya",
+						"title": "分压计算器",
+						"registerFn": "sch_fenya"
+					},
+					{
+						"id": "oumut",
+						"title": "欧姆计算器",
+						"registerFn": "sch_oumut"
+					},
+					{
+						"id": "dianchi",
+						"title": "电池续航计算器",
+						"registerFn": "sch_dianchi"
+					},
+					{
+						"id": "led",
+						"title": "LED电阻计算器",
+						"registerFn": "sch_led"
+					},
+					{
+						"id": "lm317",
+						"title": "LM317计算器",
+						"registerFn": "sch_lm317"
+					},{
+						"id": "555",
+						"title": "555定时计算器",
+						"registerFn": "sch_555"
+					},
+					{
+						"id": "dianzu",
+						"title": "电阻计算器",
+						"registerFn": "sch_dianzu"
+					},
+					{
+						"id": "dianrong",
+						"title": "电容计算器",
+						"registerFn": "sch_dianrong"
+					},
+					{
+						"id": "dianliu",
+						"title": "电流计算器",
+						"registerFn": "sch_dianliu"
+					},
+					{
+						"id": "dianchi",
+						"title": "电池计算器",
+						"registerFn": "sch_dianchi"
+					}
+				]
+			}
+		],
+		"pcb": [
+			{
+				"id": "pcb score",
+				"title": "PCB工具箱",
+				"menuItems": [
+					{
+						"id": "sehuan",
+						"title": "色环计算器",
+						"registerFn": "pcb_sehuan"
+					}
+				]
+			}
+		]
+	}
+}

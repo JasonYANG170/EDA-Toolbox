@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电流计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+<div class="container">
+    <h1>PCB 电流计算器</h1>
+    <div class="formula">
+        <p>电流计算公式： <br>
+            <strong>I = K × T<sup>0.44</sup> × A<sup>0.75</sup></strong></p>
+        <p>其中：<br>
+            K = 0.024（内层）或 0.048（外层）<br>
+            T = 温升 (℃)<br>
+            A = 铜条截面积，单位：mil<sup>2</sup></p>
+    </div>
+
+    <!-- 选择铜箔位置 -->
+    <label for="layer">铜箔位置:</label>
+    <select id="layer">
+        <option value="0.024">内层</option>
+        <option value="0.048">外层</option>
+    </select>
+
+    <!-- 输入宽度 -->
+    <label for="width">铜条宽度:</label>
+    <input type="number" id="width" placeholder="输入铜条宽度" min="0" required>
+
+    <!-- 选择单位 -->
+    <label for="widthUnit">宽度单位:</label>
+    <select id="widthUnit">
+        <option value="mil">mil</option>
+        <option value="mm">mm</option>
+    </select>
+
+    <!-- 输入温升 -->
+    <label for="temperature">温升 (℃):</label>
+    <input type="number" id="temperature" placeholder="输入温升 (℃)" min="0" required>
+
+    <!-- 计算按钮 -->
+    <button class="calculate" onclick="calculateCurrent()">计算电流</button>
+    <button class="clear" onclick="clearFields()">清空</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    function calculateCurrent() {
+        const K = parseFloat(document.getElementById('layer').value); // 选择铜箔位置的修正系数
+        const width = parseFloat(document.getElementById('width').value); // 铜条宽度
+        const widthUnit = document.getElementById('widthUnit').value; // 选择的单位
+        const temperature = parseFloat(document.getElementById('temperature').value); // 温升 (℃)
+
+        if (isNaN(width) || isNaN(temperature) || width <= 0 || temperature <= 0) {
+            alert('请输入有效的铜条宽度和温升值');
+            return;
+        }
+
+        // 如果单位是mm，转换为mil
+        let widthInMil = width;
+        if (widthUnit === 'mm') {
+            widthInMil = width * 39.37;  // 1mm = 39.37mil
+        }
+
+        // 计算覆铜截面积A，A = 宽度 * 1.44（修正因子）
+        const A = widthInMil * 1.44;
+
+        // 计算电流 I = K * (T^0.44) * (A^0.75)
+        const I = K * Math.pow(temperature, 0.44) * Math.pow(A, 0.75);
+
+        // 显示计算结果
+        document.getElementById('result').innerHTML = `容许最大电流：${I.toFixed(3)} A`;
+    }
+
+    function clearFields() {
+        document.getElementById('width').value = '';
+        document.getElementById('temperature').value = '';
+        document.getElementById('result').innerHTML = '';
+    }
+</script>
+</body>
+</html>

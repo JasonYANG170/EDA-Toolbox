@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>串联和并联电容器计算器</title>
+    <link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+<div class="container">
+    <h1>串联和并联电容器计算器</h1>
+
+    <!-- 公式展示 -->
+    <div class="formula">
+        <p><strong>串联计算公式：</strong>1 / C_total = 1 / C1 + 1 / C2 + ... + 1 / Cn</p>
+        <p><strong>并联计算公式：</strong>C_total = C1 + C2 + ... + Cn</p>
+    </div>
+
+    <label for="mode">计算模式：</label>
+    <select id="mode">
+        <option value="series">串联</option>
+        <option value="parallel">并联</option>
+    </select>
+
+    <div id="capacitor-inputs">
+        <div class="capacitor-group">
+            <label for="capacitor1">电容器 1 (μF):</label>
+            <input type="number" class="capacitor" placeholder="请输入电容值">
+        </div>
+    </div>
+
+    <div class="add-remove-container">
+        <div class="add-button" onclick="addCapacitor()">+</div>
+        <div class="remove-button" onclick="removeCapacitor()">-</div>
+    </div>
+
+    <label for="total">总电容 (μF):</label>
+    <input type="number" id="total" placeholder="计算结果将在此显示" readonly>
+
+    <div id="error-message" class="alert" style="display: none;">请输入有效的电容值！</div>
+
+    <button class="calculate" onclick="capacitorCalculate()">计算</button>
+    <button class="clear" onclick="capacitorClear()">清空</button>
+</div>
+
+<script>
+    function addCapacitor() {
+        const capacitorGroup = document.createElement('div');
+        capacitorGroup.className = 'capacitor-group';
+
+        const label = document.createElement('label');
+        label.textContent = `电容器 ${document.querySelectorAll('.capacitor-group').length + 1} (μF):`;
+        capacitorGroup.appendChild(label);
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'capacitor';
+        input.placeholder = '请输入电容值';
+        capacitorGroup.appendChild(input);
+
+        document.getElementById('capacitor-inputs').appendChild(capacitorGroup);
+    }
+
+    function removeCapacitor() {
+        const allCapacitorGroups = document.querySelectorAll('.capacitor-group');
+        if (allCapacitorGroups.length > 1) {
+            allCapacitorGroups[allCapacitorGroups.length - 1].remove();
+        }
+    }
+
+    function capacitorCalculate() {
+        const mode = document.getElementById('mode').value;
+        const capacitors = Array.from(document.querySelectorAll('.capacitor')).map(input => parseFloat(input.value)).filter(c => !isNaN(c));
+
+        // 错误提示显示
+        const errorMessage = document.getElementById('error-message');
+        if (capacitors.length > 0) {
+            let totalCapacitance = 0;
+            if (mode === 'series') {
+                // 串联计算
+                totalCapacitance = 1 / capacitors.reduce((a, b) => a + (1 / b), 0);
+            } else if (mode === 'parallel') {
+                // 并联计算
+                totalCapacitance = capacitors.reduce((a, b) => a + b, 0);
+            }
+
+            document.getElementById('total').value = totalCapacitance.toFixed(2);
+
+            // 隐藏错误提示
+            errorMessage.style.display = 'none';
+        } else {
+            // 显示错误提示
+            errorMessage.style.display = 'block';
+        }
+    }
+
+    function capacitorClear() {
+        document.getElementById('capacitor-inputs').innerHTML = `
+        <div class="capacitor-group">
+            <label for="capacitor1">电容器 1 (μF):</label>
+            <input type="number" class="capacitor" placeholder="请输入电容值">
+        </div>
+    `;
+        document.getElementById('total').value = '';
+        document.getElementById('error-message').style.display = 'none';
+    }
+</script>
+</body>
+</html>
