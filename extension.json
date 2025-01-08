@@ -26,15 +26,15 @@
 	"headerMenus": {
 		"home": [
 			{
-				"id": "score",
+				"id": "edatoolbox",
 				"title": "EDA工具箱",
 				"menuItems": [
 					{
-						"id": "Help",
+						"id": "help",
 						"title": "使用说明",
 						"registerFn": "home_help"
 					},{
-						"id": "Game",
+						"id": "game",
 						"title": "摸摸小鱼",
 						"registerFn": "home_game"
 					},
@@ -48,71 +48,66 @@
 		],
 		"sch": [
 			{
-				"id": "sch score",
+				"id": "sch_tool",
 				"title": "原理图工具箱",
 				"menuItems": [
 
 					{
-						"id": "fenya",
+						"id": "voltageDividerCalculator",
 						"title": "分压计算器",
-						"registerFn": "sch_fenya"
+						"registerFn": "sch_voltageDividerCalculator"
 					},
 					{
-						"id": "oumut",
+						"id": "ohmCalculate",
 						"title": "欧姆计算器",
-						"registerFn": "sch_oumut"
+						"registerFn": "sch_ohmCalculate"
 					},
 					{
-						"id": "dianchi",
-						"title": "电池续航计算器",
-						"registerFn": "sch_dianchi"
+						"id": "batteryCalculate",
+						"title": "电池容量计算器",
+						"registerFn": "sch_batteryCalculate"
 					},
 					{
-						"id": "led",
+						"id": "ledResistorCalculate",
 						"title": "LED电阻计算器",
-						"registerFn": "sch_led"
+						"registerFn": "sch_ledResistorCalculate"
 					},
 					{
-						"id": "lm317",
+						"id": "lm317VoltagecCalculate",
 						"title": "LM317计算器",
-						"registerFn": "sch_lm317"
+						"registerFn": "sch_lm317VoltagecCalculate"
 					},{
-						"id": "555",
+						"id": "timer555Calculate",
 						"title": "555定时计算器",
-						"registerFn": "sch_555"
+						"registerFn": "sch_timer555Calculate"
 					},
 					{
-						"id": "dianzu",
+						"id": "resistorCalculate",
 						"title": "电阻计算器",
-						"registerFn": "sch_dianzu"
+						"registerFn": "sch_resistorCalculate"
 					},
 					{
-						"id": "dianrong",
+						"id": "capacitorCalculate",
 						"title": "电容计算器",
-						"registerFn": "sch_dianrong"
+						"registerFn": "sch_capacitorCalculate"
 					},
-					{
-						"id": "dianliu",
-						"title": "电流计算器",
-						"registerFn": "sch_dianliu"
-					},
-					{
-						"id": "dianchi",
-						"title": "电池计算器",
-						"registerFn": "sch_dianchi"
-					}
+
 				]
 			}
 		],
 		"pcb": [
 			{
-				"id": "pcb score",
+				"id": "pcb_tool",
 				"title": "PCB工具箱",
 				"menuItems": [
 					{
-						"id": "sehuan",
+						"id": "resistorColorCalculator",
 						"title": "色环计算器",
-						"registerFn": "pcb_sehuan"
+						"registerFn": "pcb_resistorColorCalculator"
+					},{
+						"id": "currentcalCalculate",
+						"title": "电流线宽计算器",
+						"registerFn": "pcb_currentcalCalculate"
 					}
 				]
 			}

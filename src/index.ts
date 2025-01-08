@@ -32,34 +32,34 @@ export function home_help(): void {
 export function home_game(): void {
 	eda.sys_IFrame.openIFrame('/iframe/game.html', 300, 550);
 }
-export function sch_oumut(): void {
+export function sch_ohmCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/ohmCalculate.html', 300, 550);
 }
-export function sch_fenya(): void {
+export function sch_voltageDividerCalculator(): void {
 	eda.sys_IFrame.openIFrame('/iframe/voltageDividerCalculator.html', 300, 550);
 }
-export function sch_dianchi(): void {
+export function sch_batteryCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/batteryCalculate.html', 300, 550);
 }
-export function sch_dianzu(): void {
+export function sch_resistorCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/resistorCalculate.html', 300, 550);
 }
-export function sch_led(): void {
+export function sch_ledResistorCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/ledResistorCalculate.html', 300, 550);
 }
-export function sch_lm317(): void {
+export function sch_lm317VoltagecCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/lm317VoltagecCalculate.html', 300, 550);
 }
-export function sch_555(): void {
+export function sch_timer555Calculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 300, 550);
 }
-export function sch_dianrong(): void {
+export function sch_capacitorCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 300, 550);
 }
-export function sch_dianliu(): void {
+export function pcb_currentcalCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 300, 550);
 }
-export function pcb_sehuan(): void{
+export function pcb_resistorColorCalculator(): void{
 	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 300, 550);
 }
 
