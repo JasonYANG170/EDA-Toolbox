@@ -1,5 +1,5 @@
 <div align="center">
-<img src="/images/toolbox.jpg"width="50%" height="auto" >
+<img src="/images/toolbox.jpg"width="25%" height="auto" >
     <h1>EDA-Toolbox</h1>
 
 
