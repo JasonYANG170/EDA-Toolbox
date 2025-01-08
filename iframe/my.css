@@ -1,0 +1,135 @@
+body {
+	font-family: 'Arial', sans-serif;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background-color: #e0f7fa;
+	overflow: auto;
+}
+
+.container {
+	background: #fff;
+	padding: 20px;
+	border-radius: 15px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	width: 90%;
+	max-width: 500px;
+	max-height: 90vh;
+	overflow-y: auto;
+	transition: all 0.3s ease;
+}
+
+h1 {
+	text-align: center;
+	font-size: 28px;
+	color: #00796b;
+	margin-bottom: 20px;
+	font-weight: bold;
+}
+
+label {
+	display: block;
+	margin: 10px 0 5px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #00796b;
+}
+
+input, select {
+	width: 100%;
+	padding: 12px;
+	margin-bottom: 15px;
+	border: 1px solid #00796b;
+	border-radius: 10px;
+	font-size: 16px;
+	color: #00796b;
+	box-sizing: border-box;
+	transition: all 0.3s ease;
+}
+input:focus, select:focus {
+	border-color: #004d40;
+	outline: none;
+}
+
+button {
+	width: 100%;
+	padding: 12px;
+	font-size: 18px;
+	font-weight: bold;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	margin-top: 10px;
+	transition: all 0.3s ease;
+}
+button.calculate {
+	background-color: dodgerblue;
+	color: white;
+}
+button.calculate:hover {
+	background-color: deepskyblue;
+}
+button.clear {
+	background-color: #d32f2f;
+	color: white;
+}
+button.clear:hover {
+	background-color: #b71c1c;
+}
+.add-remove-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.add-button, .remove-button {
+	width: 40px;
+	height: 40px;
+	display: inline-block;
+	cursor: pointer;
+	background-color: dodgerblue;
+	color: white;
+	font-size: 24px;
+	border-radius: 50%; /* 圆形效果 */
+	text-align: center;
+	vertical-align: middle;
+	line-height: 40px;
+	margin: 0 10px;
+}
+.remove-button {
+	background-color: #f44336;
+}
+.remove-button:hover, .add-button:hover {
+	opacity: 0.8;
+}
+
+.alert {
+	color: red;
+	font-size: 14px;
+	margin-top: 10px;
+	text-align: center;
+}
+
+.formula {
+	text-align: center;
+	font-size: 14px;
+	color: #00796b;
+	margin-bottom: 15px;
+	background-color: #f1f8e9;
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid #00796b;
+}
+
+
+.resistor-group {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+.resistor-group input {
+	width: calc(100% - 45px);
+}

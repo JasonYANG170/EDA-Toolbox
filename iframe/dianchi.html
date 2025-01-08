@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>电池续航时间计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+
+</head>
+<body>
+<div class="container">
+	<h1>电池续航时间计算器</h1>
+
+	<div class="formula">
+		<p>续航时间计算公式：<br>
+			<strong>续航时间 (小时) = 电池容量 (mAh) ÷ 负载电流 (mA)</strong></p>
+	</div>
+
+	<label for="capacity">电池容量 (mAh):</label>
+	<input type="number" id="capacity" placeholder="请输入电池容量">
+	<label for="current">负载电流 (mA):</label>
+	<input type="number" id="current" placeholder="请输入负载电流">
+	<label for="time">续航时间 (小时):</label>
+	<input type="number" id="time" placeholder="续航时间将显示在这里" readonly>
+
+	<button class="calculate" onclick="batteryCalculate()">计算</button>
+	<button class="clear" onclick="batteryClear()">清空</button>
+</div>
+
+<script>
+	function batteryCalculate() {
+		const capacity = parseFloat(document.getElementById('capacity').value);
+		const current = parseFloat(document.getElementById('current').value);
+
+		if (!isNaN(capacity) && !isNaN(current)) {
+			document.getElementById('time').value = (capacity / current).toFixed(2);
+		} else {
+			alert('请输入电池容量和负载电流！');
+		}
+	}
+
+	function batteryClear() {
+		document.getElementById('capacity').value = '';
+		document.getElementById('current').value = '';
+		document.getElementById('time').value = '';
+	}
+</script>
+
+</body>
+</html>

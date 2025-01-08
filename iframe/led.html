@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED 串联电阻计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+<div class="container">
+    <h1>LED 串联电阻计算器</h1>
+	<div class="formula">
+		<p><strong>计算公式：</strong></p>
+		<p><strong>R = (V<sub>供应</sub> -V<sub>正向电压</sub>) / I</strong></p>
+
+	</div>
+    <label for="supplyVoltage">电源电压 (V):</label>
+    <input type="number" id="supplyVoltage" placeholder="请输入电源电压">
+    <label for="ledVoltage">LED 电压 (V):</label>
+    <input type="number" id="ledVoltage" placeholder="请输入 LED 电压">
+    <label for="ledCurrent">LED 电流 (mA):</label>
+    <input type="number" id="ledCurrent" placeholder="请输入 LED 电流">
+    <label for="resistor">电阻 (Ω):</label>
+    <input type="number" id="resistor" placeholder="计算结果将在此显示">
+    <button class="calculate" onclick="ledResistorCalculate()">计算</button>
+    <button class="clear" onclick="ledResistorClear()">清空</button>
+</div>
+<script>
+function ledResistorCalculate() {
+    const Vs = parseFloat(document.getElementById('supplyVoltage').value);
+    const Vf = parseFloat(document.getElementById('ledVoltage').value);
+    const I = parseFloat(document.getElementById('ledCurrent').value) / 1000; // 转换为安培
+
+    if (!isNaN(Vs) && !isNaN(Vf) && !isNaN(I)) {
+        const R = (Vs - Vf) / I;
+        document.getElementById('resistor').value = R.toFixed(2);
+    } else {
+        alert('请输入所有已知值！');
+    }
+}
+
+function ledResistorClear() {
+    document.getElementById('supplyVoltage').value = '';
+    document.getElementById('ledVoltage').value = '';
+    document.getElementById('ledCurrent').value = '';
+    document.getElementById('resistor').value = '';
+}
+</script>
+</body>
+</html>

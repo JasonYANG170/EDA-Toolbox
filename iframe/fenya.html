@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>分压计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+
+<div class="container">
+	<h1>分压计算器</h1>
+
+	<!-- 公式展示 -->
+	<div class="formula">
+		<p><strong>分压计算公式：</strong></p>
+		<p><strong>V<sub>out</sub> = V<sub>in</sub> × (R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>))</strong></p>
+
+	</div>
+		<label for="Vin">输入电压 (V<sub>in</sub>):</label>
+		<input type="number" id="Vin" placeholder="输入电压" step="any">
+
+		<label for="R1">电阻 R1 (Ω):</label>
+		<input type="number" id="R1" placeholder="电阻R1" step="any">
+
+		<label for="R2">电阻 R2 (Ω):</label>
+		<input type="number" id="R2" placeholder="电阻R2" step="any">
+
+		<label for="Vout">输出电压 (V<sub>out</sub>):</label>
+		<input type="number" id="Vout" placeholder="输出电压" step="any">
+
+		<button class="calculate" onclick="calculate()">计算</button>
+		<button class="clear" onclick="clearFields()">清空</button>
+
+
+	<script>
+		function calculate() {
+			const Vin = parseFloat(document.getElementById('Vin').value);
+			const R1 = parseFloat(document.getElementById('R1').value);
+			const R2 = parseFloat(document.getElementById('R2').value);
+			const Vout = parseFloat(document.getElementById('Vout').value);
+
+			// 判断哪个参数为空，并进行相应的计算
+			if (!isNaN(Vin) && !isNaN(R1) && !isNaN(R2) && isNaN(Vout)) {
+				document.getElementById('Vout').value = (Vin * (R2 / (R1 + R2))).toFixed(2);
+			}
+			else if (!isNaN(Vout) && !isNaN(R1) && !isNaN(R2) && isNaN(Vin)) {
+				document.getElementById('Vin').value = (Vout / (R2 / (R1 + R2))).toFixed(2);
+			}
+			else if (!isNaN(Vin) && !isNaN(Vout) && !isNaN(R2) && isNaN(R1)) {
+				document.getElementById('R1').value = (R2 * (Vin / Vout - 1)).toFixed(2);
+			}
+			else if (!isNaN(Vin) && !isNaN(Vout) && !isNaN(R1) && isNaN(R2)) {
+				document.getElementById('R2').value = (R1 * (Vin / Vout - 1)).toFixed(2);
+			} else {
+				alert('请输入三个已知值！');
+			}
+		}
+
+		function clearFields() {
+			document.getElementById('Vin').value = '';
+			document.getElementById('R1').value = '';
+			document.getElementById('R2').value = '';
+			document.getElementById('Vout').value = '';
+		}
+	</script>
+
+</body>
+</html>

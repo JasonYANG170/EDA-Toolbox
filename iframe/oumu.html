@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>欧姆定律计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+
+<div class="container">
+	<h1>欧姆定律计算器</h1>
+
+	<!-- 公式展示 -->
+	<div class="formula">
+		<p><strong>欧姆定律公式：</strong></p>
+		<p><strong>V = I × R</strong></p>
+
+	</div>
+
+	<label for="voltage">电压 (V):</label>
+	<input type="number" id="voltage" placeholder="请输入电压 (V)">
+
+	<label for="current">电流 (I):</label>
+	<input type="number" id="current" placeholder="请输入电流 (A)">
+
+	<label for="resistance">电阻 (R):</label>
+	<input type="number" id="resistance" placeholder="请输入电阻 (Ω)">
+
+	<button class="calculate" onclick="ohmCalculate()">计算</button>
+	<button class="clear" onclick="ohmClear()">清空</button>
+</div>
+
+<script>
+	function ohmCalculate() {
+		const V = parseFloat(document.getElementById('voltage').value);
+		const I = parseFloat(document.getElementById('current').value);
+		const R = parseFloat(document.getElementById('resistance').value);
+
+		// 判断输入并进行相应的计算
+		if (isNaN(V) && !isNaN(I) && !isNaN(R)) {
+			document.getElementById('voltage').value = (I * R).toFixed(2);
+		} else if (isNaN(I) && !isNaN(V) && !isNaN(R)) {
+			document.getElementById('current').value = (V / R).toFixed(2);
+		} else if (isNaN(R) && !isNaN(V) && !isNaN(I)) {
+			document.getElementById('resistance').value = (V / I).toFixed(2);
+		} else {
+			alert('请输入两个已知值！');
+		}
+	}
+
+	function ohmClear() {
+		document.getElementById('voltage').value = '';
+		document.getElementById('current').value = '';
+		document.getElementById('resistance').value = '';
+	}
+</script>
+
+</body>
+</html>

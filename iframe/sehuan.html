@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电阻色环计算器</title>
+	<link rel="stylesheet" href="/iframe/my.css">
+</head>
+<body>
+<div class="container">
+    <h1>电阻色环计算器</h1>
+
+    <!-- 选择环数 -->
+    <label for="numRings">选择色环数:</label>
+    <select id="numRings" onchange="updateColorOptions()">
+        <option value="3">3 环</option>
+        <option value="4">4 环</option>
+        <option value="5">5 环</option>
+        <option value="6">6 环</option>
+    </select>
+
+    <!-- 动态生成颜色选择项 -->
+    <div class="color-options" id="colorOptions"></div>
+
+    <label for="resistorValue">电阻值 (Ω):</label>
+    <input type="text" id="resistorValue" placeholder="计算结果将在此显示" readonly>
+
+    <button class="calculate" onclick="calculateResistor()">计算</button>
+    <button class="clear" onclick="clearFields()">清空</button>
+</div>
+
+<script>
+    const colorCodes = {
+        '黑': 0, '棕': 1, '红': 2, '橙': 3, '黄': 4, '绿': 5, '蓝': 6, '紫': 7, '灰': 8, '白': 9,
+        '金': -1, '银': -2
+    };
+
+    const multipliers = {
+        '黑': 1, '棕': 10, '红': 100, '橙': 1000, '黄': 10000, '绿': 100000, '蓝': 1000000,
+        '紫': 10000000, '灰': 100000000, '白': 1000000000, '金': 0.1, '银': 0.01
+    };
+
+    function updateColorOptions() {
+        const numRings = parseInt(document.getElementById('numRings').value);
+        const colorOptionsDiv = document.getElementById('colorOptions');
+        colorOptionsDiv.innerHTML = '';
+
+        // 生成色环选择项
+        const colorOptions = ['黑', '棕', '红', '橙', '黄', '绿', '蓝', '紫', '灰', '白', '金', '银'];
+        const ringCount = numRings <= 4 ? 3 : 5; // 3环和4环显示前3个色环，5环及6环显示前5个色环
+
+        for (let i = 0; i < numRings; i++) {
+            const selectElement = document.createElement('select');
+            selectElement.id = 'ring' + (i + 1);
+            const defaultOption = document.createElement('option');
+            defaultOption.text = '选择颜色';
+            selectElement.appendChild(defaultOption);
+
+            colorOptions.forEach(color => {
+                const option = document.createElement('option');
+                option.text = color;
+                selectElement.appendChild(option);
+            });
+
+            colorOptionsDiv.appendChild(selectElement);
+        }
+    }
+
+    function calculateResistor() {
+        const numRings = parseInt(document.getElementById('numRings').value);
+        let colorValues = [];
+
+        for (let i = 0; i < numRings; i++) {
+            const color = document.getElementById('ring' + (i + 1)).value;
+            if (color === '选择颜色' || !color) {
+                alert('请为每个色环选择颜色');
+                return;
+            }
+            colorValues.push(color);
+        }
+
+        let resistance;
+        let multiplier = 1;
+        let tolerance = '';
+
+        if (numRings === 3) {
+            // 3 环计算 (数字数字 * 10的倍数)
+            resistance = (colorCodes[colorValues[0]] * 10 + colorCodes[colorValues[1]]) * multipliers[colorValues[2]];
+        } else if (numRings === 4) {
+            // 4 环计算 (数字数字 * 10的倍数 +/-公差)
+            resistance = (colorCodes[colorValues[0]] * 10 + colorCodes[colorValues[1]]) * multipliers[colorValues[2]];
+            tolerance = colorValues[3] === '金' ? '±5%' : colorValues[3] === '银' ? '±10%' : '';
+        } else if (numRings === 5) {
+            // 5 环计算 (数字数字数字 * 10的倍数 +/-公差)
+            resistance = (colorCodes[colorValues[0]] * 100 + colorCodes[colorValues[1]] * 10 + colorCodes[colorValues[2]]) * multipliers[colorValues[3]];
+            tolerance = colorValues[4] === '金' ? '±5%' : colorValues[4] === '银' ? '±10%' : '';
+        } else if (numRings === 6) {
+            // 6 环计算 (数字数字数字数字 * 10的倍数 +/-公差)
+            resistance = (colorCodes[colorValues[0]] * 1000 + colorCodes[colorValues[1]] * 100 + colorCodes[colorValues[2]] * 10 + colorCodes[colorValues[3]]) * multipliers[colorValues[4]];
+            tolerance = colorValues[5] === '金' ? '±5%' : colorValues[5] === '银' ? '±10%' : '';
+        }
+
+        const result = resistance + (tolerance ? ' ' + tolerance : '');
+        document.getElementById('resistorValue').value = result;
+    }
+
+    function clearFields() {
+        document.getElementById('resistorValue').value = '';
+        document.getElementById('colorOptions').innerHTML = '';
+    }
+</script>
+
+</body>
+</html>
