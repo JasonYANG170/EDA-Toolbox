@@ -90,7 +90,7 @@
 						"id": "capacitorCalculate",
 						"title": "电容计算器",
 						"registerFn": "sch_capacitorCalculate"
-					},
+					}
 
 				]
 			}
