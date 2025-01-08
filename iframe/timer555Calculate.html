@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>555 定时器计算器</title>
-	<link rel="stylesheet" href="/iframe/my.css">
+	<link rel="stylesheet" href="/iframe/toolbox.css">
 
 </head>
 <body>
@@ -57,7 +57,7 @@
 
     <div id="error-message" class="alert" style="display: none;">请输入有效的数值！</div>
 
-    <button class="calculate" onclick="calculate555Timer()">计算</button>
+    <button class="calculate" onclick="timer555Calculate()">计算</button>
     <button class="clear" onclick="clearInputs()">清空</button>
 </div>
 
@@ -75,7 +75,7 @@
     });
 
                 // 计算555定时器
-    function calculate555Timer() {
+    function timer555Calculate() {
         const mode = document.getElementById('mode').value;
         let result = '';
         const errorMessage = document.getElementById('error-message');

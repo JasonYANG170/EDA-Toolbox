@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LM117/LM317 输出电压计算器</title>
-	<link rel="stylesheet" href="/iframe/my.css">
+	<link rel="stylesheet" href="/iframe/toolbox.css">
 </head>
 <body>
 <div class="container">
@@ -31,12 +31,12 @@
 
     <div id="error-message" class="alert" style="display: none;">请输入有效的电阻值！</div>
 
-    <button class="calculate" onclick="calculateVoltage()">计算</button>
+    <button class="calculate" onclick="lm317VoltagecCalculate()">计算</button>
     <button class="clear" onclick="clearInputs()">清空</button>
 </div>
 
 <script>
-    function calculateVoltage() {
+    function lm317VoltagecCalculate() {
         const R1 = parseFloat(document.getElementById('resistor1').value);
         const R2 = parseFloat(document.getElementById('resistor2').value);
 

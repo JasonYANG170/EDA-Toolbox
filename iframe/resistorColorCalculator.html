@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电阻色环计算器</title>
-	<link rel="stylesheet" href="/iframe/my.css">
+	<link rel="stylesheet" href="/iframe/toolbox.css">
 </head>
 <body>
 <div class="container">
@@ -25,7 +25,7 @@
     <label for="resistorValue">电阻值 (Ω):</label>
     <input type="text" id="resistorValue" placeholder="计算结果将在此显示" readonly>
 
-    <button class="calculate" onclick="calculateResistor()">计算</button>
+    <button class="calculate" onclick="resistorColorCalculator()">计算</button>
     <button class="clear" onclick="clearFields()">清空</button>
 </div>
 
@@ -66,7 +66,7 @@
         }
     }
 
-    function calculateResistor() {
+    function resistorColorCalculator() {
         const numRings = parseInt(document.getElementById('numRings').value);
         let colorValues = [];
 
