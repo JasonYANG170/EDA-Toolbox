@@ -5,7 +5,7 @@
 
 ![LICENSE](https://img.shields.io/github/license/JasonYANG170/EDA-Toolbox?label=License&style=for-the-badge)
 ![Commit Activity](https://img.shields.io/github/commit-activity/w/JasonYANG170/EDA-Toolbox?style=for-the-badge&color=yellow)
-![Languages Count](https://img.shields.io/github/languages/count/JasonYANG170/EDA-Toolbox?logo=c&style=for-the-badge)
+![Languages Count](https://img.shields.io/github/languages/count/JasonYANG170/EDA-Toolbox?logo=javascript&style=for-the-badge)
 [![Discord](https://img.shields.io/discord/978108215499816980?style=social&logo=discord&label=echosec)](https://discord.com/invite/az3ceRmgVe)
 
 
