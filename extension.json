@@ -3,7 +3,7 @@
 	"uuid": "f306c3c4639f4378b5dc194976524205",
 	"displayName": "EDA-Toolbox",
 	"description": "嘉立创EDA & EasyEDA 专业版工具箱",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"publisher": "JasonYANG170",
 	"engines": {
 		"eda": "^2.2.32"
