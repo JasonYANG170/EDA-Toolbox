@@ -41,7 +41,7 @@
 
 	<button class="calculate" onclick="resistorColorCalculator()">通过色环计算阻值</button>
 	<p>选择色环数量，然后选择颜色即可得到阻值。</p>
-	<button class="generate" onclick="applyTrackWidth()">选择电阻生成色环</button>
+	<button class="generate" onclick="applyColorOptions()">选择电阻生成色环</button>
 	<p>选择色环数量，然后点击 “选择电阻生成” 以选择一个电阻即可得出色环。</p>
 	<button class="clear" onclick="clearFields()">清空</button>
 </div>
@@ -49,7 +49,7 @@
 <script>
 	const TRACK_EVENT_ID = '1';
 	let ohm = '';
-	function applyTrackWidth() {
+	function applyColorOptions() {
 		console.log('will ok：');
 		eda.pcb_Event.addMouseEventListener(
 			TRACK_EVENT_ID,
