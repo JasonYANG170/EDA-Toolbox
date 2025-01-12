@@ -52,6 +52,7 @@
 		eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
 	}
 	function applyTrackWidth(WInner, WOuter) {
+		calculateWidth();
 		console.log('WInner:', WInner);
 		console.log('WOuter:', WOuter);
 		eda.pcb_Event.addMouseEventListener(
