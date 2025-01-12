@@ -1,85 +1,115 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电流计算器</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>PCB 线宽与电流计算器</title>
 	<link rel="stylesheet" href="/iframe/toolbox.css">
 </head>
 <body>
 <div class="container">
-    <h1>PCB 电流计算器</h1>
-    <div class="formula">
-        <p>电流计算公式： <br>
-            <strong>I = K × T<sup>0.44</sup> × A<sup>0.75</sup></strong></p>
-        <p>其中：<br>
-            K = 0.024（内层）或 0.048（外层）<br>
-            T = 温升 (℃)<br>
-            A = 铜条截面积，单位：mil<sup>2</sup></p>
-    </div>
+	<h1>PCB 线宽与电流计算器</h1>
+	<div class="formula">
+		<p>计算公式：</p>
+		<p>截面积计算：<br><strong>A = (I / (k × T<sub>Rise</sub><sup>b</sup>))<sup>(1 / c)</sup></strong></p>
+		<p>线宽计算：<br><strong>W = A / (t × 1.378)</strong></p>
+		<p>其中：</p>
+		<ul>
+			<li>k, b, c 为曲线拟合常数。</li>
+			<li>t = 铜厚 (单位：oz)。</li>
+		</ul>
+	</div>
 
-    <!-- 选择铜箔位置 -->
-    <label for="layer">铜箔位置:</label>
-    <select id="layer">
-        <option value="0.024">内层</option>
-        <option value="0.048">外层</option>
-    </select>
+	<!-- 输入电流 -->
+	<label for="current">电流 (I, 单位：A):</label>
+	<input type="number" id="current" placeholder="输入电流 (A)" min="0">
 
-    <!-- 输入宽度 -->
-    <label for="width">铜条宽度:</label>
-    <input type="number" id="width" placeholder="输入铜条宽度" min="0" required>
+	<!-- 输入温升 -->
+	<label for="temperature">温升 (T<sub>Rise</sub>, 单位：℃):</label>
+	<input type="number" id="temperature" placeholder="输入温升 (℃)" min="0">
 
-    <!-- 选择单位 -->
-    <label for="widthUnit">宽度单位:</label>
-    <select id="widthUnit">
-        <option value="mil">mil</option>
-        <option value="mm">mm</option>
-    </select>
+	<!-- 输入铜厚 -->
+	<label for="thickness">铜厚 (t, 单位：oz):</label>
+	<input type="number" id="thickness" placeholder="输入铜厚 (oz)" min="0" step="0.01" value="1">
 
-    <!-- 输入温升 -->
-    <label for="temperature">温升 (℃):</label>
-    <input type="number" id="temperature" placeholder="输入温升 (℃)" min="0" required>
-
-    <!-- 计算按钮 -->
-    <button class="calculate" onclick="currentcalCalculate()">计算电流</button>
-    <button class="clear" onclick="clearFields()">清空</button>
-
-    <div class="result" id="result"></div>
+	<!-- 按钮 -->
+	<button class="calculate" onclick="calculateWidth()">计算线宽</button>
+	<button class="calculate" onclick="applyTrackWidth(WInner, WOuter)">应用线宽</button>
+	<p>点击 “应用线宽” 按钮，选择需要修改的线段，即可自动修改线宽。</p>
+	<button class="clear" onclick="clearInputs()">清空</button>
+	<div class="result" id="result"></div>
 </div>
 
 <script>
-    function currentcalCalculate() {
-        const K = parseFloat(document.getElementById('layer').value); // 选择铜箔位置的修正系数
-        const width = parseFloat(document.getElementById('width').value); // 铜条宽度
-        const widthUnit = document.getElementById('widthUnit').value; // 选择的单位
-        const temperature = parseFloat(document.getElementById('temperature').value); // 温升 (℃)
+	const TRACK_EVENT_ID = '1';
+	let WInner =0;
+	let WOuter =0;
+	function clearInputs() {
+		document.getElementById('current').value = '';
+		document.getElementById('temperature').value = '';
+		document.getElementById('thickness').value = '1'; // 恢复默认值
+		document.getElementById('result').innerHTML = ''; // 清空结果
+		eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
+	}
+	function applyTrackWidth(WInner, WOuter) {
+		console.log('WInner:', WInner);
+		console.log('WOuter:', WOuter);
+		eda.pcb_Event.addMouseEventListener(
+			TRACK_EVENT_ID,
+			'selected',
+			async (eventType) => {
+				const selectedPrimitives = await eda.pcb_SelectControl.getSelectedPrimitives();
+				if (selectedPrimitives.length === 1) {
+					const track = selectedPrimitives[0];
+					console.log('was ok：', track);
+					if (track['pcbItemPrimitiveType'] === 'Track') {
+						const layerId = track['layerId'];
+						const globalIndex = track['globalIndex'];
+						if (layerId >= 1 && layerId <= 2) {
+							console.log(WOuter/10);
+							console.log('eda.pcb_PrimitiveLine.modify("' + globalIndex + '", { lineWidth: "' + WOuter/10 + '" });');
+							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter/10 });
+						} else if (layerId >= 15 && layerId <= 46) {
+							console.log(WInner/10);
+							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner/10 });
+						}
+					}
+				}
+			},
+			1,
+		);
+	}
+	function calculateWidth() {
+		const kInner = 0.024; // 内层 k 值
+		const kOuter = 0.048; // 外层 k 值
+		const b = 0.44; // b 值
+		const c = 0.725; // c 值
 
-        if (isNaN(width) || isNaN(temperature) || width <= 0 || temperature <= 0) {
-            alert('请输入有效的铜条宽度和温升值');
-            return;
-        }
+		const current = parseFloat(document.getElementById('current').value); // 电流 I
+		const temperature = parseFloat(document.getElementById('temperature').value); // 温升 T
+		const thickness = parseFloat(document.getElementById('thickness').value); // 铜厚 t
 
-        // 如果单位是mm，转换为mil
-        let widthInMil = width;
-        if (widthUnit === 'mm') {
-            widthInMil = width * 39.37;  // 1mm = 39.37mil
-        }
+		if (isNaN(current) || isNaN(temperature) || isNaN(thickness) || current <= 0 || temperature <= 0 || thickness <= 0) {
+			alert('请输入有效的电流、温升和铜厚值！');
+			return;
+		}
 
-        // 计算覆铜截面积A，A = 宽度 * 1.44（修正因子）
-        const A = widthInMil * 1.44;
+		// 计算截面积 A（内层和外层）
+		const AInner = Math.pow(current / (kInner * Math.pow(temperature, b)), 1 / c);
+		const AOuter = Math.pow(current / (kOuter * Math.pow(temperature, b)), 1 / c);
 
-        // 计算电流 I = K * (T^0.44) * (A^0.75)
-        const I = K * Math.pow(temperature, 0.44) * Math.pow(A, 0.75);
+		// 计算线宽 W（内层和外层）
+		WInner = (AInner / (thickness * 1.378)).toFixed(2);
+		WOuter = (AOuter / (thickness * 1.378)).toFixed(2);
 
-        // 显示计算结果
-        document.getElementById('result').innerHTML = `容许最大电流：${I.toFixed(3)} A`;
-    }
-
-    function clearFields() {
-        document.getElementById('width').value = '';
-        document.getElementById('temperature').value = '';
-        document.getElementById('result').innerHTML = '';
-    }
+		// 显示结果
+		document.getElementById('result').innerHTML = `
+            内层所需线宽：${WInner} mil<br>
+            外层所需线宽：${WOuter} mil
+        `;
+		console.log(WInner);
+		console.log( WOuter);
+	}
 </script>
 </body>
 </html>
