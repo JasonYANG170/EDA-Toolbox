@@ -330,26 +330,37 @@
 			reader.onload = e => {
 				const workbook = XLSX.read(e.target.result, { type: 'binary' });
 				const sheet = workbook.Sheets[workbook.SheetNames[0]];
-				const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(15); // 从第16行开始
+				const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(16); // 从第16行开始
 
 				const formattedData = jsonData.map((row) => {
 					if (row.length < 7) return null; // 处理无效的行
 					return {
 						productNumber: row[1]?.toString().trim() || '',       // 商品编号在第二列
-						厂商: row[2]?.toString().trim() || '',              // 品牌在第三列
-						manufacturerModel: row[3]?.toString().trim() || '',  // 制造商型号
-						封装: row[4]?.toString().trim() || '',            // 包装
-						productName: row[5]?.toString().trim() || '',        // 商品名称
-						orderQuantity: Number(row[6]?.toString().trim()) || 0 // 订单数量
+						brand: row[2]?.toString().trim() || '',              // 品牌在第三列
+						manufacturerModel: row[3]?.toString().trim() || '',  // 厂家型号在第四列
+						package: row[4]?.toString().trim() || '',            // 封装在第五列
+						productName: row[5]?.toString().trim() || '',        // 商品名称在第六列
+						orderQuantity: parseInt(row[6]?.replace(/[^\d]/g, '') || 0, 10) // 数量在第七列
 					};
-				}).filter(item => item !== null);
+				}).filter(row => row !== null); // 移除无效的行
 
-				dataStore = [...dataStore, ...formattedData];
+				// 合并数据，按商品编号累加数量
+				formattedData.forEach(newRow => {
+					const existingRow = dataStore.find(row => row.productNumber === newRow.productNumber);
+					if (existingRow) {
+						existingRow.orderQuantity += newRow.orderQuantity; // 累加数量
+					} else {
+						dataStore.push(newRow); // 添加新行
+					}
+				});
+
+				// 更新localStorage
 				localStorage.setItem('tableData', JSON.stringify(dataStore));
+
+				// 调用updateTable以刷新表格
 				updateTable();
 			};
 			reader.readAsBinaryString(file);
-			location.reload();  // 刷新页面
 		});
 	});
 
