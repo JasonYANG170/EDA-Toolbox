@@ -29,6 +29,12 @@
 				"id": "edatoolbox",
 				"title": "EDA工具箱",
 				"menuItems": [
+
+			{
+				"id": "myLib",
+				"title": "我的器件库",
+				"registerFn": "myLib"
+			},
 					{
 						"id": "help",
 						"title": "使用说明",
@@ -43,6 +49,7 @@
 						"title": "检测更新",
 						"registerFn": "home_update"
 					}
+
 				]
 			}
 		],
@@ -51,7 +58,11 @@
 				"id": "sch_tool",
 				"title": "原理图工具箱",
 				"menuItems": [
-
+					{
+						"id": "myLib",
+						"title": "我的器件库",
+						"registerFn": "myLib"
+					},
 					{
 						"id": "voltageDividerCalculator",
 						"title": "分压计算器",
@@ -100,6 +111,11 @@
 				"id": "pcb_tool",
 				"title": "PCB工具箱",
 				"menuItems": [
+					{
+						"id": "myLib",
+						"title": "我的器件库",
+						"registerFn": "myLib"
+					},
 					{
 						"id": "resistorColorCalculator",
 						"title": "色环计算器",
