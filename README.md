@@ -48,6 +48,6 @@
 
 | 1 | 2 |
 | --- | --- |
-| ![img_1.png](img_1.png)|![img.png](img.png)|
+| ![img_1.png](img_1.png)|![image](https://github.com/user-attachments/assets/06b4f3a8-d443-4184-84fc-16bf53d1dadc)|
 | ![image](https://github.com/user-attachments/assets/5ba5c629-ddac-4ab8-85f6-f9dcd089576e) | ![image](https://github.com/user-attachments/assets/b2f88c65-cbd2-4d12-b970-0e8c7623828a) |
-| ![img_2.png](img_2.png)|![image](https://github.com/user-attachments/assets/06b4f3a8-d443-4184-84fc-16bf53d1dadc)|
+| ![img_2.png](img_2.png)|![img.png](img.png)|
