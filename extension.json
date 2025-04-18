@@ -1,9 +1,9 @@
 {
-	"name": "EDA-Toolbox",
+	"name": "eda-toolbox",
 	"uuid": "f306c3c4639f4378b5dc194976524205",
-	"displayName": "EDA-Toolbox",
+	"displayName": "EDA-Toolbox工具箱",
 	"description": "嘉立创EDA & EasyEDA 专业版工具箱",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"publisher": "JasonYANG170",
 	"engines": {
 		"eda": "^2.2.32"
@@ -36,6 +36,11 @@
 				"registerFn": "myLib"
 			},
 					{
+						"id": "ai",
+						"title": "AI助手",
+						"registerFn": "ai"
+					},
+					{
 						"id": "help",
 						"title": "使用说明",
 						"registerFn": "home_help"
@@ -62,6 +67,10 @@
 						"id": "myLib",
 						"title": "我的器件库",
 						"registerFn": "myLib"
+					},{
+						"id": "ai",
+						"title": "AI助手",
+						"registerFn": "ai"
 					},
 					{
 						"id": "voltageDividerCalculator",
@@ -115,6 +124,10 @@
 						"id": "myLib",
 						"title": "我的器件库",
 						"registerFn": "myLib"
+					},{
+						"id": "ai",
+						"title": "AI助手",
+						"registerFn": "ai"
 					},
 					{
 						"id": "resistorColorCalculator",

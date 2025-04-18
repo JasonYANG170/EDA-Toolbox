@@ -26,6 +26,9 @@ export function home_update(): void {
 		eda.sys_I18n.text('确认')
 	);
 }
+export async function ai(): Promise<void> {
+	eda.sys_IFrame.openIFrame('/iframe/ai.html', 400, 600);
+}
 export function myLib(): void {
 	eda.sys_IFrame.openIFrame('/iframe/myLib.html', 1000, 1500);
 }
