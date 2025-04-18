@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI-HELP</title>
+	<style>
+		body { background-color: #f3f4f6; display: flex; align-items: center; justify-content: center; height: 100vh; }
+		.container { width: 100%; max-width: 640px; background: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 24px; }
+		.chat-box { height: 384px; overflow-y: auto; border: 1px solid #ddd; padding: 16px; background: #f9fafb; border-radius: 8px; }
+		.input-field, .button { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd; margin-top: 8px; }
+		.button { background-color: #3b82f6; color: white; border: none; cursor: pointer; }
+		.button:hover { background-color: #2563eb; }
+		.settings-modal {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.5);
+			align-items: center;
+			justify-content: center;
+		}
+		.modal-content { background: white; padding: 24px; border-radius: 8px; width: 320px; }
+		/* Markdown 样式优化 */
+		.markdown-output pre { background: #282c34; color: #abb2bf; padding: 8px; border-radius: 4px; overflow-x: auto; }
+		.markdown-output code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+	</style>
+	<script src="marked.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<h2>AI-HELP智能助手</h2>
+	<div id="chat-box" class="chat-box"></div>
+	<input type="text" id="message" placeholder="输入你的消息..." class="input-field">
+	<input type="file" id="imageInput" accept="image/*" class="input-field">
+	<button onclick="sendMessage()" class="button">发送</button>
+	<button onclick="toggleSettings()" class="button" style="background: gray;">设置</button>
+</div>
+
+<!-- 设置界面 -->
+<div id="settingsModal" class="settings-modal">
+	<div class="modal-content">
+		<h3>设置</h3>
+		<label>Ollama API 地址</label>
+		<input type="text" id="ollamaUrl" value="http://localhost:11434/api/generate" class="input-field">
+		<label>模型名称（推荐minicpm-v）</label>
+		<input type="text" id="modelInput" placeholder="请输入模型名称" class="input-field">
+		<button onclick="saveSettings()" class="button">保存</button>
+		<button onclick="toggleSettings()" class="button" style="background: gray;">关闭</button>
+	</div>
+</div>
+
+<script>
+
+
+		let pastedImage = null;
+
+		document.addEventListener("paste", async (event) => {
+		const items = event.clipboardData.items;
+		for (const item of items) {
+		if (item.type.startsWith("image")) {
+		const file = item.getAsFile();
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => {
+		pastedImage = reader.result;
+		displayImage(pastedImage);
+	};
+	}
+	}
+	});
+
+		document.getElementById("imageInput").addEventListener("change", (event) => {
+		const file = event.target.files[0];
+		if (file) {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => {
+		pastedImage = reader.result;
+		displayImage(pastedImage);
+	};
+	}
+	});
+
+		function displayImage(base64Image) {
+		const chatBox = document.getElementById("chat-box");
+		const imgElement = document.createElement("img");
+		imgElement.src = base64Image;
+		imgElement.style.maxWidth = "100%";
+		imgElement.style.borderRadius = "8px";
+		imgElement.style.marginTop = "8px";
+		chatBox.appendChild(imgElement);
+		chatBox.scrollTop = chatBox.scrollHeight;
+	}
+
+			document.getElementById("message").addEventListener("keydown", function(event) {
+			if (event.key === "Enter") {
+			event.preventDefault();
+			sendMessage();
+		}
+		});
+
+		async function sendMessage() {
+			const messageInput = document.getElementById("message");
+			const chatBox = document.getElementById("chat-box");
+			const ollamaUrl = localStorage.getItem("ollamaUrl") || "http://localhost:11434/api/generate";
+			const model = localStorage.getItem("model");
+
+			if (!model) {
+				alert("请先设置模型名称");
+				return;
+			}
+
+			const message = messageInput.value;
+			chatBox.innerHTML += `<div style='padding: 8px; background: #dbeafe; border-radius: 8px; margin-top: 8px;'>你: ${message}</div>`;
+			chatBox.scrollTop = chatBox.scrollHeight;
+
+			const requestBody = { model: model, prompt: message, stream: false };
+			if (pastedImage) {
+				requestBody.images = [pastedImage.split(",")[1]];
+				pastedImage = null; // 发送后清除图片
+			}
+
+			messageInput.value = "";
+			document.getElementById("imageInput").value = "";
+
+			try {
+				const response = await fetch(ollamaUrl, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(requestBody)
+				});
+
+				const jsonData = await response.json();
+				if (jsonData.response) {
+					const aiResponse = jsonData.response;
+					const aiMessageDiv = document.createElement("div");
+					aiMessageDiv.classList.add("markdown-output");
+					aiMessageDiv.style.cssText = "padding: 8px; background: #e5e7eb; border-radius: 8px; margin-top: 8px;";
+					aiMessageDiv.innerHTML = marked.parse(aiResponse);
+					chatBox.appendChild(aiMessageDiv);
+					chatBox.scrollTop = chatBox.scrollHeight;
+				}
+			} catch (error) {
+				console.error("请求失败:", error);
+			}
+		}
+
+
+
+
+
+
+		// 切换设置界面显示/隐藏
+	function toggleSettings() {
+		const modal = document.getElementById("settingsModal");
+		modal.style.display = (modal.style.display === "none" || modal.style.display === "") ? "flex" : "none";
+	}
+
+	// 保存设置
+	function saveSettings() {
+		localStorage.setItem("ollamaUrl", document.getElementById("ollamaUrl").value);
+		localStorage.setItem("model", document.getElementById("modelInput").value);
+		toggleSettings();
+	}
+
+</script>
+</body>
+</html>
