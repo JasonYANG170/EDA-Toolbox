@@ -1,16 +1,6 @@
 <div align="center">
 <img src="/images/toolbox.jpg"width="25%" height="auto" >
     <h1>EDA-Toolbox</h1>
-
-
-![LICENSE](https://img.shields.io/github/license/JasonYANG170/EDA-Toolbox?label=License&style=for-the-badge)
-![Commit Activity](https://img.shields.io/github/commit-activity/w/JasonYANG170/EDA-Toolbox?style=for-the-badge&color=yellow)
-![Languages Count](https://img.shields.io/github/languages/count/JasonYANG170/EDA-Toolbox?logo=javascript&style=for-the-badge)
-[![Discord](https://img.shields.io/discord/978108215499816980?style=social&logo=discord&label=echosec)](https://discord.com/invite/az3ceRmgVe)
-
-
-
-
 这是一项嘉立创EDA&EasyEDA的插件
 
 </div>
@@ -32,16 +22,11 @@
 ### 其他
 - ✅Game_接住EDA
 - ✅我的器件库 (支持管理自己当前持有的器件库存和快速索引)
-- ✅Ollama_API(支持上传图片分析电路)
-  
+
 如果你有更好的建议，请向我提出Issues
 
 ## PR
 如果你有更好的想法，欢迎PR，让我们共建好用的EDA工具箱
-
-## 喜欢这个项目，请为我点个Star ⭐
-
-[![Star History Chart](https://api.star-history.com/svg?repos=JasonYANG170/EDA-Toolbox&type=Date)](https://star-history.com/#star-history/star-history&Date)
 
 
 
