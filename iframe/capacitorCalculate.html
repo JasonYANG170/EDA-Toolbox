@@ -1,109 +1,265 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>串联和并联电容器计算器</title>
-    <link rel="stylesheet" href="/iframe/toolbox.css">
+	<meta charset="UTF-8">
+	<title>串联和并联电容器计算器</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background-color: #eef2f7;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+		/* 公式默认隐藏 */
+		.formula {
+			display: none;
+			text-align: center;
+			margin: 20px 0;
+			font-weight: bold;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+		/* 显示公式按钮样式 */
+		.show-formula-button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			margin-bottom: 10px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+
+		.container {
+			background-color: #fff;
+			padding: 25px 30px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			width: 430px;
+			height: 380px;
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+			overflow-y: auto; /* 启用垂直滚动 */
+			position: relative;
+		}
+
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.row {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.field-group {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+
+		.field-group label {
+			width: 100px;
+			font-weight: 500;
+		}
+
+		.field-group input, .field-group select {
+			flex: 1;
+			padding: 5px 8px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 14px;
+			outline: none;
+		}
+
+		.formula {
+			text-align: center;
+			margin: 20px 0;
+			font-weight: bold;
+			font-size: 14px;
+		}
+
+		.buttons {
+			text-align: right;
+			margin-top: 20px;
+		}
+
+		button {
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			color: white;
+			background-color: #007bff;
+			border: none;
+			border-radius: 6px;
+			margin-left: 10px;
+			cursor: pointer;
+		}
+
+		button.clear {
+			background-color: #6c757d;
+		}
+
+		button:hover {
+			opacity: 0.9;
+		}
+
+		.add-remove-container {
+			display: flex;
+			justify-content: flex-end;
+			gap: 10px;
+			margin: 10px 0;
+		}
+
+		.add-button, .remove-button {
+			background-color: #007bff;
+			color: white;
+			padding: 5px 10px;
+			border-radius: 6px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.alert {
+			color: red;
+			font-size: 14px;
+			text-align: center;
+			margin-top: 10px;
+		}
+	</style>
 </head>
 <body>
 <div class="container">
-    <h1>串联和并联电容器计算器</h1>
+	<h2>串联和并联电容器计算器</h2>
+	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
 
-    <!-- 公式展示 -->
-    <div class="formula">
-        <p><strong>串联计算公式：</strong>1 / C_total = 1 / C1 + 1 / C2 + ... + 1 / Cn</p>
-        <p><strong>并联计算公式：</strong>C_total = C1 + C2 + ... + Cn</p>
-    </div>
+	<div class="formula">
+		串联：1 / C<sub>总</sub> = 1 / C1 + 1 / C2 + ... + 1 / Cn <br>
+		并联：C<sub>总</sub> = C1 + C2 + ... + Cn
+	</div>
 
-    <label for="mode">计算模式：</label>
-    <select id="mode">
-        <option value="series">串联</option>
-        <option value="parallel">并联</option>
-    </select>
+	<div class="field-group">
+		<label for="mode">计算模式：</label>
+		<select id="mode">
+			<option value="series">串联</option>
+			<option value="parallel">并联</option>
+		</select>
+	</div>
 
-    <div id="capacitor-inputs">
-        <div class="capacitor-group">
-            <label for="capacitor1">电容器 1 (μF):</label>
-            <input type="number" class="capacitor" placeholder="请输入电容值">
-        </div>
-    </div>
+	<div id="capacitor-inputs">
+		<div class="field-group capacitor-group">
+			<label>电容器 1 (μF):</label>
+			<input type="number" class="capacitor" placeholder="请输入电容值">
+		</div>
+	</div>
 
-    <div class="add-remove-container">
-        <div class="add-button" onclick="addCapacitor()">+</div>
-        <div class="remove-button" onclick="removeCapacitor()">-</div>
-    </div>
+	<div class="add-remove-container">
+		<div class="add-button" onclick="addCapacitor()">+</div>
+		<div class="remove-button" onclick="removeCapacitor()">-</div>
+	</div>
 
-    <label for="total">总电容 (μF):</label>
-    <input type="number" id="total" placeholder="计算结果将在此显示" readonly>
+	<div class="field-group">
+		<label for="total">总电容 (μF):</label>
+		<input type="number" id="total" readonly placeholder="计算结果将在此显示">
+	</div>
 
-    <div id="error-message" class="alert" style="display: none;">请输入有效的电容值！</div>
+	<div id="error-message" class="alert" style="display: none;">请输入有效的电容值！</div>
 
-    <button class="calculate" onclick="capacitorCalculate()">计算</button>
-    <button class="clear" onclick="capacitorClear()">清空</button>
+	<div class="buttons">
+		<button onclick="capacitorCalculate()">计算</button>
+		<button class="clear" onclick="capacitorClear()">清空</button>
+	</div>
 </div>
 
 <script>
-    function addCapacitor() {
-        const capacitorGroup = document.createElement('div');
-        capacitorGroup.className = 'capacitor-group';
+	function addCapacitor() {
+		const count = document.querySelectorAll('.capacitor-group').length + 1;
+		const capacitorGroup = document.createElement('div');
+		capacitorGroup.className = 'field-group capacitor-group';
 
-        const label = document.createElement('label');
-        label.textContent = `电容器 ${document.querySelectorAll('.capacitor-group').length + 1} (μF):`;
-        capacitorGroup.appendChild(label);
+		const label = document.createElement('label');
+		label.textContent = `电容器 ${count} (μF):`;
+		capacitorGroup.appendChild(label);
 
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.className = 'capacitor';
-        input.placeholder = '请输入电容值';
-        capacitorGroup.appendChild(input);
+		const input = document.createElement('input');
+		input.type = 'number';
+		input.className = 'capacitor';
+		input.placeholder = '请输入电容值';
+		capacitorGroup.appendChild(input);
 
-        document.getElementById('capacitor-inputs').appendChild(capacitorGroup);
-    }
+		document.getElementById('capacitor-inputs').appendChild(capacitorGroup);
+	}
 
-    function removeCapacitor() {
-        const allCapacitorGroups = document.querySelectorAll('.capacitor-group');
-        if (allCapacitorGroups.length > 1) {
-            allCapacitorGroups[allCapacitorGroups.length - 1].remove();
-        }
-    }
+	function removeCapacitor() {
+		const groups = document.querySelectorAll('.capacitor-group');
+		if (groups.length > 1) {
+			groups[groups.length - 1].remove();
+		}
+	}
 
-    function capacitorCalculate() {
-        const mode = document.getElementById('mode').value;
-        const capacitors = Array.from(document.querySelectorAll('.capacitor')).map(input => parseFloat(input.value)).filter(c => !isNaN(c));
+	function capacitorCalculate() {
+		const mode = document.getElementById('mode').value;
+		const values = Array.from(document.querySelectorAll('.capacitor')).map(input => parseFloat(input.value)).filter(v => !isNaN(v));
+		const errorMessage = document.getElementById('error-message');
 
-        // 错误提示显示
-        const errorMessage = document.getElementById('error-message');
-        if (capacitors.length > 0) {
-            let totalCapacitance = 0;
-            if (mode === 'series') {
-                // 串联计算
-                totalCapacitance = 1 / capacitors.reduce((a, b) => a + (1 / b), 0);
-            } else if (mode === 'parallel') {
-                // 并联计算
-                totalCapacitance = capacitors.reduce((a, b) => a + b, 0);
-            }
+		if (values.length > 0) {
+			let total = 0;
+			if (mode === 'series') {
+				total = 1 / values.reduce((sum, c) => sum + (1 / c), 0);
+			} else {
+				total = values.reduce((sum, c) => sum + c, 0);
+			}
+			document.getElementById('total').value = total.toFixed(2);
+			errorMessage.style.display = 'none';
+		} else {
+			errorMessage.style.display = 'block';
+		}
+	}
 
-            document.getElementById('total').value = totalCapacitance.toFixed(2);
+	function capacitorClear() {
+		document.getElementById('capacitor-inputs').innerHTML = `
+            <div class="field-group capacitor-group">
+                <label>电容器 1 (μF):</label>
+                <input type="number" class="capacitor" placeholder="请输入电容值">
+            </div>
+        `;
+		document.getElementById('total').value = '';
+		document.getElementById('error-message').style.display = 'none';
+	}
+	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+		const formula = document.querySelector('.formula');
+		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
 
-            // 隐藏错误提示
-            errorMessage.style.display = 'none';
-        } else {
-            // 显示错误提示
-            errorMessage.style.display = 'block';
-        }
-    }
+		const isVisible = formula.style.display === 'block';
 
-    function capacitorClear() {
-        document.getElementById('capacitor-inputs').innerHTML = `
-        <div class="capacitor-group">
-            <label for="capacitor1">电容器 1 (μF):</label>
-            <input type="number" class="capacitor" placeholder="请输入电容值">
-        </div>
-    `;
-        document.getElementById('total').value = '';
-        document.getElementById('error-message').style.display = 'none';
-    }
+		if (isVisible) {
+			formula.style.display = 'none';
+			this.textContent = '显示公式';
+			inputs.forEach(el => el.style.display = '');
+		} else {
+			formula.style.display = 'block';
+			this.textContent = '关闭公式';
+			inputs.forEach(el => el.style.display = 'none');
+		}
+	});
+
 </script>
 </body>
 </html>

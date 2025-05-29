@@ -1,50 +1,193 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED 串联电阻计算器</title>
-	<link rel="stylesheet" href="/iframe/toolbox.css">
+	<meta charset="UTF-8" />
+	<title>LED 串联电阻计算器</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background-color: #eef2f7;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		.container {
+			background-color: #fff;
+			padding: 25px 30px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			width: 430px;
+			height: 300px;
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+			position: relative;
+		}
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.row {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.field-group {
+			display: flex;
+			align-items: center;
+			width: 48%;
+		}
+
+		.field-group label {
+			width: 120px;
+			font-weight: 500;
+		}
+
+		.field-group input {
+			width: 100px;
+			padding: 5px 8px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 14px;
+			outline: none;
+		}
+		/* 公式默认隐藏 */
+		.formula {
+			display: none;
+			text-align: center;
+			margin: 20px 0;
+			font-weight: bold;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+		/* 显示公式按钮样式 */
+		.show-formula-button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			margin-bottom: 10px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+
+				.buttons {
+			margin-top: 20px;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+
+		button {
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			color: white;
+			background-color: #007bff;
+			border: none;
+			border-radius: 6px;
+			margin-left: 10px;
+			cursor: pointer;
+		}
+
+		button.clear {
+			background-color: #6c757d;
+		}
+
+		button:hover {
+			opacity: 0.9;
+		}
+	</style>
 </head>
 <body>
 <div class="container">
-    <h1>LED 串联电阻计算器</h1>
+	<h2>LED 串联电阻计算器</h2>
+	<!-- 显示公式按钮 -->
+	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+
 	<div class="formula">
-		<p><strong>计算公式：</strong></p>
-		<p><strong>R = (V<sub>供应</sub> -V<sub>正向电压</sub>) / I</strong></p>
-
+		R = (V<sub>供应</sub> - V<sub>正向电压</sub>) / I
 	</div>
-    <label for="supplyVoltage">电源电压 (V):</label>
-    <input type="number" id="supplyVoltage" placeholder="请输入电源电压">
-    <label for="ledVoltage">LED 电压 (V):</label>
-    <input type="number" id="ledVoltage" placeholder="请输入 LED 电压">
-    <label for="ledCurrent">LED 电流 (mA):</label>
-    <input type="number" id="ledCurrent" placeholder="请输入 LED 电流">
-    <label for="resistor">电阻 (Ω):</label>
-    <input type="number" id="resistor" placeholder="计算结果将在此显示">
-    <button class="calculate" onclick="ledResistorCalculate()">计算</button>
-    <button class="clear" onclick="ledResistorClear()">清空</button>
+
+	<div class="row">
+		<div class="field-group">
+			<label for="supplyVoltage">电源电压 (V)</label>
+			<input type="number" id="supplyVoltage" step="any" placeholder="请输入电源电压">
+		</div>
+		<div class="field-group">
+			<label for="ledVoltage">LED 电压 (V)</label>
+			<input type="number" id="ledVoltage" step="any" placeholder="请输入 LED 电压">
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="field-group">
+			<label for="ledCurrent">LED 电流 (mA)</label>
+			<input type="number" id="ledCurrent" step="any" placeholder="请输入 LED 电流">
+		</div>
+		<div class="field-group">
+			<label for="resistor">电阻 (Ω)</label>
+			<input type="number" id="resistor" step="any" placeholder="计算结果将在此显示" readonly>
+		</div>
+	</div>
+
+	<div class="buttons">
+		<button onclick="ledResistorCalculate()">计算</button>
+		<button class="clear" onclick="ledResistorClear()">清空</button>
+	</div>
 </div>
+
 <script>
-function ledResistorCalculate() {
-    const Vs = parseFloat(document.getElementById('supplyVoltage').value);
-    const Vf = parseFloat(document.getElementById('ledVoltage').value);
-    const I = parseFloat(document.getElementById('ledCurrent').value) / 1000; // 转换为安培
+	function ledResistorCalculate() {
+		const Vs = parseFloat(document.getElementById('supplyVoltage').value);
+		const Vf = parseFloat(document.getElementById('ledVoltage').value);
+		const I = parseFloat(document.getElementById('ledCurrent').value) / 1000; // 转换为安培
 
-    if (!isNaN(Vs) && !isNaN(Vf) && !isNaN(I)) {
-        const R = (Vs - Vf) / I;
-        document.getElementById('resistor').value = R.toFixed(2);
-    } else {
-        alert('请输入所有已知值！');
-    }
-}
+		if (!isNaN(Vs) && !isNaN(Vf) && !isNaN(I) && I !== 0) {
+			const R = (Vs - Vf) / I;
+			document.getElementById('resistor').value = R.toFixed(2);
+		} else {
+			alert('请输入所有已知值，且电流不能为0！');
+		}
+	}
 
-function ledResistorClear() {
-    document.getElementById('supplyVoltage').value = '';
-    document.getElementById('ledVoltage').value = '';
-    document.getElementById('ledCurrent').value = '';
-    document.getElementById('resistor').value = '';
-}
+	function ledResistorClear() {
+		document.getElementById('supplyVoltage').value = '';
+		document.getElementById('ledVoltage').value = '';
+		document.getElementById('ledCurrent').value = '';
+		document.getElementById('resistor').value = '';
+	}
+	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+		const formula = document.querySelector('.formula');
+		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
+
+		const isVisible = formula.style.display === 'block';
+
+		if (isVisible) {
+			formula.style.display = 'none';
+			this.textContent = '显示公式';
+			inputs.forEach(el => el.style.display = '');
+		} else {
+			formula.style.display = 'block';
+			this.textContent = '关闭公式';
+			inputs.forEach(el => el.style.display = 'none');
+		}
+	});
 </script>
 </body>
 </html>

@@ -1,56 +1,174 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8" />
 	<title>PCB 线宽与电流计算器</title>
-	<link rel="stylesheet" href="/iframe/toolbox.css">
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background-color: #eef2f7;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		.container {
+			background-color: #fff;
+			padding: 25px 30px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			width: 430px;
+			height: 350px;
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+			position: relative;
+		}
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.row {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.field-group {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+
+		.field-group label {
+			width: 130px;
+			font-weight: 500;
+		}
+
+		.field-group input {
+			flex: 1;
+			padding: 5px 8px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 14px;
+			outline: none;
+		}
+
+		/* 公式默认隐藏 */
+		.formula {
+			display: none;
+			text-align: center;
+			margin: 20px 0;
+			font-weight: bold;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+		/* 显示公式按钮样式 */
+		.show-formula-button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			margin-bottom: 10px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.result {
+			text-align: center;
+			font-size: 14px;
+			color: #333;
+			margin-top: 10px;
+		}
+
+				.buttons {
+			margin-top: 20px;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+
+		button {
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			color: white;
+			background-color: #007bff;
+			border: none;
+			border-radius: 6px;
+			margin-left: 10px;
+			cursor: pointer;
+		}
+
+		button.clear {
+			background-color: #6c757d;
+		}
+
+		button:hover {
+			opacity: 0.9;
+		}
+	</style>
 </head>
 <body>
 <div class="container">
-	<h1>PCB 线宽与电流计算器</h1>
+	<h2>PCB 线宽与电流计算器</h2>
+	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+
 	<div class="formula">
-		<p>计算公式：</p>
-		<p>截面积计算：<br><strong>A = (I / (k × T<sub>Rise</sub><sup>b</sup>))<sup>(1 / c)</sup></strong></p>
-		<p>线宽计算：<br><strong>W = A / (t × 1.378)</strong></p>
-		<p>其中：</p>
-		<ul>
-			<li>k, b, c 为曲线拟合常数。</li>
-			<li>t = 铜厚 (单位：oz)。</li>
-		</ul>
+		A = (I / (k × T<sub>Rise</sub><sup>b</sup>))<sup>(1 / c)</sup><br>
+		W = A / (t × 1.378)
 	</div>
 
-	<!-- 输入电流 -->
-	<label for="current">电流 (I, 单位：A):</label>
-	<input type="number" id="current" placeholder="输入电流 (A)" min="0">
+	<div class="field-group">
+		<label for="current">电流 (A):</label>
+		<input type="number" id="current" placeholder="输入电流" min="0">
+	</div>
 
-	<!-- 输入温升 -->
-	<label for="temperature">温升 (T<sub>Rise</sub>, 单位：℃):</label>
-	<input type="number" id="temperature" placeholder="输入温升 (℃)" min="0">
+	<div class="field-group">
+		<label for="temperature">温升 (℃):</label>
+		<input type="number" id="temperature" placeholder="输入温升" min="0">
+	</div>
 
-	<!-- 输入铜厚 -->
-	<label for="thickness">铜厚 (t, 单位：oz):</label>
-	<input type="number" id="thickness" placeholder="输入铜厚 (oz)" min="0" step="0.01" value="1">
+	<div class="field-group">
+		<label for="thickness">铜厚 (oz):</label>
+		<input type="number" id="thickness" placeholder="输入铜厚" min="0" step="0.01" value="1">
+	</div>
 
-	<!-- 按钮 -->
-	<button class="calculate" onclick="calculateWidth()">计算线宽</button>
-	<button class="calculate" onclick="applyTrackWidth(WInner, WOuter)">应用线宽</button>
-	<p>点击 “应用线宽” 按钮，选择需要修改的线段，即可自动修改线宽。</p>
-	<button class="clear" onclick="clearInputs()">清空</button>
 	<div class="result" id="result"></div>
+
+	<div class="buttons">
+		<button onclick="calculateWidth()">计算</button>
+		<button onclick="applyTrackWidth(WInner, WOuter)">应用</button>
+		<button class="clear" onclick="clearInputs()">清空</button>
+	</div>
 </div>
 
 <script>
 	const TRACK_EVENT_ID = '1';
-	let WInner =0;
-	let WOuter =0;
+	let WInner = 0;
+	let WOuter = 0;
+
 	function clearInputs() {
 		document.getElementById('current').value = '';
 		document.getElementById('temperature').value = '';
-		document.getElementById('thickness').value = '1'; // 恢复默认值
-		document.getElementById('result').innerHTML = ''; // 清空结果
+		document.getElementById('thickness').value = '1';
+		document.getElementById('result').innerHTML = '';
 		eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
 	}
+
 	function applyTrackWidth(WInner, WOuter) {
 		calculateWidth();
 		console.log('WInner:', WInner);
@@ -69,10 +187,10 @@
 						if (layerId >= 1 && layerId <= 2) {
 							console.log(WOuter/10);
 							console.log('eda.pcb_PrimitiveLine.modify("' + globalIndex + '", { lineWidth: "' + WOuter/10 + '" });');
-							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter/10 });
+							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter });
 						} else if (layerId >= 15 && layerId <= 46) {
 							console.log(WInner/10);
-							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner/10 });
+							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner });
 						}
 					}
 				}
@@ -80,37 +198,49 @@
 			1,
 		);
 	}
-	function calculateWidth() {
-		const kInner = 0.024; // 内层 k 值
-		const kOuter = 0.048; // 外层 k 值
-		const b = 0.44; // b 值
-		const c = 0.725; // c 值
 
-		const current = parseFloat(document.getElementById('current').value); // 电流 I
-		const temperature = parseFloat(document.getElementById('temperature').value); // 温升 T
-		const thickness = parseFloat(document.getElementById('thickness').value); // 铜厚 t
+	function calculateWidth() {
+		const kInner = 0.024;
+		const kOuter = 0.048;
+		const b = 0.44;
+		const c = 0.725;
+
+		const current = parseFloat(document.getElementById('current').value);
+		const temperature = parseFloat(document.getElementById('temperature').value);
+		const thickness = parseFloat(document.getElementById('thickness').value);
 
 		if (isNaN(current) || isNaN(temperature) || isNaN(thickness) || current <= 0 || temperature <= 0 || thickness <= 0) {
 			alert('请输入有效的电流、温升和铜厚值！');
 			return;
 		}
 
-		// 计算截面积 A（内层和外层）
 		const AInner = Math.pow(current / (kInner * Math.pow(temperature, b)), 1 / c);
 		const AOuter = Math.pow(current / (kOuter * Math.pow(temperature, b)), 1 / c);
 
-		// 计算线宽 W（内层和外层）
 		WInner = (AInner / (thickness * 1.378)).toFixed(2);
 		WOuter = (AOuter / (thickness * 1.378)).toFixed(2);
 
-		// 显示结果
 		document.getElementById('result').innerHTML = `
-            内层所需线宽：${WInner} mil<br>
-            外层所需线宽：${WOuter} mil
-        `;
-		console.log(WInner);
-		console.log( WOuter);
+			内层所需线宽：${WInner} mil<br>
+			外层所需线宽：${WOuter} mil
+		`;
 	}
+	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+		const formula = document.querySelector('.formula');
+		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
+
+		const isVisible = formula.style.display === 'block';
+
+		if (isVisible) {
+			formula.style.display = 'none';
+			this.textContent = '显示公式';
+			inputs.forEach(el => el.style.display = '');
+		} else {
+			formula.style.display = 'block';
+			this.textContent = '关闭公式';
+			inputs.forEach(el => el.style.display = 'none');
+		}
+	});
 </script>
 </body>
 </html>

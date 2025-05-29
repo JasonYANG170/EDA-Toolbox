@@ -1,10 +1,8 @@
-<div align="center">
-<img src="/images/toolbox.jpg"width="25%" height="auto" >
-    <h1>EDA-Toolbox</h1>
-这是一项嘉立创EDA&EasyEDA的插件
+## Tool-Box工具箱
 
-</div>
-
+![Static Badge](https://img.shields.io/badge/License-Apache_2.0-green?style=for-the-badge)
+![Commit Activity](https://img.shields.io/github/commit-activity/w/JasonYANG170/EDA-Toolbox?style=for-the-badge&color=yellow)
+![Languages Count](https://img.shields.io/github/languages/count/JasonYANG170/EDA-Toolbox?logo=typescript&style=for-the-badge)
 
 ## 功能
 ### 原理图
@@ -19,9 +17,17 @@
 ### PCB
 - ✅色环计算器 (支持鼠标点击电阻器件自动生成)
 - ✅电流线宽计算器 (支持鼠标点击走线自动修改)
+#### 器件库
+- ✅支持从立创商城导入订单
+- ✅支持相同器件数量累计
+- ✅支持自定义编辑器件
+- ✅支持器件库存计数
+- ✅支持备份器件数据
+- ✅支持导入器件数据
+- ✅支持模糊搜索器件
 ### 其他
 - ✅Game_接住EDA
-- ✅我的器件库 (支持管理自己当前持有的器件库存和快速索引)
+- ✅支持OllamaAPI本地AI分析及答疑
 
 如果你有更好的建议，请向我提出Issues
 

@@ -1,68 +1,211 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LM117/LM317 输出电压计算器</title>
-	<link rel="stylesheet" href="/iframe/toolbox.css">
+	<meta charset="UTF-8" />
+	<title>LM117/LM317 输出电压计算器</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background-color: #eef2f7;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		.container {
+			background-color: #fff;
+			padding: 25px 30px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			width: 430px;
+			height: 260px;
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+			position: relative;
+		}
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.row {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.field-group {
+			display: flex;
+			align-items: center;
+			width: 48%;
+		}
+
+		.field-group label {
+			width: 80px;
+			font-weight: 500;
+		}
+
+		.field-group input {
+			width: 100px;
+			padding: 5px 8px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 14px;
+			outline: none;
+		}
+
+		/* 公式默认隐藏 */
+		.formula {
+			display: none;
+			text-align: center;
+			margin: 20px 0;
+			font-weight: bold;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+		/* 显示公式按钮样式 */
+		.show-formula-button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			margin-bottom: 10px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+
+				.buttons {
+			margin-top: 20px;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+
+		button {
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			color: white;
+			background-color: #007bff;
+			border: none;
+			border-radius: 6px;
+			margin-left: 10px;
+			cursor: pointer;
+		}
+
+		button.clear {
+			background-color: #6c757d;
+		}
+
+		button:hover {
+			opacity: 0.9;
+		}
+
+		/* 错误提示 */
+		.alert {
+			color: #dc3545;
+			font-size: 13px;
+			margin-top: 5px;
+			text-align: center;
+		}
+	</style>
 </head>
 <body>
 <div class="container">
-    <h1>LM117/LM317 输出电压计算器</h1>
+	<h2>LM117/LM317 输出电压计算器</h2>
 
-    <!-- 公式展示 -->
-    <div class="formula">
-        <p><strong>输出电压计算公式：</strong><br>
-            V<sub>out</sub> = 1.25 × (1 + R<sub>2</sub> / R<sub>1</sub>)<br>
-            其中：<br>
-            - R<sub>1</sub> 和 R<sub>2</sub> 为外接电阻<br>
-            - V<sub>out</sub> 为输出电压
-        </p>
-    </div>
+	<!-- 显示公式按钮 -->
+	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
 
-    <label for="resistor1">电阻 R1 (Ω):</label>
-    <input type="number" id="resistor1" placeholder="请输入电阻 R1 的值">
+	<div class="formula">
+		输出电压计算公式：<br>
+		V<sub>out</sub> = 1.25 × (1 + R<sub>2</sub> / R<sub>1</sub>)<br>
+		其中：<br>
+		- R<sub>1</sub> 和 R<sub>2</sub> 为外接电阻<br>
+		- V<sub>out</sub> 为输出电压
+	</div>
 
-    <label for="resistor2">电阻 R2 (Ω):</label>
-    <input type="number" id="resistor2" placeholder="请输入电阻 R2 的值">
+	<div class="row">
+		<div class="field-group">
+			<label for="resistor1">电阻 R1</label>
+			<input type="number" id="resistor1" step="any" placeholder="Ω">
+		</div>
+		<div class="field-group">
+			<label for="resistor2">电阻 R2</label>
+			<input type="number" id="resistor2" step="any" placeholder="Ω">
+		</div>
+	</div>
 
-    <label for="result">输出电压 (V):</label>
-    <input type="text" id="result" readonly placeholder="计算结果将在此显示">
+	<div class="row">
+		<div class="field-group">
+			<label for="result">输出电压</label>
+			<input type="text" id="result" readonly placeholder="V">
+		</div>
+		<div class="field-group" style="justify-content:flex-start;">
+			<div id="error-message" class="alert" style="display: none;">请输入有效的电阻值！</div>
+		</div>
+	</div>
 
-    <div id="error-message" class="alert" style="display: none;">请输入有效的电阻值！</div>
-
-    <button class="calculate" onclick="lm317VoltagecCalculate()">计算</button>
-    <button class="clear" onclick="clearInputs()">清空</button>
+	<div class="buttons">
+		<button onclick="lm317VoltageCalculate()">计算</button>
+		<button class="clear" onclick="clearInputs()">清空</button>
+	</div>
 </div>
 
 <script>
-    function lm317VoltagecCalculate() {
-        const R1 = parseFloat(document.getElementById('resistor1').value);
-        const R2 = parseFloat(document.getElementById('resistor2').value);
+	function lm317VoltageCalculate() {
+		const R1 = parseFloat(document.getElementById('resistor1').value);
+		const R2 = parseFloat(document.getElementById('resistor2').value);
 
-        const errorMessage = document.getElementById('error-message');
-        const resultInput = document.getElementById('result');
+		const errorMessage = document.getElementById('error-message');
+		const resultInput = document.getElementById('result');
 
-        // 隐藏错误消息
-        errorMessage.style.display = 'none';
+		errorMessage.style.display = 'none';
 
-        // 验证输入
-        if (isNaN(R1) || isNaN(R2) || R1 <= 0 || R2 <= 0) {
-            errorMessage.style.display = 'block';
-            resultInput.value = '';
-        } else {
-            // 计算输出电压
-            const Vout = 1.25 * (1 + R2 / R1);
-            resultInput.value = Vout.toFixed(2); // 保留两位小数
-        }
-    }
+		if (isNaN(R1) || isNaN(R2) || R1 <= 0 || R2 <= 0) {
+			errorMessage.style.display = 'block';
+			resultInput.value = '';
+		} else {
+			const Vout = 1.25 * (1 + R2 / R1);
+			resultInput.value = Vout.toFixed(2);
+		}
+	}
 
-    function clearInputs() {
-        document.getElementById('resistor1').value = '';
-        document.getElementById('resistor2').value = '';
-        document.getElementById('result').value = '';
-        document.getElementById('error-message').style.display = 'none';
-    }
+	function clearInputs() {
+		document.getElementById('resistor1').value = '';
+		document.getElementById('resistor2').value = '';
+		document.getElementById('result').value = '';
+		document.getElementById('error-message').style.display = 'none';
+	}
+	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+		const formula = document.querySelector('.formula');
+		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
+
+		const isVisible = formula.style.display === 'block';
+
+		if (isVisible) {
+			formula.style.display = 'none';
+			this.textContent = '显示公式';
+			inputs.forEach(el => el.style.display = '');
+		} else {
+			formula.style.display = 'block';
+			this.textContent = '关闭公式';
+			inputs.forEach(el => el.style.display = 'none');
+		}
+	});
 </script>
 </body>
 </html>

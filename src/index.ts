@@ -39,34 +39,34 @@ export function home_game(): void {
 	eda.sys_IFrame.openIFrame('/iframe/game.html', 300, 550);
 }
 export function sch_ohmCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/ohmCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/ohmCalculate.html', 430, 320);
 }
 export function sch_voltageDividerCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/voltageDividerCalculator.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/voltageDividerCalculator.html', 430, 260);
 }
 export function sch_batteryCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/batteryCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/batteryCalculate.html', 430, 260);
 }
 export function sch_resistorCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/resistorCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/resistorCalculate.html', 430, 380);
 }
 export function sch_ledResistorCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/ledResistorCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/ledResistorCalculate.html', 430, 300);
 }
 export function sch_lm317VoltagecCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/lm317VoltagecCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/lm317VoltagecCalculate.html', 430, 260);
 }
 export function sch_timer555Calculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 430, 360);
 }
 export function sch_capacitorCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 430, 380);
 }
 export function pcb_currentcalCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 430, 350);
 }
 export function pcb_resistorColorCalculator(): void{
-	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 300, 550);
+	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 500, 320);
 }
 
 
