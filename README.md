@@ -37,9 +37,7 @@
 
 
 ## 实物图
-
 | 1 | 2 |
 | --- | --- |
-| ![img_1.png](img_1.png)|![image](https://github.com/user-attachments/assets/06b4f3a8-d443-4184-84fc-16bf53d1dadc)|
-| ![image](https://github.com/user-attachments/assets/5ba5c629-ddac-4ab8-85f6-f9dcd089576e) | ![image](https://github.com/user-attachments/assets/b2f88c65-cbd2-4d12-b970-0e8c7623828a) |
-| ![img_2.png](img_2.png)|![img.png](img.png)|
+| ![image](https://github.com/user-attachments/assets/d7647801-b43d-4c6e-8f0f-95c1f18bff19)|![image](https://github.com/user-attachments/assets/1f6f4868-7fee-4d1c-995d-1d112a7cab5e)|
+| ![image](https://github.com/user-attachments/assets/06b4f3a8-d443-4184-84fc-16bf53d1dadc)|![image](https://github.com/user-attachments/assets/ee171542-4a2a-4d8f-97ca-b70405a56ff7)|
