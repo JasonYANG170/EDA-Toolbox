@@ -1,30 +1,152 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8" />
 	<title>电池续航时间计算器</title>
-	<link rel="stylesheet" href="/iframe/toolbox.css">
+	<style>
+		* {
+			box-sizing: border-box;
+		}
 
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background-color: #eef2f7;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		.container {
+			background-color: #fff;
+			padding: 25px 30px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			width: 430px;
+			height: 260px;
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+			position: relative;
+		}
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.row {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.field-group {
+			display: flex;
+			align-items: center;
+			width: 48%;
+		}
+
+		.field-group label {
+			width: 80px;
+			font-weight: 500;
+		}
+
+		.field-group input {
+			width: 100px;
+			padding: 5px 8px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 14px;
+			outline: none;
+		}
+
+		/* 公式默认隐藏 */
+		.formula {
+			display: none;
+			text-align: center;
+			margin: 20px 0;
+			font-weight: bold;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+		/* 显示公式按钮样式 */
+		.show-formula-button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			margin-bottom: 10px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+
+				.buttons {
+			margin-top: 20px;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+
+		button {
+			padding: 6px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			color: white;
+			background-color: #007bff;
+			border: none;
+			border-radius: 6px;
+			margin-left: 10px;
+			cursor: pointer;
+		}
+
+		button.clear {
+			background-color: #6c757d;
+		}
+
+		button:hover {
+			opacity: 0.9;
+		}
+	</style>
 </head>
 <body>
 <div class="container">
-	<h1>电池续航时间计算器</h1>
+	<h2>电池续航时间计算器</h2>
+	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
 
 	<div class="formula">
-		<p>续航时间计算公式：<br>
-			<strong>续航时间 (小时) = 电池容量 (mAh) ÷ 负载电流 (mA)</strong></p>
+		续航时间 = 电池容量 ÷ 负载电流
+	</div>
+	<div class="row">
+		<div class="field-group">
+			<label for="capacity">电池容量</label>
+			<input type="number" id="capacity" placeholder="mAh">
+		</div>
+		<div class="field-group">
+			<label for="current">负载电流</label>
+			<input type="number" id="current" placeholder="mA">
+		</div>
 	</div>
 
-	<label for="capacity">电池容量 (mAh):</label>
-	<input type="number" id="capacity" placeholder="请输入电池容量">
-	<label for="current">负载电流 (mA):</label>
-	<input type="number" id="current" placeholder="请输入负载电流">
-	<label for="time">续航时间 (小时):</label>
-	<input type="number" id="time" placeholder="续航时间将显示在这里" readonly>
+	<div class="row">
+		<div class="field-group">
+			<label for="time">续航时间</label>
+			<input type="number" id="time" placeholder="小时" readonly>
+		</div>
+	</div>
 
-	<button class="calculate" onclick="batteryCalculate()">计算</button>
-	<button class="clear" onclick="batteryClear()">清空</button>
+
+
+	<div class="buttons">
+		<button onclick="batteryCalculate()">计算</button>
+		<button class="clear" onclick="batteryClear()">清空</button>
+	</div>
 </div>
 
 <script>
@@ -44,7 +166,22 @@
 		document.getElementById('current').value = '';
 		document.getElementById('time').value = '';
 	}
-</script>
+	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+		const formula = document.querySelector('.formula');
+		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
 
+		const isVisible = formula.style.display === 'block';
+
+		if (isVisible) {
+			formula.style.display = 'none';
+			this.textContent = '显示公式';
+			inputs.forEach(el => el.style.display = '');
+		} else {
+			formula.style.display = 'block';
+			this.textContent = '关闭公式';
+			inputs.forEach(el => el.style.display = 'none');
+		}
+	});
+</script>
 </body>
 </html>
