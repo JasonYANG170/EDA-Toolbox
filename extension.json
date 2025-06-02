@@ -1,7 +1,7 @@
 {
 	"name": "eda-toolbox",
 	"uuid": "f306c3c4639f4378b5dc194976524205",
-	"displayName": "EDA-Toolbox工具箱",
+	"displayName": "Toolbox工具箱",
 	"description": "嘉立创EDA & EasyEDA 专业版工具箱",
 	"version": "1.1.5",
 	"publisher": "JasonYANG170",
@@ -29,7 +29,7 @@
 		"home": [
 			{
 				"id": "edatoolbox",
-				"title": "EDA工具箱",
+				"title": "工具箱",
 				"menuItems": [
 
 					{
