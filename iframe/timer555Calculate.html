@@ -1,280 +1,341 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8" />
-	<title>555 定时器计算器</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #eef2f7;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
-		/* 公式默认隐藏 */
-		.formula {
-			display: none;
-			text-align: center;
-			margin: 20px 0;
-			font-weight: bold;
-			font-size: 14px;
-			line-height: 1.5;
-		}
-		/* 显示公式按钮样式 */
-		.show-formula-button {
-			background-color: #007bff;
-			color: white;
-			border: none;
-			border-radius: 6px;
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			cursor: pointer;
-			margin-bottom: 10px;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
-
-
-		.container {
-			background-color: #fff;
-			padding: 25px 30px;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			height: 270px;
-			width: 430px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-			position: relative;
-		}
-
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			font-size: 20px;
-		}
-
-		.row {
-			display: flex;
-			justify-content: space-between;
-			margin-bottom: 15px;
-		}
-
-		.field-group {
-			display: flex;
-			align-items: center;
-			width: 100%;
-			margin-bottom: 10px;
-		}
-
-		.field-group label {
-			width: 120px;
-			font-weight: 500;
-		}
-
-		.field-group input,
-		select {
-			width: 100%;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-		}
-
-		.formula {
-			font-size: 14px;
-			margin-bottom: 15px;
-			font-weight: bold;
-		}
-
-		.alert {
-			color: red;
-			font-size: 13px;
-			margin-bottom: 10px;
-		}
-
-				.buttons {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
-
-
-		button {
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			color: white;
-			background-color: #007bff;
-			border: none;
-			border-radius: 6px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
-
-		button.clear {
-			background-color: #6c757d;
-		}
-
-		button:hover {
-			opacity: 0.9;
-		}
-	</style>
-</head>
-<body>
-<div class="container">
-
-	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
-
-	<div class="formula">
-		<p>单稳态模式： t = 1.1 × R × C</p>
-		<p>非稳态模式： f = 1.44 / ((R1 + 2 × R2) × C)</p>
-	</div>
-
-	<div class="field-group">
-		<label for="mode">选择模式：</label>
-		<select id="mode">
-			<option value="monostable">单稳态</option>
-			<option value="astable">非稳态</option>
-		</select>
-	</div>
-
-	<!-- 单稳态模式输入 -->
-	<div id="monostable-inputs">
-		<div class="field-group">
-			<label for="monostable-resistor">电阻 (Ω):</label>
-			<input type="number" id="monostable-resistor" placeholder="请输入电阻值">
-		</div>
-		<div class="field-group">
-			<label for="monostable-capacitor">电容 (μF):</label>
-			<input type="number" id="monostable-capacitor" placeholder="请输入电容值">
-		</div>
-	</div>
-
-	<!-- 非稳态模式输入 -->
-	<div id="astable-inputs" style="display: none;">
-		<div class="field-group">
-			<label for="astable-resistor1">电阻 R1 (Ω):</label>
-			<input type="number" id="astable-resistor1" placeholder="请输入电阻 R1">
-		</div>
-		<div class="field-group">
-			<label for="astable-resistor2">电阻 R2 (Ω):</label>
-			<input type="number" id="astable-resistor2" placeholder="请输入电阻 R2">
-		</div>
-		<div class="field-group">
-			<label for="astable-capacitor">电容 (μF):</label>
-			<input type="number" id="astable-capacitor" placeholder="请输入电容值">
-		</div>
-	</div>
-
-	<div class="field-group">
-		<label for="result">计算结果：</label>
-		<input type="text" id="result" readonly placeholder="计算结果将在此显示">
-	</div>
-
-	<div id="error-message" class="alert" style="display: none;">请输入有效的数值！</div>
-
-	<div class="buttons">
-		<button onclick="timer555Calculate()">计算</button>
-		<button class="clear" onclick="clearInputs()">清空</button>
-	</div>
-</div>
-
-<script>
-	document.getElementById('mode').addEventListener('change', function () {
-		const mode = this.value;
-		document.getElementById('monostable-inputs').style.display = mode === 'monostable' ? 'block' : 'none';
-		document.getElementById('astable-inputs').style.display = mode === 'astable' ? 'block' : 'none';
-	});
-
-	function timer555Calculate() {
-		const mode = document.getElementById('mode').value;
-		let result = '';
-		const errorMessage = document.getElementById('error-message');
-		errorMessage.style.display = 'none';
-
-		if (mode === 'monostable') {
-			const resistor = parseFloat(document.getElementById('monostable-resistor').value);
-			const capacitor = parseFloat(document.getElementById('monostable-capacitor').value);
-
-			if (isNaN(resistor) || isNaN(capacitor) || resistor <= 0 || capacitor <= 0) {
-				errorMessage.style.display = 'block';
-				result = '';
-			} else {
-				const time = 1.1 * resistor * capacitor;
-				result = `脉冲宽度：${time.toFixed(6)} 秒`;
+	<head>
+		<meta charset="UTF-8" />
+		<title>555 定时器计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
 			}
-		} else if (mode === 'astable') {
-			const resistor1 = parseFloat(document.getElementById('astable-resistor1').value);
-			const resistor2 = parseFloat(document.getElementById('astable-resistor2').value);
-			const capacitor = parseFloat(document.getElementById('astable-capacitor').value);
-
-			if (isNaN(resistor1) || isNaN(resistor2) || isNaN(capacitor) || resistor1 <= 0 || resistor2 <= 0 || capacitor <= 0) {
-				errorMessage.style.display = 'block';
-				result = '';
-			} else {
-				const frequency = 1.44 / ((resistor1 + 2 * resistor2) * capacitor);
-				const dutyCycle = resistor2 / (resistor1 + 2 * resistor2);
-				result = `频率：${frequency.toFixed(2)} Hz，占空比：${(dutyCycle * 100).toFixed(2)}%`;
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
 			}
-		}
-
-		document.getElementById('result').value = result;
-	}
-
-	function clearInputs() {
-		document.getElementById('monostable-resistor').value = '';
-		document.getElementById('monostable-capacitor').value = '';
-		document.getElementById('astable-resistor1').value = '';
-		document.getElementById('astable-resistor2').value = '';
-		document.getElementById('astable-capacitor').value = '';
-		document.getElementById('result').value = '';
-		document.getElementById('error-message').style.display = 'none';
-	}
-	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
-		const formula = document.querySelector('.formula');
-		const isVisible = formula.style.display === 'block';
-		const mode = document.getElementById('mode').value;
-
-		if (isVisible) {
-			// 关闭公式，恢复当前模式输入区域
-			formula.style.display = 'none';
-			this.textContent = '显示公式';
-
-			if (mode === 'monostable') {
-				document.getElementById('monostable-inputs').style.display = 'block';
-				document.getElementById('astable-inputs').style.display = 'none';
-			} else {
-				document.getElementById('monostable-inputs').style.display = 'none';
-				document.getElementById('astable-inputs').style.display = 'block';
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
 			}
-
-			// 显示其他控件
-			document.querySelectorAll('.field-group, .buttons, .add-remove-container').forEach(el => {
-				el.style.display = '';
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				height: 270px;
+				width: 430px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				font-size: 20px;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 100%;
+				margin-bottom: 10px;
+			}
+			.field-group label {
+				width: 120px;
+				font-weight: 500;
+			}
+			.field-group input,
+			select {
+				width: 100%;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				font-size: 14px;
+				margin-bottom: 15px;
+				font-weight: bold;
+			}
+			.alert {
+				color: red;
+				font-size: 13px;
+				margin-bottom: 10px;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">
+				<p>单稳态模式： t = 1.1 × R × C</p>
+				<p>非稳态模式： f = 1.44 / ((R1 + 2 × R2) × C)</p>
+			</div>
+			<div class="field-group">
+				<label for="mode">选择模式：</label>
+				<select id="mode">
+					<option value="monostable">单稳态</option>
+					<option value="astable">非稳态</option>
+				</select>
+			</div>
+			<!-- 单稳态模式输入 -->
+			<div id="monostable-inputs">
+				<div class="field-group">
+					<label for="monostable-resistor">电阻 (Ω):</label>
+					<input type="number" id="monostable-resistor" placeholder="请输入电阻值" />
+				</div>
+				<div class="field-group">
+					<label for="monostable-capacitor">电容 (μF):</label>
+					<input type="number" id="monostable-capacitor" placeholder="请输入电容值" />
+				</div>
+				<div class="field-group">
+					<label for="monostable-time">脉冲宽度 t (秒):</label>
+					<input type="number" id="monostable-time" placeholder="请输入脉冲宽度" />
+				</div>
+			</div>
+			<!-- 非稳态模式输入 -->
+			<div id="astable-inputs" style="display: none">
+				<div class="field-group">
+					<label for="astable-resistor1">电阻 R1 (Ω):</label>
+					<input type="number" id="astable-resistor1" placeholder="请输入电阻 R1" />
+				</div>
+				<div class="field-group">
+					<label for="astable-resistor2">电阻 R2 (Ω):</label>
+					<input type="number" id="astable-resistor2" placeholder="请输入电阻 R2" />
+				</div>
+				<div class="field-group">
+					<label for="astable-capacitor">电容 (μF):</label>
+					<input type="number" id="astable-capacitor" placeholder="请输入电容值" />
+				</div>
+				<div class="field-group">
+					<label for="astable-frequency">频率 f (Hz):</label>
+					<input type="number" id="astable-frequency" placeholder="请输入频率" />
+				</div>
+			</div>
+			<div id="error-message" class="alert" style="display: none">请输入有效的数值！</div>
+			<div class="buttons">
+				<button class="clear" onclick="clearInputs()">清空</button>
+			</div>
+		</div>
+		<script>
+			document.getElementById('mode').addEventListener('change', function () {
+				const mode = this.value;
+				document.getElementById('monostable-inputs').style.display = mode === 'monostable' ? 'block' : 'none';
+				document.getElementById('astable-inputs').style.display = mode === 'astable' ? 'block' : 'none';
+				document.getElementById('error-message').style.display = 'none';
+				clearInputs();
 			});
-		} else {
-			// 显示公式，隐藏所有输入区域
-			formula.style.display = 'block';
-			this.textContent = '关闭公式';
 
-			document.getElementById('monostable-inputs').style.display = 'none';
-			document.getElementById('astable-inputs').style.display = 'none';
-
-			document.querySelectorAll('.field-group, .buttons, .add-remove-container').forEach(el => {
-				el.style.display = 'none';
+			// 单稳态互算
+			document.querySelectorAll('#monostable-resistor, #monostable-capacitor, #monostable-time').forEach((idEl) => {
+				idEl.addEventListener('input', function () {
+					const R = parseFloat(document.getElementById('monostable-resistor').value);
+					const C = parseFloat(document.getElementById('monostable-capacitor').value);
+					const t = parseFloat(document.getElementById('monostable-time').value);
+					let filled = 0;
+					if (!isNaN(R) && R > 0) filled++;
+					if (!isNaN(C) && C > 0) filled++;
+					if (!isNaN(t) && t > 0) filled++;
+					const RInput = document.getElementById('monostable-resistor');
+					const CInput = document.getElementById('monostable-capacitor');
+					const tInput = document.getElementById('monostable-time');
+					if (filled < 2) {
+						RInput.readOnly = false;
+						CInput.readOnly = false;
+						tInput.readOnly = false;
+						return;
+					}
+					if (isNaN(t) || t <= 0) {
+						if (!isNaN(R) && R > 0 && !isNaN(C) && C > 0) {
+							tInput.value = (1.1 * R * C).toFixed(6);
+							RInput.readOnly = false;
+							CInput.readOnly = false;
+							tInput.readOnly = true;
+						}
+					} else if (isNaN(R) || R <= 0) {
+						if (!isNaN(t) && t > 0 && !isNaN(C) && C > 0) {
+							RInput.value = (t / (1.1 * C)).toFixed(2);
+							RInput.readOnly = true;
+							CInput.readOnly = false;
+							tInput.readOnly = false;
+						}
+					} else if (isNaN(C) || C <= 0) {
+						if (!isNaN(t) && t > 0 && !isNaN(R) && R > 0) {
+							CInput.value = (t / (1.1 * R)).toFixed(6);
+							RInput.readOnly = false;
+							CInput.readOnly = true;
+							tInput.readOnly = false;
+						}
+					} else {
+						RInput.readOnly = false;
+						CInput.readOnly = false;
+						tInput.readOnly = false;
+					}
+				});
 			});
-		}
-	});
 
-</script>
-</body>
+			// 非稳态互算
+			document.querySelectorAll('#astable-resistor1, #astable-resistor2, #astable-capacitor, #astable-frequency').forEach((idEl) => {
+				idEl.addEventListener('input', function () {
+					const R1 = parseFloat(document.getElementById('astable-resistor1').value);
+					const R2 = parseFloat(document.getElementById('astable-resistor2').value);
+					const C = parseFloat(document.getElementById('astable-capacitor').value);
+					const f = parseFloat(document.getElementById('astable-frequency').value);
+					let filled = 0;
+					if (!isNaN(R1) && R1 > 0) filled++;
+					if (!isNaN(R2) && R2 > 0) filled++;
+					if (!isNaN(C) && C > 0) filled++;
+					if (!isNaN(f) && f > 0) filled++;
+					const R1Input = document.getElementById('astable-resistor1');
+					const R2Input = document.getElementById('astable-resistor2');
+					const CInput = document.getElementById('astable-capacitor');
+					const fInput = document.getElementById('astable-frequency');
+					if (filled < 3) {
+						R1Input.readOnly = false;
+						R2Input.readOnly = false;
+						CInput.readOnly = false;
+						fInput.readOnly = false;
+						return;
+					}
+					if (isNaN(f) || f <= 0) {
+						if (!isNaN(R1) && R1 > 0 && !isNaN(R2) && R2 > 0 && !isNaN(C) && C > 0) {
+							fInput.value = (1.44 / ((R1 + 2 * R2) * C)).toFixed(2);
+							R1Input.readOnly = false;
+							R2Input.readOnly = false;
+							CInput.readOnly = false;
+							fInput.readOnly = true;
+						}
+					} else if (isNaN(R1) || R1 <= 0) {
+						if (!isNaN(f) && f > 0 && !isNaN(R2) && R2 > 0 && !isNaN(C) && C > 0) {
+							R1Input.value = (1.44 / (f * C) - 2 * R2).toFixed(2);
+							R1Input.readOnly = true;
+							R2Input.readOnly = false;
+							CInput.readOnly = false;
+							fInput.readOnly = false;
+						}
+					} else if (isNaN(R2) || R2 <= 0) {
+						if (!isNaN(f) && f > 0 && !isNaN(R1) && R1 > 0 && !isNaN(C) && C > 0) {
+							R2Input.value = ((1.44 / (f * C) - R1) / 2).toFixed(2);
+							R1Input.readOnly = false;
+							R2Input.readOnly = true;
+							CInput.readOnly = false;
+							fInput.readOnly = false;
+						}
+					} else if (isNaN(C) || C <= 0) {
+						if (!isNaN(f) && f > 0 && !isNaN(R1) && R1 > 0 && !isNaN(R2) && R2 > 0) {
+							CInput.value = (1.44 / (f * (R1 + 2 * R2))).toFixed(6);
+							R1Input.readOnly = false;
+							R2Input.readOnly = false;
+							CInput.readOnly = true;
+							fInput.readOnly = false;
+						}
+					} else {
+						R1Input.readOnly = false;
+						R2Input.readOnly = false;
+						CInput.readOnly = false;
+						fInput.readOnly = false;
+					}
+				});
+			});
+
+			function clearInputs() {
+				document.getElementById('monostable-resistor').value = '';
+				document.getElementById('monostable-capacitor').value = '';
+				document.getElementById('monostable-time').value = '';
+				document.getElementById('astable-resistor1').value = '';
+				document.getElementById('astable-resistor2').value = '';
+				document.getElementById('astable-capacitor').value = '';
+				document.getElementById('astable-frequency').value = '';
+				document.getElementById('error-message').style.display = 'none';
+				document
+					.querySelectorAll(
+						'#monostable-resistor, #monostable-capacitor, #monostable-time, #astable-resistor1, #astable-resistor2, #astable-capacitor, #astable-frequency',
+					)
+					.forEach((el) => {
+						el.readOnly = false;
+					});
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const isVisible = formula.style.display === 'block';
+				const mode = document.getElementById('mode').value;
+
+				if (isVisible) {
+					// 关闭公式，恢复当前模式输入区域
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+
+					if (mode === 'monostable') {
+						document.getElementById('monostable-inputs').style.display = 'block';
+						document.getElementById('astable-inputs').style.display = 'none';
+					} else {
+						document.getElementById('monostable-inputs').style.display = 'none';
+						document.getElementById('astable-inputs').style.display = 'block';
+					}
+
+					document.querySelectorAll('.field-group, .buttons, .add-remove-container').forEach((el) => {
+						el.style.display = '';
+					});
+				} else {
+					// 显示公式，隐藏所有输入区域
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+
+					document.getElementById('monostable-inputs').style.display = 'none';
+					document.getElementById('astable-inputs').style.display = 'none';
+
+					document.querySelectorAll('.field-group, .buttons, .add-remove-container').forEach((el) => {
+						el.style.display = 'none';
+					});
+				}
+			});
+		</script>
+	</body>
 </html>

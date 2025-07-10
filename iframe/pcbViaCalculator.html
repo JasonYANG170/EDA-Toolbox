@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8" />
+		<title>PCB过孔（VIA）计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 290px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 48%;
+			}
+			.field-group label {
+				width: 120px;
+				font-weight: 500;
+			}
+			.field-group input {
+				width: 100px;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			.formula-anno {
+				color: #666;
+				font-size: 13px;
+				margin-top: 4px;
+				font-weight: normal;
+			}
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">
+				过孔电阻：R = ρ × L / (π × (D/2)<sup>2</sup>)<br />
+				最大电流：I<sub>max</sub> ≈ k × D × T<br />
+				<div class="formula-anno">
+					R：过孔电阻(Ω)，ρ：铜电阻率(约1.7×10⁻⁸Ω·m)<br />
+					L：过孔长度(板厚, mm)，D：过孔内径(mm)，T：铜厚(μm)<br />
+					I<sub>max</sub>经验公式，k约为0.008（A/μm·mm）
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="d">过孔内径 D (mm)</label>
+					<input type="number" id="d" step="any" placeholder="请输入内径" />
+				</div>
+				<div class="field-group">
+					<label for="l">板厚 L (mm)</label>
+					<input type="number" id="l" step="any" placeholder="请输入板厚" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="t">铜厚 T (μm)</label>
+					<input type="number" id="t" step="any" placeholder="如25" />
+				</div>
+				<div class="field-group">
+					<label for="r">过孔电阻 R (mΩ)</label>
+					<input type="number" id="r" step="any" placeholder="计算结果" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="imax">最大电流 I<sub>max</sub> (A)</label>
+					<input type="number" id="imax" step="any" placeholder="计算结果" />
+				</div>
+			</div>
+			<div class="buttons">
+				<button class="clear" onclick="viaClear()">清空</button>
+			</div>
+		</div>
+		<script>
+			function autoCalculate() {
+				const dInput = document.getElementById('d');
+				const lInput = document.getElementById('l');
+				const tInput = document.getElementById('t');
+				const rInput = document.getElementById('r');
+				const imaxInput = document.getElementById('imax');
+				const d = parseFloat(dInput.value);
+				const l = parseFloat(lInput.value);
+				const t = parseFloat(tInput.value);
+				const r = parseFloat(rInput.value);
+				const imax = parseFloat(imaxInput.value);
+				let filled = 0;
+				if (!isNaN(d) && d > 0) filled++;
+				if (!isNaN(l) && l > 0) filled++;
+				if (!isNaN(t) && t > 0) filled++;
+				if (!isNaN(r) && r > 0) filled++;
+				if (!isNaN(imax) && imax > 0) filled++;
+				// 只支持输入3项自动算2项
+				if (filled < 3) {
+					dInput.readOnly = false;
+					lInput.readOnly = false;
+					tInput.readOnly = false;
+					rInput.readOnly = false;
+					imaxInput.readOnly = false;
+					return;
+				}
+				// 计算R和Imax
+				if ((isNaN(r) || r <= 0) && !isNaN(d) && !isNaN(l) && !isNaN(t) && d > 0 && l > 0 && t > 0) {
+					const rho = 1.7e-8; // 铜电阻率 Ω·m
+					const area = Math.PI * Math.pow((d / 2) * 1e-3, 2); // m²
+					const R = (rho * (l * 1e-3)) / area; // Ω
+					rInput.value = (R * 1000).toFixed(4); // mΩ
+					rInput.readOnly = true;
+				} else {
+					rInput.readOnly = false;
+				}
+				if ((isNaN(imax) || imax <= 0) && !isNaN(d) && !isNaN(t) && d > 0 && t > 0) {
+					const k = 0.008;
+					const Imax = k * d * t;
+					imaxInput.value = Imax.toFixed(2);
+					imaxInput.readOnly = true;
+				} else {
+					imaxInput.readOnly = false;
+				}
+			}
+			['d', 'l', 't', 'r', 'imax'].forEach((id) => {
+				document.getElementById(id).addEventListener('input', function () {
+					['d', 'l', 't', 'r', 'imax'].forEach((otherId) => {
+						if (otherId !== id) {
+							const el = document.getElementById(otherId);
+							if (el.readOnly && el.value !== '') el.value = '';
+						}
+					});
+					autoCalculate();
+				});
+			});
+			function viaClear() {
+				document.getElementById('d').value = '';
+				document.getElementById('l').value = '';
+				document.getElementById('t').value = '';
+				document.getElementById('r').value = '';
+				document.getElementById('imax').value = '';
+				document.getElementById('d').readOnly = false;
+				document.getElementById('l').readOnly = false;
+				document.getElementById('t').readOnly = false;
+				document.getElementById('r').readOnly = false;
+				document.getElementById('imax').readOnly = false;
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('.field-group, .buttons');
+				const isVisible = formula.style.display === 'block';
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
+</html>

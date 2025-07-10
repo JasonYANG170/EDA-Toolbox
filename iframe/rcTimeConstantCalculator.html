@@ -2,7 +2,7 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8" />
-		<title>电池续航时间计算器</title>
+		<title>RC时间常数计算器</title>
 		<style>
 			* {
 				box-sizing: border-box;
@@ -21,15 +21,10 @@
 				padding: 25px 30px;
 				border: 1px solid #ccc;
 				border-radius: 8px;
-				width: 420px;
-				height: 200px;
+				width: 430px;
+				height: 240px;
 				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 				position: relative;
-			}
-			h2 {
-				text-align: center;
-				margin-bottom: 20px;
-				font-size: 20px;
 			}
 			.row {
 				display: flex;
@@ -42,7 +37,7 @@
 				width: 48%;
 			}
 			.field-group label {
-				width: 80px;
+				width: 120px;
 				font-weight: 500;
 			}
 			.field-group input {
@@ -102,75 +97,78 @@
 	<body>
 		<div class="container">
 			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
-			<div class="formula">续航时间 = 电池容量 ÷ 负载电流</div>
+			<div class="formula">
+				RC时间常数：τ = R × C<br />
+				R：电阻 (Ω)，C：电容 (μF)，τ：时间常数 (ms)
+			</div>
 			<div class="row">
 				<div class="field-group">
-					<label for="capacity">电池容量</label>
-					<input type="number" id="capacity" placeholder="mAh" />
+					<label for="rValue">电阻 (R, Ω)</label>
+					<input type="number" id="rValue" step="any" placeholder="请输入电阻值" />
 				</div>
 				<div class="field-group">
-					<label for="current">负载电流</label>
-					<input type="number" id="current" placeholder="mA" />
+					<label for="cValue">电容 (C, μF)</label>
+					<input type="number" id="cValue" step="any" placeholder="请输入电容值" />
 				</div>
 			</div>
 			<div class="row">
 				<div class="field-group">
-					<label for="time">续航时间</label>
-					<input type="number" id="time" placeholder="小时" />
+					<label for="tau">时间常数 (τ, ms)</label>
+					<input type="number" id="tau" step="any" placeholder="请输入时间常数" />
 				</div>
 			</div>
 			<div class="buttons">
-				<button class="clear" onclick="batteryClear()">清空</button>
+				<button class="clear" onclick="rcTimeClear()">清空</button>
 			</div>
 		</div>
 		<script>
 			function autoCalculate() {
-				const capacityInput = document.getElementById('capacity');
-				const currentInput = document.getElementById('current');
-				const timeInput = document.getElementById('time');
-				const capacity = parseFloat(capacityInput.value);
-				const current = parseFloat(currentInput.value);
-				const time = parseFloat(timeInput.value);
+				const rInput = document.getElementById('rValue');
+				const cInput = document.getElementById('cValue');
+				const tauInput = document.getElementById('tau');
+				const r = parseFloat(rInput.value);
+				const c = parseFloat(cInput.value);
+				const tau = parseFloat(tauInput.value);
 				let filled = 0;
-				if (!isNaN(capacity) && capacity > 0) filled++;
-				if (!isNaN(current) && current > 0) filled++;
-				if (!isNaN(time) && time > 0) filled++;
+				if (!isNaN(r) && r > 0) filled++;
+				if (!isNaN(c) && c > 0) filled++;
+				if (!isNaN(tau) && tau > 0) filled++;
 				if (filled < 2) {
-					capacityInput.readOnly = false;
-					currentInput.readOnly = false;
-					timeInput.readOnly = false;
+					rInput.readOnly = false;
+					cInput.readOnly = false;
+					tauInput.readOnly = false;
 					return;
 				}
-				if (isNaN(time) || time <= 0) {
-					if (!isNaN(capacity) && capacity > 0 && !isNaN(current) && current > 0) {
-						timeInput.value = (capacity / current).toFixed(2);
-						capacityInput.readOnly = false;
-						currentInput.readOnly = false;
-						timeInput.readOnly = true;
+				if (isNaN(tau) || tau <= 0) {
+					if (!isNaN(r) && r > 0 && !isNaN(c) && c > 0) {
+						tauInput.value = (r * c).toFixed(2);
+						rInput.readOnly = false;
+						cInput.readOnly = false;
+						tauInput.readOnly = true;
 					}
-				} else if (isNaN(capacity) || capacity <= 0) {
-					if (!isNaN(time) && time > 0 && !isNaN(current) && current > 0) {
-						capacityInput.value = (time * current).toFixed(2);
-						capacityInput.readOnly = true;
-						currentInput.readOnly = false;
-						timeInput.readOnly = false;
+				} else if (isNaN(r) || r <= 0) {
+					if (!isNaN(tau) && tau > 0 && !isNaN(c) && c > 0) {
+						rInput.value = (tau / c).toFixed(2);
+						rInput.readOnly = true;
+						cInput.readOnly = false;
+						tauInput.readOnly = false;
 					}
-				} else if (isNaN(current) || current <= 0) {
-					if (!isNaN(time) && time > 0 && !isNaN(capacity) && capacity > 0) {
-						currentInput.value = (capacity / time).toFixed(2);
-						capacityInput.readOnly = false;
-						currentInput.readOnly = true;
-						timeInput.readOnly = false;
+				} else if (isNaN(c) || c <= 0) {
+					if (!isNaN(tau) && tau > 0 && !isNaN(r) && r > 0) {
+						cInput.value = (tau / r).toFixed(2);
+						rInput.readOnly = false;
+						cInput.readOnly = true;
+						tauInput.readOnly = false;
 					}
 				} else {
-					capacityInput.readOnly = false;
-					currentInput.readOnly = false;
-					timeInput.readOnly = false;
+					rInput.readOnly = false;
+					cInput.readOnly = false;
+					tauInput.readOnly = false;
 				}
 			}
-			['capacity', 'current', 'time'].forEach((id) => {
+			['rValue', 'cValue', 'tau'].forEach((id) => {
 				document.getElementById(id).addEventListener('input', function () {
-					['capacity', 'current', 'time'].forEach((otherId) => {
+					['rValue', 'cValue', 'tau'].forEach((otherId) => {
 						if (otherId !== id) {
 							const el = document.getElementById(otherId);
 							if (el.readOnly && el.value !== '') el.value = '';
@@ -179,13 +177,13 @@
 					autoCalculate();
 				});
 			});
-			function batteryClear() {
-				document.getElementById('capacity').value = '';
-				document.getElementById('current').value = '';
-				document.getElementById('time').value = '';
-				document.getElementById('capacity').readOnly = false;
-				document.getElementById('current').readOnly = false;
-				document.getElementById('time').readOnly = false;
+			function rcTimeClear() {
+				document.getElementById('rValue').value = '';
+				document.getElementById('cValue').value = '';
+				document.getElementById('tau').value = '';
+				document.getElementById('rValue').readOnly = false;
+				document.getElementById('cValue').readOnly = false;
+				document.getElementById('tau').readOnly = false;
 			}
 			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
 				const formula = document.querySelector('.formula');

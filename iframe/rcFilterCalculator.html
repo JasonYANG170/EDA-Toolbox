@@ -2,7 +2,7 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8" />
-		<title>LM117/LM317 输出电压计算器</title>
+		<title>RC 滤波器计算器</title>
 		<style>
 			* {
 				box-sizing: border-box;
@@ -22,14 +22,9 @@
 				border: 1px solid #ccc;
 				border-radius: 8px;
 				width: 430px;
-				height: 200px;
+				height: 240px;
 				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 				position: relative;
-			}
-			h2 {
-				text-align: center;
-				margin-bottom: 20px;
-				font-size: 20px;
 			}
 			.row {
 				display: flex;
@@ -42,7 +37,7 @@
 				width: 48%;
 			}
 			.field-group label {
-				width: 80px;
+				width: 120px;
 				font-weight: 500;
 			}
 			.field-group input {
@@ -97,12 +92,6 @@
 			button:hover {
 				opacity: 0.9;
 			}
-			.alert {
-				color: #dc3545;
-				font-size: 13px;
-				margin-top: 5px;
-				text-align: center;
-			}
 		</style>
 	</head>
 	<body>
@@ -110,89 +99,93 @@
 			<!-- 显示公式按钮 -->
 			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
 			<div class="formula">
-				输出电压计算公式：<br />
-				V<sub>out</sub> = 1.25 × (1 + R<sub>2</sub> / R<sub>1</sub>)<br />
-				其中：<br />
-				- R<sub>1</sub> 和 R<sub>2</sub> 为外接电阻<br />
-				- V<sub>out</sub> 为输出电压
+				f<sub>c</sub> = 1 / (2πRC)<br />
+				R：电阻 (Ω)，C：电容 (F)
 			</div>
 			<div class="row">
 				<div class="field-group">
-					<label for="resistor1">电阻 R1</label>
-					<input type="number" id="resistor1" step="any" placeholder="Ω" />
+					<label for="rValue">电阻 (R, Ω)</label>
+					<input type="number" id="rValue" step="any" placeholder="请输入电阻值" />
 				</div>
 				<div class="field-group">
-					<label for="resistor2">电阻 R2</label>
-					<input type="number" id="resistor2" step="any" placeholder="Ω" />
+					<label for="cValue">电容 (C, μF)</label>
+					<input type="number" id="cValue" step="any" placeholder="请输入电容值" />
 				</div>
 			</div>
 			<div class="row">
 				<div class="field-group">
-					<label for="result">输出电压</label>
-					<input type="number" id="result" placeholder="V" />
-				</div>
-				<div class="field-group" style="justify-content: flex-start">
-					<div id="error-message" class="alert" style="display: none">请输入有效的数值！</div>
+					<label for="fc">截止频率 (Hz)</label>
+					<input type="number" id="fc" step="any" placeholder="请输入截止频率" />
 				</div>
 			</div>
 			<div class="buttons">
-				<button class="clear" onclick="clearInputs()">清空</button>
+				<button onclick="rcFilterClear()">清空</button>
 			</div>
 		</div>
 		<script>
 			function autoCalculate() {
-				const R1Input = document.getElementById('resistor1');
-				const R2Input = document.getElementById('resistor2');
-				const VoutInput = document.getElementById('result');
-				const errorMessage = document.getElementById('error-message');
-				const R1 = parseFloat(R1Input.value);
-				const R2 = parseFloat(R2Input.value);
-				const Vout = parseFloat(VoutInput.value);
+				const rInput = document.getElementById('rValue');
+				const cInput = document.getElementById('cValue');
+				const fcInput = document.getElementById('fc');
+				const r = parseFloat(rInput.value);
+				const c = parseFloat(cInput.value) * 1e-6; // μF 转 F
+				const fc = parseFloat(fcInput.value);
+
+				// 统计有效输入数量
 				let filled = 0;
-				if (!isNaN(R1) && R1 > 0) filled++;
-				if (!isNaN(R2) && R2 > 0) filled++;
-				if (!isNaN(Vout) && Vout > 0) filled++;
+				if (!isNaN(r) && r > 0) filled++;
+				if (!isNaN(c) && c > 0) filled++;
+				if (!isNaN(fc) && fc > 0) filled++;
+
+				// 只允许有一个为空
 				if (filled < 2) {
-					R1Input.readOnly = false;
-					R2Input.readOnly = false;
-					VoutInput.readOnly = false;
-					errorMessage.style.display = 'none';
+					// 全部可编辑
+					rInput.readOnly = false;
+					cInput.readOnly = false;
+					fcInput.readOnly = false;
 					return;
 				}
-				errorMessage.style.display = 'none';
-				if (isNaN(Vout) || Vout <= 0) {
-					if (!isNaN(R1) && R1 > 0 && !isNaN(R2) && R2 > 0) {
-						const v = 1.25 * (1 + R2 / R1);
-						VoutInput.value = v.toFixed(2);
-						R1Input.readOnly = false;
-						R2Input.readOnly = false;
-						VoutInput.readOnly = true;
+
+				// 只剩一个为空，自动计算
+				if (isNaN(r) || r <= 0) {
+					// 计算R
+					if (!isNaN(c) && c > 0 && !isNaN(fc) && fc > 0) {
+						const rVal = 1 / (2 * Math.PI * fc * c);
+						rInput.value = rVal.toFixed(2);
+						rInput.readOnly = true;
+						cInput.readOnly = false;
+						fcInput.readOnly = false;
 					}
-				} else if (isNaN(R1) || R1 <= 0) {
-					if (!isNaN(Vout) && Vout > 0 && !isNaN(R2) && R2 > 0) {
-						const r1 = R2 / (Vout / 1.25 - 1);
-						R1Input.value = r1.toFixed(2);
-						R1Input.readOnly = true;
-						R2Input.readOnly = false;
-						VoutInput.readOnly = false;
+				} else if (isNaN(c) || c <= 0) {
+					// 计算C
+					if (!isNaN(r) && r > 0 && !isNaN(fc) && fc > 0) {
+						const cVal = (1 / (2 * Math.PI * fc * r)) * 1e6; // F转μF
+						cInput.value = cVal.toFixed(2);
+						rInput.readOnly = false;
+						cInput.readOnly = true;
+						fcInput.readOnly = false;
 					}
-				} else if (isNaN(R2) || R2 <= 0) {
-					if (!isNaN(Vout) && Vout > 0 && !isNaN(R1) && R1 > 0) {
-						const r2 = (Vout / 1.25 - 1) * R1;
-						R2Input.value = r2.toFixed(2);
-						R1Input.readOnly = false;
-						R2Input.readOnly = true;
-						VoutInput.readOnly = false;
+				} else if (isNaN(fc) || fc <= 0) {
+					// 计算fc
+					if (!isNaN(r) && r > 0 && !isNaN(c) && c > 0) {
+						const fcVal = 1 / (2 * Math.PI * r * c);
+						fcInput.value = fcVal.toFixed(2);
+						rInput.readOnly = false;
+						cInput.readOnly = false;
+						fcInput.readOnly = true;
 					}
 				} else {
-					R1Input.readOnly = false;
-					R2Input.readOnly = false;
-					VoutInput.readOnly = false;
+					// 三个都填了，全部可编辑
+					rInput.readOnly = false;
+					cInput.readOnly = false;
+					fcInput.readOnly = false;
 				}
 			}
-			['resistor1', 'resistor2', 'result'].forEach((id) => {
+
+			['rValue', 'cValue', 'fc'].forEach((id) => {
 				document.getElementById(id).addEventListener('input', function () {
-					['resistor1', 'resistor2', 'result'].forEach((otherId) => {
+					// 清空只读项
+					['rValue', 'cValue', 'fc'].forEach((otherId) => {
 						if (otherId !== id) {
 							const el = document.getElementById(otherId);
 							if (el.readOnly && el.value !== '') el.value = '';
@@ -201,14 +194,14 @@
 					autoCalculate();
 				});
 			});
-			function clearInputs() {
-				document.getElementById('resistor1').value = '';
-				document.getElementById('resistor2').value = '';
-				document.getElementById('result').value = '';
-				document.getElementById('resistor1').readOnly = false;
-				document.getElementById('resistor2').readOnly = false;
-				document.getElementById('result').readOnly = false;
-				document.getElementById('error-message').style.display = 'none';
+
+			function rcFilterClear() {
+				document.getElementById('rValue').value = '';
+				document.getElementById('cValue').value = '';
+				document.getElementById('fc').value = '';
+				document.getElementById('rValue').readOnly = false;
+				document.getElementById('cValue').readOnly = false;
+				document.getElementById('fc').readOnly = false;
 			}
 			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
 				const formula = document.querySelector('.formula');

@@ -14,9 +14,7 @@
 		"url": ""
 	},
 	"categories": "Other",
-	"keywords": [
-		"SDK"
-	],
+	"keywords": ["SDK"],
 	"images": {
 		"logo": "./images/logo.png"
 	},
@@ -31,7 +29,6 @@
 				"id": "edatoolbox",
 				"title": "工具箱",
 				"menuItems": [
-
 					{
 						"id": "myLib",
 						"title": "我的器件库",
@@ -46,7 +43,8 @@
 						"id": "help",
 						"title": "使用说明",
 						"registerFn": "home_help"
-					},{
+					},
+					{
 						"id": "game",
 						"title": "摸摸小鱼",
 						"registerFn": "home_game"
@@ -56,7 +54,6 @@
 						"title": "检测更新",
 						"registerFn": "home_update"
 					}
-
 				]
 			}
 		],
@@ -69,7 +66,8 @@
 						"id": "myLib",
 						"title": "我的器件库",
 						"registerFn": "myLib"
-					},{
+					},
+					{
 						"id": "ai",
 						"title": "AI助手",
 						"registerFn": "ai"
@@ -98,7 +96,8 @@
 						"id": "lm317VoltagecCalculate",
 						"title": "LM317计算器",
 						"registerFn": "sch_lm317VoltagecCalculate"
-					},{
+					},
+					{
 						"id": "timer555Calculate",
 						"title": "555定时计算器",
 						"registerFn": "sch_timer555Calculate"
@@ -112,8 +111,27 @@
 						"id": "capacitorCalculate",
 						"title": "电容计算器",
 						"registerFn": "sch_capacitorCalculate"
+					},
+					{
+						"id": "transistorAmplifierCalculator",
+						"title": "三极管放大倍数计算器",
+						"registerFn": "sch_transistorAmplifierCalculator"
+					},
+					{
+						"id": "rcFilterCalculator",
+						"title": "RC滤波器计算器",
+						"registerFn": "sch_rcFilterCalculator"
+					},
+					{
+						"id": "dbCalculator",
+						"title": "分贝计算器",
+						"registerFn": "sch_dbCalculator"
+					},
+					{
+						"id": "rcTimeConstantCalculator",
+						"title": "RC时间常数计算器",
+						"registerFn": "sch_rcTimeConstantCalculator"
 					}
-
 				]
 			}
 		],
@@ -126,7 +144,8 @@
 						"id": "myLib",
 						"title": "我的器件库",
 						"registerFn": "myLib"
-					},{
+					},
+					{
 						"id": "ai",
 						"title": "AI助手",
 						"registerFn": "ai"
@@ -135,10 +154,31 @@
 						"id": "resistorColorCalculator",
 						"title": "色环计算器",
 						"registerFn": "pcb_resistorColorCalculator"
-					},{
+					},
+					{
 						"id": "currentcalCalculate",
 						"title": "电流线宽计算器",
 						"registerFn": "pcb_currentcalCalculate"
+					},
+					{
+						"id": "pcbImpedanceCalculator",
+						"title": "微带线阻抗计算器",
+						"registerFn": "pcb_pcbImpedanceCalculator"
+					},
+					{
+						"id": "pcbViaCalculator",
+						"title": "过孔计算器",
+						"registerFn": "pcb_pcbViaCalculator"
+					},
+					{
+						"id": "pcbSignalIntegrityCalculator",
+						"title": "信号完整性计算器",
+						"registerFn": "pcb_pcbSignalIntegrityCalculator"
+					},
+					{
+						"id": "pcbThermalCalculator",
+						"title": "热管理/散热能力计算器",
+						"registerFn": "pcb_pcbThermalCalculator"
 					}
 				]
 			}

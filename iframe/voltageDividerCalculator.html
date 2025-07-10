@@ -1,209 +1,254 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8" />
-	<title>分压计算器</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
-		/* 公式默认隐藏 */
-		.formula {
-			display: none;
-			text-align: center;
-			margin: 20px 0;
-			font-weight: bold;
-			font-size: 14px;
-			line-height: 1.5;
-		}
-		/* 显示公式按钮样式 */
-		.show-formula-button {
-			background-color: #007bff;
-			color: white;
-			border: none;
-			border-radius: 6px;
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			cursor: pointer;
-			margin-bottom: 10px;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #eef2f7;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
-
-		.container {
-			background-color: #fff;
-			padding: 25px 30px;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			width: 430px;
-			height: 200px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-			position: relative;
-		}
-
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			font-size: 20px;
-		}
-
-		.row {
-			display: flex;
-			justify-content: space-between;
-			margin-bottom: 15px;
-		}
-
-		.field-group {
-			display: flex;
-			align-items: center;
-			width: 48%;
-		}
-
-		.field-group label {
-			width: 80px;
-			font-weight: 500;
-		}
-
-		.field-group input {
-			width: 100px;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-		}
-
-		.formula {
-			text-align: center;
-			margin: 20px 0;
-			font-weight: bold;
-			font-size: 14px;
-		}
-
-				.buttons {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
-
-
-		button {
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			color: white;
-			background-color: #007bff;
-			border: none;
-			border-radius: 6px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
-
-		button.clear {
-			background-color: #6c757d;
-		}
-
-		button:hover {
-			opacity: 0.9;
-		}
-	</style>
-</head>
-<body>
-<div class="container">
-
-
-	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
-	<div class="formula">
-		<p><strong>V<sub>out</sub> = V<sub>in</sub> × (R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>))</strong></p>
-		<p>R₁ 是连接在输入电压（V<sub>in</sub>）和输出点之间的电阻。</p>
-		<p>R₂ 是连接在输出点和地（GND）之间的电阻。</p>
-	</div>
-	<div class="row">
-		<div class="field-group">
-			<label for="Vin">输入电压</label>
-			<input type="number" id="Vin" step="any" placeholder="V in">
+	<head>
+		<meta charset="UTF-8" />
+		<title>分压计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			/* 公式默认隐藏 */
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			/* 显示公式按钮样式 */
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 200px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				font-size: 20px;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 48%;
+			}
+			.field-group label {
+				width: 80px;
+				font-weight: 500;
+			}
+			.field-group input {
+				width: 100px;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">
+				<p>
+					<strong>V<sub>out</sub> = V<sub>in</sub> × (R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>))</strong>
+				</p>
+				<p>R₁ 是连接在输入电压（V<sub>in</sub>）和输出点之间的电阻。</p>
+				<p>R₂ 是连接在输出点和地（GND）之间的电阻。</p>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="Vin">输入电压</label>
+					<input type="number" id="Vin" step="any" placeholder="V in" />
+				</div>
+				<div class="field-group">
+					<label for="R1">电阻 R1</label>
+					<input type="number" id="R1" step="any" placeholder="Ω" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="Vout">输出电压</label>
+					<input type="number" id="Vout" step="any" placeholder="V out" />
+				</div>
+				<div class="field-group">
+					<label for="R2">电阻 R2</label>
+					<input type="number" id="R2" step="any" placeholder="Ω" />
+				</div>
+			</div>
+			<div class="formula">V<sub>out</sub> = V<sub>in</sub> × (R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>))</div>
+			<div class="buttons">
+				<button class="clear" onclick="clearFields()">清空</button>
+			</div>
 		</div>
-		<div class="field-group">
-			<label for="R1">电阻 R1</label>
-			<input type="number" id="R1" step="any" placeholder="Ω">
-		</div>
-	</div>
+		<script>
+			function autoCalculate() {
+				const VinInput = document.getElementById('Vin');
+				const R1Input = document.getElementById('R1');
+				const R2Input = document.getElementById('R2');
+				const VoutInput = document.getElementById('Vout');
+				const Vin = parseFloat(VinInput.value);
+				const R1 = parseFloat(R1Input.value);
+				const R2 = parseFloat(R2Input.value);
+				const Vout = parseFloat(VoutInput.value);
 
-	<div class="row">
-		<div class="field-group">
-			<label for="Vout">输出电压</label>
-			<input type="number" id="Vout" step="any" placeholder="V out">
-		</div>
-		<div class="field-group">
-			<label for="R2">电阻 R2</label>
-			<input type="number" id="R2" step="any" placeholder="Ω">
-		</div>
-	</div>
+				let filled = 0;
+				if (!isNaN(Vin)) filled++;
+				if (!isNaN(R1)) filled++;
+				if (!isNaN(R2)) filled++;
+				if (!isNaN(Vout)) filled++;
 
-	<div class="formula">
-		V<sub>out</sub> = V<sub>in</sub> × (R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>))
-	</div>
+				if (filled < 3) {
+					VinInput.readOnly = false;
+					R1Input.readOnly = false;
+					R2Input.readOnly = false;
+					VoutInput.readOnly = false;
+					return;
+				}
 
-	<div class="buttons">
-		<button onclick="voltageDividerCalculator()">计算</button>
-		<button class="clear" onclick="clearFields()">清空</button>
-	</div>
-</div>
-
-<script>
-	function voltageDividerCalculator() {
-		const Vin = parseFloat(document.getElementById('Vin').value);
-		const R1 = parseFloat(document.getElementById('R1').value);
-		const R2 = parseFloat(document.getElementById('R2').value);
-		const Vout = parseFloat(document.getElementById('Vout').value);
-
-		if (!isNaN(Vin) && !isNaN(R1) && !isNaN(R2) && isNaN(Vout)) {
-			document.getElementById('Vout').value = (Vin * (R2 / (R1 + R2))).toFixed(2);
-		} else if (!isNaN(Vout) && !isNaN(R1) && !isNaN(R2) && isNaN(Vin)) {
-			document.getElementById('Vin').value = (Vout / (R2 / (R1 + R2))).toFixed(2);
-		} else if (!isNaN(Vin) && !isNaN(Vout) && !isNaN(R2) && isNaN(R1)) {
-			document.getElementById('R1').value = (R2 * (Vin / Vout - 1)).toFixed(2);
-		} else if (!isNaN(Vin) && !isNaN(Vout) && !isNaN(R1) && isNaN(R2)) {
-			document.getElementById('R2').value = (R1 * (Vout / (Vin - Vout))).toFixed(2);
-		} else {
-			alert('请输入三个已知值！');
-		}
-	}
-
-	function clearFields() {
-		document.getElementById('Vin').value = '';
-		document.getElementById('R1').value = '';
-		document.getElementById('R2').value = '';
-		document.getElementById('Vout').value = '';
-	}
-	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
-		const formula = document.querySelector('.formula');
-		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
-
-		const isVisible = formula.style.display === 'block';
-
-		if (isVisible) {
-			formula.style.display = 'none';
-			this.textContent = '显示公式';
-			inputs.forEach(el => el.style.display = '');
-		} else {
-			formula.style.display = 'block';
-			this.textContent = '关闭公式';
-			inputs.forEach(el => el.style.display = 'none');
-		}
-	});
-</script>
-</body>
+				if (isNaN(Vout)) {
+					// 计算Vout
+					if (!isNaN(Vin) && !isNaN(R1) && !isNaN(R2)) {
+						const v = Vin * (R2 / (R1 + R2));
+						VoutInput.value = v.toFixed(2);
+						VinInput.readOnly = false;
+						R1Input.readOnly = false;
+						R2Input.readOnly = false;
+						VoutInput.readOnly = true;
+					}
+				} else if (isNaN(Vin)) {
+					// 计算Vin
+					if (!isNaN(Vout) && !isNaN(R1) && !isNaN(R2)) {
+						const vin = Vout / (R2 / (R1 + R2));
+						VinInput.value = vin.toFixed(2);
+						VinInput.readOnly = true;
+						R1Input.readOnly = false;
+						R2Input.readOnly = false;
+						VoutInput.readOnly = false;
+					}
+				} else if (isNaN(R1)) {
+					// 计算R1
+					if (!isNaN(Vin) && !isNaN(Vout) && !isNaN(R2)) {
+						const r1 = R2 * (Vin / Vout - 1);
+						R1Input.value = r1.toFixed(2);
+						VinInput.readOnly = false;
+						R1Input.readOnly = true;
+						R2Input.readOnly = false;
+						VoutInput.readOnly = false;
+					}
+				} else if (isNaN(R2)) {
+					// 计算R2
+					if (!isNaN(Vin) && !isNaN(Vout) && !isNaN(R1)) {
+						const r2 = R1 * (Vout / (Vin - Vout));
+						R2Input.value = r2.toFixed(2);
+						VinInput.readOnly = false;
+						R1Input.readOnly = false;
+						R2Input.readOnly = true;
+						VoutInput.readOnly = false;
+					}
+				} else {
+					VinInput.readOnly = false;
+					R1Input.readOnly = false;
+					R2Input.readOnly = false;
+					VoutInput.readOnly = false;
+				}
+			}
+			['Vin', 'R1', 'R2', 'Vout'].forEach((id) => {
+				document.getElementById(id).addEventListener('input', function () {
+					['Vin', 'R1', 'R2', 'Vout'].forEach((otherId) => {
+						if (otherId !== id) {
+							const el = document.getElementById(otherId);
+							if (el.readOnly && el.value !== '') el.value = '';
+						}
+					});
+					autoCalculate();
+				});
+			});
+			function clearFields() {
+				document.getElementById('Vin').value = '';
+				document.getElementById('R1').value = '';
+				document.getElementById('R2').value = '';
+				document.getElementById('Vout').value = '';
+				document.getElementById('Vin').readOnly = false;
+				document.getElementById('R1').readOnly = false;
+				document.getElementById('R2').readOnly = false;
+				document.getElementById('Vout').readOnly = false;
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('.field-group, .buttons');
+				const isVisible = formula.style.display === 'block';
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
 </html>

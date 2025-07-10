@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8" />
+		<title>分贝(dB)计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 240px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 48%;
+			}
+			.field-group label {
+				width: 120px;
+				font-weight: 500;
+			}
+			.field-group input {
+				width: 100px;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			.formula-anno {
+				color: #666;
+				font-size: 13px;
+				margin-top: 4px;
+				font-weight: normal;
+			}
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+			.anno {
+				color: #888;
+				font-size: 12px;
+				margin-left: 2px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">
+				功率分贝：dB = 10 × log₁₀(P₂/P₁)<br />
+				电压分贝：dB = 20 × log₁₀(V₂/V₁)
+				<div class="formula-anno">
+					P₂/P₁、V₂/V₁均为“输出/输入”<br />
+					P₂：输出功率，P₁：输入功率<br />
+					V₂：输出电压，V₁：输入电压
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="ratio">功率比 (P₂/P₁)<span class="anno">(输出/输入)</span></label>
+					<input type="number" id="ratio" step="any" placeholder="功率比" />
+				</div>
+				<div class="field-group">
+					<label for="vratio">电压比 (V₂/V₁)<span class="anno">(输出/输入)</span></label>
+					<input type="number" id="vratio" step="any" placeholder="电压比" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="db">分贝 (dB)</label>
+					<input type="number" id="db" step="any" placeholder="dB" />
+				</div>
+			</div>
+			<div class="buttons">
+				<button class="clear" onclick="dbClear()">清空</button>
+			</div>
+		</div>
+		<script>
+			function autoCalculate() {
+				const ratioInput = document.getElementById('ratio');
+				const vratioInput = document.getElementById('vratio');
+				const dbInput = document.getElementById('db');
+				const ratio = parseFloat(ratioInput.value);
+				const vratio = parseFloat(vratioInput.value);
+				const db = parseFloat(dbInput.value);
+				let filled = 0;
+				if (!isNaN(ratio) && ratio > 0) filled++;
+				if (!isNaN(vratio) && vratio > 0) filled++;
+				if (!isNaN(db)) filled++;
+				if (filled < 2) {
+					ratioInput.readOnly = false;
+					vratioInput.readOnly = false;
+					dbInput.readOnly = false;
+					return;
+				}
+				if (isNaN(db)) {
+					if (!isNaN(ratio) && ratio > 0) {
+						dbInput.value = (10 * Math.log10(ratio)).toFixed(2);
+						ratioInput.readOnly = false;
+						vratioInput.readOnly = false;
+						dbInput.readOnly = true;
+					} else if (!isNaN(vratio) && vratio > 0) {
+						dbInput.value = (20 * Math.log10(vratio)).toFixed(2);
+						ratioInput.readOnly = false;
+						vratioInput.readOnly = false;
+						dbInput.readOnly = true;
+					}
+				} else if (isNaN(ratio) || ratio <= 0) {
+					if (!isNaN(db) && !isNaN(vratio) && vratio > 0) {
+						ratioInput.value = Math.pow(10, db / 10).toFixed(4);
+						ratioInput.readOnly = true;
+						vratioInput.readOnly = false;
+						dbInput.readOnly = false;
+					} else if (!isNaN(db)) {
+						ratioInput.value = Math.pow(10, db / 10).toFixed(4);
+						ratioInput.readOnly = true;
+						vratioInput.readOnly = false;
+						dbInput.readOnly = false;
+					}
+				} else if (isNaN(vratio) || vratio <= 0) {
+					if (!isNaN(db) && !isNaN(ratio) && ratio > 0) {
+						vratioInput.value = Math.pow(10, db / 20).toFixed(4);
+						ratioInput.readOnly = false;
+						vratioInput.readOnly = true;
+						dbInput.readOnly = false;
+					} else if (!isNaN(db)) {
+						vratioInput.value = Math.pow(10, db / 20).toFixed(4);
+						ratioInput.readOnly = false;
+						vratioInput.readOnly = true;
+						dbInput.readOnly = false;
+					}
+				} else {
+					ratioInput.readOnly = false;
+					vratioInput.readOnly = false;
+					dbInput.readOnly = false;
+				}
+			}
+			['ratio', 'vratio', 'db'].forEach((id) => {
+				document.getElementById(id).addEventListener('input', function () {
+					['ratio', 'vratio', 'db'].forEach((otherId) => {
+						if (otherId !== id) {
+							const el = document.getElementById(otherId);
+							if (el.readOnly && el.value !== '') el.value = '';
+						}
+					});
+					autoCalculate();
+				});
+			});
+			function dbClear() {
+				document.getElementById('ratio').value = '';
+				document.getElementById('vratio').value = '';
+				document.getElementById('db').value = '';
+				document.getElementById('ratio').readOnly = false;
+				document.getElementById('vratio').readOnly = false;
+				document.getElementById('db').readOnly = false;
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('.field-group, .buttons');
+				const isVisible = formula.style.display === 'block';
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
+</html>
