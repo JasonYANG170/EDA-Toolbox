@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8" />
+		<title>PCB信号完整性计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 300px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 48%;
+			}
+			.field-group label {
+				width: 120px;
+				font-weight: 500;
+			}
+			.field-group input {
+				width: 100px;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			.formula-anno {
+				color: #666;
+				font-size: 13px;
+				margin-top: 4px;
+				font-weight: normal;
+			}
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">
+				信号传播延迟：t = L / v<br />
+				反射系数：Γ = (Z<sub>L</sub> - Z<sub>0</sub>) / (Z<sub>L</sub> + Z<sub>0</sub>)<br />
+				<div class="formula-anno">
+					t：传播延迟(ns)，L：走线长度(m)，v：信号速度(m/ns)<br />
+					Γ：反射系数，Z<sub>L</sub>：终端阻抗(Ω)，Z<sub>0</sub>：特性阻抗(Ω)
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="length">走线长度 L (m)</label>
+					<input type="number" id="length" step="any" placeholder="请输入长度" />
+				</div>
+				<div class="field-group">
+					<label for="v">信号速度 v (m/ns)</label>
+					<input type="number" id="v" step="any" placeholder="如0.18" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="delay">传播延迟 t (ns)</label>
+					<input type="number" id="delay" step="any" placeholder="计算结果" />
+				</div>
+				<div class="field-group">
+					<label for="z0">特性阻抗 Z₀ (Ω)</label>
+					<input type="number" id="z0" step="any" placeholder="请输入Z₀" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="zl">终端阻抗 Z<sub>L</sub> (Ω)</label>
+					<input type="number" id="zl" step="any" placeholder="请输入ZL" />
+				</div>
+				<div class="field-group">
+					<label for="gamma">反射系数 Γ</label>
+					<input type="number" id="gamma" step="any" placeholder="计算结果" />
+				</div>
+			</div>
+			<div class="buttons">
+				<button class="clear" onclick="sigClear()">清空</button>
+			</div>
+		</div>
+		<script>
+			function autoCalculate() {
+				const lengthInput = document.getElementById('length');
+				const vInput = document.getElementById('v');
+				const delayInput = document.getElementById('delay');
+				const z0Input = document.getElementById('z0');
+				const zlInput = document.getElementById('zl');
+				const gammaInput = document.getElementById('gamma');
+				const length = parseFloat(lengthInput.value);
+				const v = parseFloat(vInput.value);
+				const delay = parseFloat(delayInput.value);
+				const z0 = parseFloat(z0Input.value);
+				const zl = parseFloat(zlInput.value);
+				const gamma = parseFloat(gammaInput.value);
+				// 传播延迟三参数互算
+				let filledDelay = 0;
+				if (!isNaN(length) && length > 0) filledDelay++;
+				if (!isNaN(v) && v > 0) filledDelay++;
+				if (!isNaN(delay) && delay > 0) filledDelay++;
+				if (filledDelay >= 2) {
+					if (isNaN(delay) || delay <= 0) {
+						if (!isNaN(length) && length > 0 && !isNaN(v) && v > 0) {
+							delayInput.value = (length / v).toFixed(3);
+							lengthInput.readOnly = false;
+							vInput.readOnly = false;
+							delayInput.readOnly = true;
+						}
+					} else if (isNaN(length) || length <= 0) {
+						if (!isNaN(delay) && delay > 0 && !isNaN(v) && v > 0) {
+							lengthInput.value = (delay * v).toFixed(3);
+							lengthInput.readOnly = true;
+							vInput.readOnly = false;
+							delayInput.readOnly = false;
+						}
+					} else if (isNaN(v) || v <= 0) {
+						if (!isNaN(delay) && delay > 0 && !isNaN(length) && length > 0) {
+							vInput.value = (length / delay).toFixed(3);
+							lengthInput.readOnly = false;
+							vInput.readOnly = true;
+							delayInput.readOnly = false;
+						}
+					} else {
+						lengthInput.readOnly = false;
+						vInput.readOnly = false;
+						delayInput.readOnly = false;
+					}
+				} else {
+					lengthInput.readOnly = false;
+					vInput.readOnly = false;
+					delayInput.readOnly = false;
+				}
+				// 反射系数三参数互算
+				let filledGamma = 0;
+				if (!isNaN(z0) && z0 > 0) filledGamma++;
+				if (!isNaN(zl) && zl > 0) filledGamma++;
+				if (!isNaN(gamma)) filledGamma++;
+				if (filledGamma >= 2) {
+					if (isNaN(gamma)) {
+						if (!isNaN(z0) && z0 > 0 && !isNaN(zl) && zl > 0) {
+							gammaInput.value = ((zl - z0) / (zl + z0)).toFixed(4);
+							z0Input.readOnly = false;
+							zlInput.readOnly = false;
+							gammaInput.readOnly = true;
+						}
+					} else if (isNaN(zl) || zl <= 0) {
+						if (!isNaN(gamma) && !isNaN(z0) && z0 > 0) {
+							zlInput.value = ((gamma * z0 + z0) / (1 - gamma)).toFixed(2);
+							z0Input.readOnly = false;
+							zlInput.readOnly = true;
+							gammaInput.readOnly = false;
+						}
+					} else if (isNaN(z0) || z0 <= 0) {
+						if (!isNaN(gamma) && !isNaN(zl) && zl > 0) {
+							z0Input.value = ((zl - gamma * zl) / (1 + gamma)).toFixed(2);
+							z0Input.readOnly = true;
+							zlInput.readOnly = false;
+							gammaInput.readOnly = false;
+						}
+					} else {
+						z0Input.readOnly = false;
+						zlInput.readOnly = false;
+						gammaInput.readOnly = false;
+					}
+				} else {
+					z0Input.readOnly = false;
+					zlInput.readOnly = false;
+					gammaInput.readOnly = false;
+				}
+			}
+			['length', 'v', 'delay', 'z0', 'zl', 'gamma'].forEach((id) => {
+				document.getElementById(id).addEventListener('input', function () {
+					['length', 'v', 'delay', 'z0', 'zl', 'gamma'].forEach((otherId) => {
+						if (otherId !== id) {
+							const el = document.getElementById(otherId);
+							if (el.readOnly && el.value !== '') el.value = '';
+						}
+					});
+					autoCalculate();
+				});
+			});
+			function sigClear() {
+				document.getElementById('length').value = '';
+				document.getElementById('v').value = '';
+				document.getElementById('delay').value = '';
+				document.getElementById('z0').value = '';
+				document.getElementById('zl').value = '';
+				document.getElementById('gamma').value = '';
+				document.getElementById('length').readOnly = false;
+				document.getElementById('v').readOnly = false;
+				document.getElementById('delay').readOnly = false;
+				document.getElementById('z0').readOnly = false;
+				document.getElementById('zl').readOnly = false;
+				document.getElementById('gamma').readOnly = false;
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('.field-group, .buttons');
+				const isVisible = formula.style.display === 'block';
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
+</html>

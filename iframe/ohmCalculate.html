@@ -1,204 +1,214 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8" />
-	<title>欧姆定律计算器</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
-
-		/* 公式默认隐藏 */
-		.formula {
-			display: none;
-			text-align: center;
-			margin: 20px 0;
-			font-weight: bold;
-			font-size: 14px;
-			line-height: 1.5;
-		}
-		/* 显示公式按钮样式 */
-		.show-formula-button {
-			background-color: #007bff;
-			color: white;
-			border: none;
-			border-radius: 6px;
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			cursor: pointer;
-			margin-bottom: 10px;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
-
-
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #eef2f7;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
-
-		.container {
-			background-color: #fff;
-			padding: 25px 30px;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			width: 430px;
-			height: 260px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-			position: relative;
-		}
-
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			font-size: 20px;
-		}
-
-		.row {
-			display: flex;
-			justify-content: space-between;
-			margin-bottom: 15px;
-		}
-
-		.field-group {
-			display: flex;
-			flex-direction: column;
-			width: 48%;
-		}
-
-		.field-group label {
-			font-weight: 500;
-			margin-bottom: 6px;
-		}
-
-		.field-group input {
-			width: 100%;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-		}
-
-		.formula {
-			text-align: center;
-			margin: 15px 0;
-			font-weight: bold;
-			font-size: 14px;
-		}
-
-				.buttons {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
-
-
-		button {
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			color: white;
-			background-color: #007bff;
-			border: none;
-			border-radius: 6px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
-
-		button.clear {
-			background-color: #6c757d;
-		}
-
-		button:hover {
-			opacity: 0.9;
-		}
-	</style>
-</head>
-<body>
-
-<div class="container">
-
-	<!-- 显示公式按钮 -->
-	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
-
-	<div class="formula">
-		V = I × R
-	</div>
-
-	<div class="row">
-		<div class="field-group">
-			<label for="voltage">电压 (V)</label>
-			<input type="number" id="voltage" placeholder="请输入电压 (V)">
+	<head>
+		<meta charset="UTF-8" />
+		<title>欧姆定律计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 260px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				font-size: 20px;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				flex-direction: column;
+				width: 48%;
+			}
+			.field-group label {
+				font-weight: 500;
+				margin-bottom: 6px;
+			}
+			.field-group input {
+				width: 100%;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				text-align: center;
+				margin: 15px 0;
+				font-weight: bold;
+				font-size: 14px;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!-- 显示公式按钮 -->
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">V = I × R</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="voltage">电压 (V)</label>
+					<input type="number" id="voltage" placeholder="请输入电压 (V)" />
+				</div>
+				<div class="field-group">
+					<label for="current">电流 (I)</label>
+					<input type="number" id="current" placeholder="请输入电流 (A)" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="resistance">电阻 (R)</label>
+					<input type="number" id="resistance" placeholder="请输入电阻 (Ω)" />
+				</div>
+				<div class="field-group"></div>
+			</div>
+			<div class="buttons">
+				<button class="clear" onclick="ohmClear()">清空</button>
+			</div>
 		</div>
-		<div class="field-group">
-			<label for="current">电流 (I)</label>
-			<input type="number" id="current" placeholder="请输入电流 (A)">
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="field-group">
-			<label for="resistance">电阻 (R)</label>
-			<input type="number" id="resistance" placeholder="请输入电阻 (Ω)">
-		</div>
-		<!-- 空占位保证对称，可以删掉或放别的内容 -->
-		<div class="field-group"></div>
-	</div>
-
-	<div class="buttons">
-		<button onclick="ohmCalculate()">计算</button>
-		<button class="clear" onclick="ohmClear()">清空</button>
-	</div>
-</div>
-
-<script>
-	function ohmCalculate() {
-		const V = parseFloat(document.getElementById('voltage').value);
-		const I = parseFloat(document.getElementById('current').value);
-		const R = parseFloat(document.getElementById('resistance').value);
-
-		if (isNaN(V) && !isNaN(I) && !isNaN(R)) {
-			document.getElementById('voltage').value = (I * R).toFixed(2);
-		} else if (isNaN(I) && !isNaN(V) && !isNaN(R)) {
-			document.getElementById('current').value = (V / R).toFixed(2);
-		} else if (isNaN(R) && !isNaN(V) && !isNaN(I)) {
-			document.getElementById('resistance').value = (V / I).toFixed(2);
-		} else {
-			alert('请输入两个已知值！');
-		}
-	}
-
-	function ohmClear() {
-		document.getElementById('voltage').value = '';
-		document.getElementById('current').value = '';
-		document.getElementById('resistance').value = '';
-	}
-	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
-		const formula = document.querySelector('.formula');
-		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
-
-		const isVisible = formula.style.display === 'block';
-
-		if (isVisible) {
-			formula.style.display = 'none';
-			this.textContent = '显示公式';
-			inputs.forEach(el => el.style.display = '');
-		} else {
-			formula.style.display = 'block';
-			this.textContent = '关闭公式';
-			inputs.forEach(el => el.style.display = 'none');
-		}
-	});
-</script>
-
-</body>
+		<script>
+			function autoCalculate() {
+				const VInput = document.getElementById('voltage');
+				const IInput = document.getElementById('current');
+				const RInput = document.getElementById('resistance');
+				const V = parseFloat(VInput.value);
+				const I = parseFloat(IInput.value);
+				const R = parseFloat(RInput.value);
+				let filled = 0;
+				if (!isNaN(V)) filled++;
+				if (!isNaN(I)) filled++;
+				if (!isNaN(R)) filled++;
+				if (filled < 2) {
+					VInput.readOnly = false;
+					IInput.readOnly = false;
+					RInput.readOnly = false;
+					return;
+				}
+				if (isNaN(V)) {
+					if (!isNaN(I) && !isNaN(R)) {
+						VInput.value = (I * R).toFixed(2);
+						VInput.readOnly = true;
+						IInput.readOnly = false;
+						RInput.readOnly = false;
+					}
+				} else if (isNaN(I)) {
+					if (!isNaN(V) && !isNaN(R)) {
+						IInput.value = (V / R).toFixed(2);
+						VInput.readOnly = false;
+						IInput.readOnly = true;
+						RInput.readOnly = false;
+					}
+				} else if (isNaN(R)) {
+					if (!isNaN(V) && !isNaN(I)) {
+						RInput.value = (V / I).toFixed(2);
+						VInput.readOnly = false;
+						IInput.readOnly = false;
+						RInput.readOnly = true;
+					}
+				} else {
+					VInput.readOnly = false;
+					IInput.readOnly = false;
+					RInput.readOnly = false;
+				}
+			}
+			['voltage', 'current', 'resistance'].forEach((id) => {
+				document.getElementById(id).addEventListener('input', function () {
+					['voltage', 'current', 'resistance'].forEach((otherId) => {
+						if (otherId !== id) {
+							const el = document.getElementById(otherId);
+							if (el.readOnly && el.value !== '') el.value = '';
+						}
+					});
+					autoCalculate();
+				});
+			});
+			function ohmClear() {
+				document.getElementById('voltage').value = '';
+				document.getElementById('current').value = '';
+				document.getElementById('resistance').value = '';
+				document.getElementById('voltage').readOnly = false;
+				document.getElementById('current').readOnly = false;
+				document.getElementById('resistance').readOnly = false;
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('.field-group, .buttons');
+				const isVisible = formula.style.display === 'block';
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
 </html>

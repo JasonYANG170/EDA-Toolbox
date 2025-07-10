@@ -23,7 +23,7 @@ export function home_update(): void {
 	eda.sys_MessageBox.showInformationMessage(
 		eda.sys_I18n.text('即将支持...', undefined, undefined),
 		eda.sys_I18n.text('检测更新'),
-		eda.sys_I18n.text('确认')
+		eda.sys_I18n.text('确认'),
 	);
 }
 export async function ai(): Promise<void> {
@@ -65,8 +65,31 @@ export function sch_capacitorCalculate(): void {
 export function pcb_currentcalCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 430, 290);
 }
-export function pcb_resistorColorCalculator(): void{
+export function pcb_resistorColorCalculator(): void {
 	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 500, 240);
 }
-
-
+export function sch_transistorAmplifierCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/transistorAmplifierCalculator.html', 430, 250);
+}
+export function sch_rcFilterCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/rcFilterCalculator.html', 430, 240);
+}
+export function sch_dbCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/dbCalculator.html', 430, 240);
+}
+export function sch_rcTimeConstantCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/rcTimeConstantCalculator.html', 430, 240);
+}
+// PCB相关
+export function pcb_pcbImpedanceCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/pcbImpedanceCalculator.html', 430, 240);
+}
+export function pcb_pcbViaCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/pcbViaCalculator.html', 430, 290);
+}
+export function pcb_pcbSignalIntegrityCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/pcbSignalIntegrityCalculator.html', 430, 300);
+}
+export function pcb_pcbThermalCalculator(): void {
+	eda.sys_IFrame.openIFrame('/iframe/pcbThermalCalculator.html', 430, 240);
+}

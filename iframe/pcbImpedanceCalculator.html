@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8" />
+		<title>PCB阻抗计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 240px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 48%;
+			}
+			.field-group label {
+				width: 120px;
+				font-weight: 500;
+			}
+			.field-group input {
+				width: 100px;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			.formula-anno {
+				color: #666;
+				font-size: 13px;
+				margin-top: 4px;
+				font-weight: normal;
+			}
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
+			button.clear {
+				background-color: #6c757d;
+			}
+			button:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+			<div class="formula">
+				微带线特性阻抗公式：<br />
+				Z₀ ≈ 87 / √εr × ln(5.98 × H / (0.8W + T))<br />
+				<div class="formula-anno">
+					Z₀：特性阻抗 (Ω)<br />
+					εr：介电常数，H：介质厚度 (mm)，W：线宽 (mm)，T：铜厚 (mm)<br />
+					常用FR4板T可忽略，简化为Z₀ ≈ 87 / √εr × ln(5.98 × H / (0.8W))
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="w">线宽 W (mm)</label>
+					<input type="number" id="w" step="any" placeholder="请输入线宽" />
+				</div>
+				<div class="field-group">
+					<label for="h">介质厚度 H (mm)</label>
+					<input type="number" id="h" step="any" placeholder="请输入厚度" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="field-group">
+					<label for="er">介电常数 εr</label>
+					<input type="number" id="er" step="any" placeholder="如4.3" />
+				</div>
+				<div class="field-group">
+					<label for="z0">特性阻抗 Z₀ (Ω)</label>
+					<input type="number" id="z0" step="any" placeholder="计算结果" />
+				</div>
+			</div>
+			<div class="buttons">
+				<button class="clear" onclick="impedanceClear()">清空</button>
+			</div>
+		</div>
+		<script>
+			function autoCalculate() {
+				const wInput = document.getElementById('w');
+				const hInput = document.getElementById('h');
+				const erInput = document.getElementById('er');
+				const z0Input = document.getElementById('z0');
+				const w = parseFloat(wInput.value);
+				const h = parseFloat(hInput.value);
+				const er = parseFloat(erInput.value);
+				const z0 = parseFloat(z0Input.value);
+				let filled = 0;
+				if (!isNaN(w) && w > 0) filled++;
+				if (!isNaN(h) && h > 0) filled++;
+				if (!isNaN(er) && er > 0) filled++;
+				if (!isNaN(z0) && z0 > 0) filled++;
+				if (filled < 3) {
+					wInput.readOnly = false;
+					hInput.readOnly = false;
+					erInput.readOnly = false;
+					z0Input.readOnly = false;
+					return;
+				}
+				if (isNaN(z0) || z0 <= 0) {
+					if (!isNaN(w) && w > 0 && !isNaN(h) && h > 0 && !isNaN(er) && er > 0) {
+						const z = (87 / Math.sqrt(er)) * Math.log((5.98 * h) / (0.8 * w));
+						z0Input.value = z.toFixed(2);
+						wInput.readOnly = false;
+						hInput.readOnly = false;
+						erInput.readOnly = false;
+						z0Input.readOnly = true;
+					}
+				} else if (isNaN(w) || w <= 0) {
+					if (!isNaN(z0) && z0 > 0 && !isNaN(h) && h > 0 && !isNaN(er) && er > 0) {
+						const wVal = (5.98 * h) / Math.exp((z0 * Math.sqrt(er)) / 87) / 0.8;
+						wInput.value = wVal.toFixed(3);
+						wInput.readOnly = true;
+						hInput.readOnly = false;
+						erInput.readOnly = false;
+						z0Input.readOnly = false;
+					}
+				} else if (isNaN(h) || h <= 0) {
+					if (!isNaN(z0) && z0 > 0 && !isNaN(w) && w > 0 && !isNaN(er) && er > 0) {
+						hInput.value = ((0.8 * w * Math.exp((z0 * Math.sqrt(er)) / 87)) / 5.98).toFixed(3);
+						wInput.readOnly = false;
+						hInput.readOnly = true;
+						erInput.readOnly = false;
+						z0Input.readOnly = false;
+					}
+				} else if (isNaN(er) || er <= 0) {
+					if (!isNaN(z0) && z0 > 0 && !isNaN(w) && w > 0 && !isNaN(h) && h > 0) {
+						erInput.value = Math.pow(87 / (z0 / Math.log((5.98 * h) / (0.8 * w))), 2).toFixed(3);
+						wInput.readOnly = false;
+						hInput.readOnly = false;
+						erInput.readOnly = true;
+						z0Input.readOnly = false;
+					}
+				} else {
+					wInput.readOnly = false;
+					hInput.readOnly = false;
+					erInput.readOnly = false;
+					z0Input.readOnly = false;
+				}
+			}
+			['w', 'h', 'er', 'z0'].forEach((id) => {
+				document.getElementById(id).addEventListener('input', function () {
+					['w', 'h', 'er', 'z0'].forEach((otherId) => {
+						if (otherId !== id) {
+							const el = document.getElementById(otherId);
+							if (el.readOnly && el.value !== '') el.value = '';
+						}
+					});
+					autoCalculate();
+				});
+			});
+			function impedanceClear() {
+				document.getElementById('w').value = '';
+				document.getElementById('h').value = '';
+				document.getElementById('er').value = '';
+				document.getElementById('z0').value = '';
+				document.getElementById('w').readOnly = false;
+				document.getElementById('h').readOnly = false;
+				document.getElementById('er').readOnly = false;
+				document.getElementById('z0').readOnly = false;
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('.field-group, .buttons');
+				const isVisible = formula.style.display === 'block';
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
+</html>
