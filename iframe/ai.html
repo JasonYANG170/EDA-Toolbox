@@ -6,24 +6,21 @@
 		<title>AI-HELP</title>
 		<style>
 			body {
-				background-color: #f3f4f6;
-				display: flex;
-				align-items: center;
-				justify-content: center;
+				margin: 0;
+				padding: 0;
 				height: 100vh;
+				overflow: hidden;
 			}
 
 			.container {
 				width: 100%;
-				max-width: 640px;
-				background: white;
-				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-				border-radius: 8px;
-				padding: 24px;
+				height: 100vh;
+				padding: 10px;
+				box-sizing: border-box;
 			}
 
 			.chat-box {
-				height: 384px;
+				height: 300px;
 				overflow-y: auto;
 				border: 1px solid #ddd;
 				padding: 16px;
@@ -31,7 +28,24 @@
 				border-radius: 8px;
 			}
 
-			.input-field,
+			.input-container {
+				display: flex;
+				gap: 8px;
+				margin-top: 8px;
+			}
+
+			.input-field {
+				flex: 1;
+				padding: 8px;
+				border-radius: 8px;
+				border: 1px solid #ddd;
+			}
+
+			#imageInput {
+				flex: 0 0 auto;
+				width: 120px;
+			}
+
 			.button {
 				width: 100%;
 				padding: 8px;
@@ -82,16 +96,28 @@
 				border-radius: 4px;
 			}
 
+			/* 用户消息气泡样式 */
+			.user-message {
+				padding: 8px;
+				background: #dbeafe;
+				color: #1e3a8a;
+				border-radius: 8px;
+				margin-top: 8px;
+			}
+
+			/* AI消息气泡样式 */
+			.ai-message {
+				padding: 8px;
+				background: #e5e7eb;
+				color: #1f2937;
+				border-radius: 8px;
+				margin-top: 8px;
+			}
+
 			/* 深色模式 */
 			@media (prefers-color-scheme: dark) {
 				body {
-					background-color: #1a1a1a;
 					color: #e0e0e0;
-				}
-
-				.container {
-					background: #2d2d2d;
-					box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 				}
 
 				h2 {
@@ -140,6 +166,18 @@
 					background: #3a3a3a;
 					color: #e0e0e0;
 				}
+
+				/* 深色模式下的用户消息气泡 */
+				.user-message {
+					background: #1e3a8a;
+					color: #bfdbfe;
+				}
+
+				/* 深色模式下的AI消息气泡 */
+				.ai-message {
+					background: #374151;
+					color: #e5e7eb;
+				}
 			}
 		</style>
 		<script src="marked.min.js"></script>
@@ -149,8 +187,10 @@
 		<div class="container">
 			<h2>AI-HELP智能助手</h2>
 			<div id="chat-box" class="chat-box"></div>
-			<input type="text" id="message" placeholder="输入你的消息..." class="input-field" />
-			<input type="file" id="imageInput" accept="image/*" class="input-field" />
+			<div class="input-container">
+				<input type="text" id="message" placeholder="输入你的消息..." class="input-field" />
+				<input type="file" id="imageInput" accept="image/*" class="input-field" />
+			</div>
 			<button onclick="sendMessage()" class="button">发送</button>
 			<button onclick="toggleSettings()" class="button" style="background: gray">设置</button>
 		</div>
@@ -228,7 +268,7 @@
 				}
 
 				const message = messageInput.value;
-				chatBox.innerHTML += `<div style='padding: 8px; background: #dbeafe; border-radius: 8px; margin-top: 8px;'>你: ${message}</div>`;
+				chatBox.innerHTML += `<div class='user-message'>你: ${message}</div>`;
 				chatBox.scrollTop = chatBox.scrollHeight;
 
 				const requestBody = { model: model, prompt: message, stream: false };
@@ -251,8 +291,7 @@
 					if (jsonData.response) {
 						const aiResponse = jsonData.response;
 						const aiMessageDiv = document.createElement('div');
-						aiMessageDiv.classList.add('markdown-output');
-						aiMessageDiv.style.cssText = 'padding: 8px; background: #e5e7eb; border-radius: 8px; margin-top: 8px;';
+						aiMessageDiv.classList.add('markdown-output', 'ai-message');
 						aiMessageDiv.innerHTML = marked.parse(aiResponse);
 						chatBox.appendChild(aiMessageDiv);
 						chatBox.scrollTop = chatBox.scrollHeight;
