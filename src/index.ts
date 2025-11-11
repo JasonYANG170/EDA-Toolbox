@@ -27,7 +27,7 @@ export function home_update(): void {
 	);
 }
 export async function ai(): Promise<void> {
-	eda.sys_IFrame.openIFrame('/iframe/ai.html', 400, 600);
+	eda.sys_IFrame.openIFrame('/iframe/ai.html', 400, 570);
 }
 export function myLib(): void {
 	eda.sys_IFrame.openIFrame('/iframe/myLib.html', 600, 800);

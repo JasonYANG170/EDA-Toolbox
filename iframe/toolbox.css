@@ -6,18 +6,14 @@ body {
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
-	background-color: #e0f7fa;
 	overflow: auto;
 }
 
 .container {
-	background: #fff;
 	padding: 20px;
-	border-radius: 15px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	width: 90%;
-	max-width: 500px;
-	max-height: 90vh;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
 	overflow-y: auto;
 	transition: all 0.3s ease;
 }
@@ -145,8 +141,6 @@ button.clear:hover {
 	}
 
 	.container {
-		background: #2d2d2d;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 		color: #e0e0e0;
 	}
 

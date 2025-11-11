@@ -44,6 +44,7 @@
 
 -   ✅Game-接住EDA
 -   ✅支持OllamaAPI本地AI分析及答疑
+-   ✅跟随系统设置切换深浅色
 
 如果你有更好的建议，请向我提出Issues  
 [GitHub issues](https://github.com/JasonYANG170/EDA-Toolbox/issues)
