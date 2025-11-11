@@ -1,0 +1,135 @@
+/* 深色模式自适应样式 */
+@media (prefers-color-scheme: dark) {
+	body {
+		background-color: #1a1a1a !important;
+		color: #e0e0e0 !important;
+	}
+
+	.container {
+		background: #2d2d2d !important;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+		color: #e0e0e0 !important;
+	}
+
+	h1,
+	h2,
+	h3 {
+		color: #4db8ff !important;
+	}
+
+	label {
+		color: #4db8ff !important;
+	}
+
+	input,
+	select,
+	textarea {
+		background-color: #3a3a3a !important;
+		color: #e0e0e0 !important;
+		border: 1px solid #555 !important;
+	}
+
+	input:focus,
+	select:focus,
+	textarea:focus {
+		border-color: #4db8ff !important;
+	}
+
+	input::placeholder {
+		color: #888 !important;
+	}
+
+	button {
+		background-color: #0d6efd !important;
+		color: white !important;
+	}
+
+	button:hover {
+		background-color: #0a58ca !important;
+	}
+
+	button.clear,
+	button.remove-button {
+		background-color: #dc3545 !important;
+	}
+
+	button.clear:hover,
+	button.remove-button:hover {
+		background-color: #bb2d3b !important;
+	}
+
+	.formula {
+		background-color: #3a3a3a !important;
+		color: #4db8ff !important;
+		border: 1px solid #555 !important;
+	}
+
+	table {
+		background-color: #2d2d2d !important;
+		color: #e0e0e0 !important;
+	}
+
+	th {
+		background-color: #3a3a3a !important;
+		color: #4db8ff !important;
+	}
+
+	td {
+		border: 1px solid #555 !important;
+	}
+
+	.chat-box {
+		background: #2d2d2d !important;
+		border: 1px solid #555 !important;
+		color: #e0e0e0 !important;
+	}
+
+	.modal-content,
+	.details-card {
+		background: #2d2d2d !important;
+		color: #e0e0e0 !important;
+		border: 1px solid #555 !important;
+	}
+
+	.markdown-output pre {
+		background: #1a1a1a !important;
+		color: #e0e0e0 !important;
+	}
+
+	.markdown-output code {
+		background: #3a3a3a !important;
+		color: #e0e0e0 !important;
+	}
+
+	/* AI助手特定样式 */
+	.chat-box div {
+		background: #3a3a3a !important;
+		color: #e0e0e0 !important;
+	}
+
+	/* 按钮特殊颜色 */
+	.add-button {
+		background-color: #0d6efd !important;
+	}
+
+	.show-formula-button {
+		background-color: #0d6efd !important;
+	}
+
+	/* 输入框样式 */
+	.input-field {
+		background-color: #3a3a3a !important;
+		color: #e0e0e0 !important;
+		border: 1px solid #555 !important;
+	}
+
+	/* 自定义文件上传按钮 */
+	.custom-file-upload {
+		background-color: #0d6efd !important;
+		color: white !important;
+	}
+
+	.custom-file-upload:hover {
+		background-color: #0a58ca !important;
+	}
+}

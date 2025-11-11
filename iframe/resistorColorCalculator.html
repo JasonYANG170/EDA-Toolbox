@@ -1,375 +1,470 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>电阻色环计算器</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
-		#colorOptions {
-			display: flex;
-			flex-direction: row; /* 水平排列 */
-			gap: 10px;           /* 子元素间距 */
-			flex-wrap: nowrap;   /* 不换行，如需换行可设置为 wrap */
-			align-items: center; /* 垂直居中 */
-			overflow-x: auto;    /* 超出宽度可横向滚动 */
-			padding: 5px;
-		}
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>电阻色环计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
 
+			#colorOptions {
+				display: flex;
+				flex-direction: row;
+				/* 水平排列 */
+				gap: 10px;
+				/* 子元素间距 */
+				flex-wrap: nowrap;
+				/* 不换行，如需换行可设置为 wrap */
+				align-items: center;
+				/* 垂直居中 */
+				overflow-x: auto;
+				/* 超出宽度可横向滚动 */
+				padding: 5px;
+			}
 
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #eef2f7;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
 
-		.container {
-			background-color: #fff;
-			padding: 25px 30px;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			width: 500px;
-			/* 适当调整高度，使内容能放下 */
-			height: 240px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-			position: relative;
-			color: #333;
-		}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 500px;
+				/* 适当调整高度，使内容能放下 */
+				height: 240px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+				color: #333;
+			}
 
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			font-size: 20px;
-			font-weight: 600;
-		}
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				font-size: 20px;
+				font-weight: 600;
+			}
 
-		.row {
-			display: flex;
-			justify-content: space-between;
-			margin-bottom: 15px;
-			flex-wrap: wrap;
-		}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+				flex-wrap: wrap;
+			}
 
-		.field-group {
-			display: flex;
-			align-items: center;
-			width: 48%;
-		}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 48%;
+			}
 
-		.field-group label {
-			width: 100px; /* 略微加宽以适应文字 */
-			font-weight: 500;
-		}
+			.field-group label {
+				width: 100px;
+				/* 略微加宽以适应文字 */
+				font-weight: 500;
+			}
 
-		.field-group input,
-		.field-group select {
-			width: 100px;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-			color: #333;
-			background-color: #fff;
-		}
+			.field-group input,
+			.field-group select {
+				width: 100px;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+				color: #333;
+				background-color: #fff;
+			}
 
-		select:focus, input:focus {
-			border-color: #007bff;
-			box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-		}
+			select:focus,
+			input:focus {
+				border-color: #007bff;
+				box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+			}
 
-		.formula {
-			text-align: center;
-			margin: 15px 0 10px;
-			font-weight: bold;
-			font-size: 14px;
-			min-height: 20px;
-		}
+			.formula {
+				text-align: center;
+				margin: 15px 0 10px;
+				font-weight: bold;
+				font-size: 14px;
+				min-height: 20px;
+			}
 
-				.buttons {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
 
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
 
-		button {
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			color: white;
-			background-color: #007bff;
-			border: none;
-			border-radius: 6px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
+			button.clear {
+				background-color: #6c757d;
+			}
 
-		button.clear {
-			background-color: #6c757d;
-		}
+			button:hover {
+				opacity: 0.9;
+			}
 
-		button:hover {
-			opacity: 0.9;
-		}
+			/* 多余的说明文字 */
+			p {
+				font-size: 12px;
+				color: #666;
+				margin: 5px 0;
+			}
 
-		/* 多余的说明文字 */
-		p {
-			font-size: 12px;
-			color: #666;
-			margin: 5px 0;
-		}
-	</style>
-</head>
-<body>
-<div class="container">
+			/* 深色模式 */
+			@media (prefers-color-scheme: dark) {
+				body {
+					background-color: #1a1a1a;
+					color: #e0e0e0;
+				}
 
-	<div class="row">
-		<div class="field-group">
-			<label for="numRings">色环数量</label>
-			<select id="numRings" onchange="updateColorOptions()">
-				<option value="3">3 环</option>
-				<option value="4">4 环</option>
-				<option value="5">5 环</option>
-			</select>
+				.container {
+					background-color: #2d2d2d;
+					border: 1px solid #555;
+					box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+					color: #e0e0e0;
+				}
+
+				h2 {
+					color: #4db8ff;
+				}
+
+				.field-group label {
+					color: #4db8ff;
+				}
+
+				.field-group input,
+				.field-group select {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
+
+				.field-group input::placeholder {
+					color: #888;
+				}
+
+				select:focus,
+				input:focus {
+					border-color: #4db8ff;
+					box-shadow: 0 0 5px rgba(77, 184, 255, 0.5);
+				}
+
+				.formula {
+					color: #4db8ff;
+				}
+
+				button {
+					background-color: #0d6efd;
+				}
+
+				button:hover {
+					background-color: #0a58ca;
+				}
+
+				button.clear {
+					background-color: #dc3545;
+				}
+
+				button.clear:hover {
+					background-color: #bb2d3b;
+				}
+
+				p {
+					color: #aaa;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="field-group">
+					<label for="numRings">色环数量</label>
+					<select id="numRings" onchange="updateColorOptions()">
+						<option value="3">3 环</option>
+						<option value="4">4 环</option>
+						<option value="5">5 环</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="row" id="colorOptions">
+				<!-- 色环选择框动态插入这里 -->
+			</div>
+
+			<div class="formula">选择色环数量，然后选择颜色即可得到阻值，或输入阻值生成色环。</div>
+			<div class="field-group">
+				<label for="resistorValue">电阻值 (Ω)</label>
+				<input type="text" id="resistorValue" placeholder="输入阻值或显示计算结果" />
+			</div>
+			<div class="buttons">
+				<button onclick="resistorColorCalculator()">通过色环计算阻值</button>
+				<button class="calculate" onclick="generateColorBandsFromInput()">输入阻值生成色环</button>
+				<button class="clear" onclick="clearFields()">清空</button>
+			</div>
 		</div>
 
-	</div>
-
-	<div class="row" id="colorOptions">
-		<!-- 色环选择框动态插入这里 -->
-	</div>
-
-	<div class="formula">
-		选择色环数量，然后选择颜色即可得到阻值，或输入阻值生成色环。
-	</div>
-	<div class="field-group">
-		<label for="resistorValue">电阻值 (Ω)</label>
-		<input type="text" id="resistorValue" placeholder="计算结果将在此显示" readonly>
-	</div>
-	<div class="buttons">
-		<button onclick="resistorColorCalculator()">通过色环计算阻值</button>
-		<button class="calculate" onclick="applyColorOptions()">选择电阻生成色环</button>
-		<button class="clear" onclick="clearFields()">清空</button>
-	</div>
-</div>
-
-<script>
-	const TRACK_EVENT_ID = '1';
-	let ohm = '';
-	function applyColorOptions() {
-		console.log('will ok：');
-		eda.pcb_Event.addMouseEventListener(
-			TRACK_EVENT_ID,
-			'selected',
-			async (eventType) => {
-				const selectedPrimitives = await eda.pcb_SelectControl.getSelectedPrimitives();
-				if (selectedPrimitives.length === 1) {
-					const track = selectedPrimitives[0];
-					console.log('was ok：', track);
-					console.log(track['device'].attrs.Value);
-					ohm = track['device'].attrs.Value;
-					console.log('will ok：');
-					generateColorBands();
+		<script>
+			function generateColorBandsFromInput() {
+				const inputValue = document.getElementById('resistorValue').value.trim();
+				if (!inputValue) {
+					alert('请输入电阻值');
+					return;
 				}
-			},
-			1,
-		);
-	}
-	const colorCodes = {
-		'黑': 0, '棕': 1, '红': 2, '橙': 3, '黄': 4, '绿': 5, '蓝': 6, '紫': 7, '灰': 8, '白': 9,
-		'金': -1, '银': -2
-	};
 
-	const multipliers = {
-		'黑': 1, '棕': 10, '红': 100, '橙': 1000, '黄': 10000, '绿': 100000, '蓝': 1000000,
-		'紫': 10000000, '灰': 100000000, '白': 1000000000, '金': 0.1, '银': 0.01
-	};
+				// 解析输入值，支持 k, M 等单位
+				let resistorValue = parseResistorValue(inputValue);
 
-	const tolerances = {
-		'棕': '±1%', '红': '±2%', '金': '±5%', '银': '±10%'
-	};
+				if (isNaN(resistorValue) || resistorValue <= 0) {
+					alert('请输入有效的阻值（例如：100, 4.7k, 1M）');
+					return;
+				}
 
-	function updateColorOptions() {
-		const numRings = parseInt(document.getElementById('numRings').value);
-		const colorOptionsDiv = document.getElementById('colorOptions');
-		colorOptionsDiv.innerHTML = '';
-
-		// 生成色环选择项
-		const colorOptions = ['黑', '棕', '红', '橙', '黄', '绿', '蓝', '紫', '灰', '白', '金', '银'];
-
-		for (let i = 0; i < numRings; i++) {
-			const selectElement = document.createElement('select');
-			selectElement.id = 'ring' + (i + 1);
-			const defaultOption = document.createElement('option');
-			defaultOption.text = '选择颜色';
-			selectElement.appendChild(defaultOption);
-
-			colorOptions.forEach(color => {
-				const option = document.createElement('option');
-				option.text = color;
-				selectElement.appendChild(option);
-			});
-
-			// 为每个下拉框添加事件监听器，用于改变背景色
-			selectElement.addEventListener('change', function() {
-				changeColor(selectElement);
-			});
-
-			colorOptionsDiv.appendChild(selectElement);
-		}
-	}
-
-	// 改变颜色选择框背景颜色
-	function changeColor(selectElement) {
-		const color = selectElement.value;
-		const colorMap = {
-			'黑': '#000000', '棕': '#8B4513', '红': '#FF0000', '橙': '#FFA500', '黄': '#FFFF00',
-			'绿': '#008000', '蓝': '#0000FF', '紫': '#800080', '灰': '#808080', '白': '#FFFFFF',
-			'金': '#FFD700', '银': '#C0C0C0'
-		};
-
-		// 设置背景色为所选颜色
-		selectElement.style.backgroundColor = colorMap[color] || '#FFFFFF';
-		selectElement.style.color = (color === '黑' || color === '棕') ? '#FFFFFF' : '#000000'; // 根据背景颜色调整文字颜色
-	}
-
-	function resistorColorCalculator() {
-		const numRings = parseInt(document.getElementById('numRings').value);
-		let colorValues = [];
-
-		for (let i = 0; i < numRings; i++) {
-			const color = document.getElementById('ring' + (i + 1)).value;
-			if (color === '选择颜色' || !color) {
-				alert('请为每个色环选择颜色');
-				return;
-			}
-			colorValues.push(color);
-		}
-
-		let resistance;
-		let tolerance = '';
-
-		if (numRings === 3) {
-			// 3 环计算 (数字数字 * 10的倍数)
-			resistance = (colorCodes[colorValues[0]] * 10 + colorCodes[colorValues[1]]) * multipliers[colorValues[2]];
-		} else if (numRings === 4) {
-			// 4 环计算 (数字数字 * 10的倍数 +/-公差)
-			resistance = (colorCodes[colorValues[0]] * 10 + colorCodes[colorValues[1]]) * multipliers[colorValues[2]];
-			tolerance = tolerances[colorValues[3]] || '';
-		} else if (numRings === 5) {
-			// 5 环计算 (数字数字数字 * 10的倍数 +/-公差)
-			resistance = (colorCodes[colorValues[0]] * 100 + colorCodes[colorValues[1]] * 10 + colorCodes[colorValues[2]]) * multipliers[colorValues[3]];
-			tolerance = tolerances[colorValues[4]] || '';
-		}
-
-		const result = resistance + (tolerance ? ' ' + tolerance : '');
-		document.getElementById('resistorValue').value = result;
-
-		// 更新选择框背景色
-		updateSelectColors(colorValues);
-	}
-
-	function updateSelectColors(colorValues) {
-		colorValues.forEach((color, index) => {
-			const selectElement = document.getElementById('ring' + (index + 1));
-			changeColor(selectElement);
-		});
-	}
-
-	function generateColorBands() {
-		console.log('开始生成');
-		const numRings = parseInt(document.getElementById('numRings').value);
-		let number = parseFloat(ohm);  // 从 'ohm' 字符串中提取数字部分
-		let unit = ohm.slice(-1);      // 从 'ohm' 字符串中提取单位
-		console.log('number:', number);
-
-		// 判断单位并转换为Ω
-		if (unit === 'k') {
-			number *= 1000; // 转换为Ω
-		} else if (unit === 'M') {
-			number *= 1000000; // 转换为Ω
-		}
-
-		console.log(number);  // 输出数字部分
-		let resistorValue = number;
-		console.log('resistorValue:', number);
-
-		if (isNaN(resistorValue) || resistorValue <= 0) {
-			alert('请输入有效的阻值');
-			return;
-		}
-
-		const colorOptionsDiv = document.getElementById('colorOptions');
-		colorOptionsDiv.innerHTML = '';
-
-		let colorBands = [];
-
-		if (numRings === 3) {
-			// 生成 3 环颜色带
-			const firstDigit = Math.floor(resistorValue / 10) % 10;
-			const secondDigit = Math.floor(resistorValue) % 10;
-			const multiplier = Math.pow(10, Math.floor(Math.log10(resistorValue)) - 1);
-
-			colorBands = [
-				Object.keys(colorCodes).find(key => colorCodes[key] === firstDigit),
-				Object.keys(colorCodes).find(key => colorCodes[key] === secondDigit),
-				Object.keys(multipliers).find(key => multipliers[key] === multiplier)
-			];
-		} else if (numRings === 4 || numRings === 5) {
-			// 生成 4 环或 5 环颜色带
-			const digits = resistorValue.toExponential().split('e');
-			const significantFigures = digits[0].replace('.', '').substring(0, numRings - 2);
-			const multiplier = Math.pow(10, parseInt(digits[1]) - (numRings - 2));
-
-			for (let i = 0; i < significantFigures.length; i++) {
-				colorBands.push(Object.keys(colorCodes).find(key => colorCodes[key] === parseInt(significantFigures[i])));
+				generateColorBands(resistorValue);
 			}
 
-			colorBands.push(Object.keys(multipliers).find(key => multipliers[key] === multiplier));
+			function parseResistorValue(input) {
+				// 移除空格和Ω符号
+				input = input.replace(/\s/g, '').replace(/Ω/g, '');
 
-			if (numRings === 4) {
-				colorBands.push('金'); // 默认公差
-			} else if (numRings === 5) {
-				colorBands.push('棕'); // 默认公差
+				// 提取数字和单位
+				const match = input.match(/^([\d.]+)([kKmM]?)$/);
+				if (!match) return NaN;
+
+				let number = parseFloat(match[1]);
+				const unit = match[2].toLowerCase();
+
+				// 根据单位转换为欧姆
+				if (unit === 'k') {
+					number *= 1000;
+				} else if (unit === 'm') {
+					number *= 1000000;
+				}
+
+				return number;
 			}
-		}
+			const colorCodes = {
+				'黑': 0,
+				'棕': 1,
+				'红': 2,
+				'橙': 3,
+				'黄': 4,
+				'绿': 5,
+				'蓝': 6,
+				'紫': 7,
+				'灰': 8,
+				'白': 9,
+				'金': -1,
+				'银': -2,
+			};
 
-		colorBands.forEach((color, index) => {
-			const selectElement = document.createElement('select');
-			selectElement.id = 'ring' + (index + 1);
-			const defaultOption = document.createElement('option');
-			defaultOption.text = color;
-			selectElement.appendChild(defaultOption);
+			const multipliers = {
+				'黑': 1,
+				'棕': 10,
+				'红': 100,
+				'橙': 1000,
+				'黄': 10000,
+				'绿': 100000,
+				'蓝': 1000000,
+				'紫': 10000000,
+				'灰': 100000000,
+				'白': 1000000000,
+				'金': 0.1,
+				'银': 0.01,
+			};
 
-			// 设置背景颜色
-			changeColor(selectElement);
+			const tolerances = {
+				'棕': '±1%',
+				'红': '±2%',
+				'金': '±5%',
+				'银': '±10%',
+			};
 
-			colorOptionsDiv.appendChild(selectElement);
+			function updateColorOptions() {
+				const numRings = parseInt(document.getElementById('numRings').value);
+				const colorOptionsDiv = document.getElementById('colorOptions');
+				colorOptionsDiv.innerHTML = '';
 
-			// 为新生成的色环添加事件监听器
-			selectElement.addEventListener('change', function() {
-				changeColor(selectElement);
-			});
-		});
-	}
+				// 生成色环选择项
+				const colorOptions = ['黑', '棕', '红', '橙', '黄', '绿', '蓝', '紫', '灰', '白', '金', '银'];
 
+				for (let i = 0; i < numRings; i++) {
+					const selectElement = document.createElement('select');
+					selectElement.id = 'ring' + (i + 1);
+					const defaultOption = document.createElement('option');
+					defaultOption.text = '选择颜色';
+					selectElement.appendChild(defaultOption);
 
-	function clearFields() {
-		document.getElementById('resistorValue').value = '';
-		document.getElementById('inputResistor').value = '';
-		document.getElementById('colorOptions').innerHTML = '';
-		eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
-	}
+					colorOptions.forEach((color) => {
+						const option = document.createElement('option');
+						option.text = color;
+						selectElement.appendChild(option);
+					});
 
-	// 页面初始加载默认生成色环选择框
-	window.onload = updateColorOptions;
-</script>
-</body>
+					// 为每个下拉框添加事件监听器，用于改变背景色
+					selectElement.addEventListener('change', function () {
+						changeColor(selectElement);
+					});
+
+					colorOptionsDiv.appendChild(selectElement);
+				}
+			}
+
+			// 改变颜色选择框背景颜色
+			function changeColor(selectElement) {
+				const color = selectElement.value;
+				const colorMap = {
+					'黑': '#000000',
+					'棕': '#8B4513',
+					'红': '#FF0000',
+					'橙': '#FFA500',
+					'黄': '#FFFF00',
+					'绿': '#008000',
+					'蓝': '#0000FF',
+					'紫': '#800080',
+					'灰': '#808080',
+					'白': '#FFFFFF',
+					'金': '#FFD700',
+					'银': '#C0C0C0',
+				};
+
+				// 设置背景色为所选颜色
+				selectElement.style.backgroundColor = colorMap[color] || '#FFFFFF';
+				selectElement.style.color = color === '黑' || color === '棕' ? '#FFFFFF' : '#000000'; // 根据背景颜色调整文字颜色
+			}
+
+			function resistorColorCalculator() {
+				const numRings = parseInt(document.getElementById('numRings').value);
+				let colorValues = [];
+
+				for (let i = 0; i < numRings; i++) {
+					const color = document.getElementById('ring' + (i + 1)).value;
+					if (color === '选择颜色' || !color) {
+						alert('请为每个色环选择颜色');
+						return;
+					}
+					colorValues.push(color);
+				}
+
+				let resistance;
+				let tolerance = '';
+
+				if (numRings === 3) {
+					// 3 环计算 (数字数字 * 10的倍数)
+					resistance = (colorCodes[colorValues[0]] * 10 + colorCodes[colorValues[1]]) * multipliers[colorValues[2]];
+				} else if (numRings === 4) {
+					// 4 环计算 (数字数字 * 10的倍数 +/-公差)
+					resistance = (colorCodes[colorValues[0]] * 10 + colorCodes[colorValues[1]]) * multipliers[colorValues[2]];
+					tolerance = tolerances[colorValues[3]] || '';
+				} else if (numRings === 5) {
+					// 5 环计算 (数字数字数字 * 10的倍数 +/-公差)
+					resistance =
+						(colorCodes[colorValues[0]] * 100 + colorCodes[colorValues[1]] * 10 + colorCodes[colorValues[2]]) *
+						multipliers[colorValues[3]];
+					tolerance = tolerances[colorValues[4]] || '';
+				}
+
+				const result = resistance + (tolerance ? ' ' + tolerance : '');
+				document.getElementById('resistorValue').value = result;
+
+				// 更新选择框背景色
+				updateSelectColors(colorValues);
+			}
+
+			function updateSelectColors(colorValues) {
+				colorValues.forEach((color, index) => {
+					const selectElement = document.getElementById('ring' + (index + 1));
+					changeColor(selectElement);
+				});
+			}
+
+			function generateColorBands(resistorValue) {
+				const numRings = parseInt(document.getElementById('numRings').value);
+
+				const colorOptionsDiv = document.getElementById('colorOptions');
+				colorOptionsDiv.innerHTML = '';
+
+				let colorBands = [];
+
+				if (numRings === 3) {
+					// 生成 3 环颜色带
+					const firstDigit = Math.floor(resistorValue / 10) % 10;
+					const secondDigit = Math.floor(resistorValue) % 10;
+					const multiplier = Math.pow(10, Math.floor(Math.log10(resistorValue)) - 1);
+
+					colorBands = [
+						Object.keys(colorCodes).find((key) => colorCodes[key] === firstDigit),
+						Object.keys(colorCodes).find((key) => colorCodes[key] === secondDigit),
+						Object.keys(multipliers).find((key) => multipliers[key] === multiplier),
+					];
+				} else if (numRings === 4 || numRings === 5) {
+					// 生成 4 环或 5 环颜色带
+					const digits = resistorValue.toExponential().split('e');
+					const significantFigures = digits[0].replace('.', '').substring(0, numRings - 2);
+					const multiplier = Math.pow(10, parseInt(digits[1]) - (numRings - 2));
+
+					for (let i = 0; i < significantFigures.length; i++) {
+						colorBands.push(Object.keys(colorCodes).find((key) => colorCodes[key] === parseInt(significantFigures[i])));
+					}
+
+					colorBands.push(Object.keys(multipliers).find((key) => multipliers[key] === multiplier));
+
+					if (numRings === 4) {
+						colorBands.push('金'); // 默认公差
+					} else if (numRings === 5) {
+						colorBands.push('棕'); // 默认公差
+					}
+				}
+
+				colorBands.forEach((color, index) => {
+					const selectElement = document.createElement('select');
+					selectElement.id = 'ring' + (index + 1);
+					const defaultOption = document.createElement('option');
+					defaultOption.text = color;
+					selectElement.appendChild(defaultOption);
+
+					// 设置背景颜色
+					changeColor(selectElement);
+
+					colorOptionsDiv.appendChild(selectElement);
+
+					// 为新生成的色环添加事件监听器
+					selectElement.addEventListener('change', function () {
+						changeColor(selectElement);
+					});
+				});
+			}
+
+			function clearFields() {
+				document.getElementById('resistorValue').value = '';
+				updateColorOptions();
+			}
+
+			// 页面初始加载默认生成色环选择框
+			window.onload = updateColorOptions;
+		</script>
+	</body>
 </html>

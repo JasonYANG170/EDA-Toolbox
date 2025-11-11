@@ -1,179 +1,209 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>接住EDA</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: #87ceeb; /* 背景色 */
-            font-family: 'Arial', sans-serif;
-        }
-        #gameArea {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            overflow: hidden;
-        }
-        #ball {
-            position: absolute;
-            width: 45px;
-            height: 45px;
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>接住EDA</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background: #87ceeb;
+				/* 背景色 */
+				font-family: 'Arial', sans-serif;
+			}
 
-            background-size: cover;
-            border-radius: 20%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        #catcher {
-            position: absolute;
-            width: 120px;
-            height: 20px;
-            background-color: #3498db; /* 接住器颜色 */
-            border-radius: 10px;
-        }
-        #startButton {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 15px 30px;
-            font-size: 20px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        }
-        #startButton:hover {
-            background-color: #27ae60;
-        }
-        #gameOver, #gameOver2{
-            position: absolute;
-            transform: translate(-50%, -50%);
-            font-size: 30px;
-            color: white;
-            font-weight: bold;
-            display: none;
-        }
-    </style>
-</head>
-<body>
-<div id="gameArea">
-    <div id="ball"><img src="/images/logo.png" width="100%" height="auto"></div>
-    <div id="catcher"></div>
-    <button id="startButton">开始游戏</button>
-    <div id="gameOver" style="top: 30%; left: 50%;">游戏结束</div>
-    <div id="gameOver2" style="top: 50%; left: 50%;">你不能再摸鱼了</div>
+			#gameArea {
+				position: relative;
+				width: 100vw;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: flex-end;
+				overflow: hidden;
+			}
 
-</div>
+			#ball {
+				position: absolute;
+				width: 45px;
+				height: 45px;
 
-<script>
-    const gameArea = document.getElementById('gameArea');
-    const ball = document.getElementById('ball');
-    const catcher = document.getElementById('catcher');
-    const startButton = document.getElementById('startButton');
-    const gameOverText = document.getElementById('gameOver');
-    const gameOverText2 = document.getElementById('gameOver2');
-    let ballPosX, ballPosY, ballSpeedX, ballSpeedY;
-    let catcherPosX = (gameArea.clientWidth - 120) / 2;
-    let score = 0;
-    let isMouseDown = false;
-    let gameStarted = false;
+				background-size: cover;
+				border-radius: 20%;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+			}
 
-    // 游戏初始化
-    function initializeGame() {
-        ballPosX = Math.random() * (gameArea.clientWidth - 30);
-        ballPosY = 0;
-        ballSpeedX = 2;  // 小球的水平速度
-        ballSpeedY = 2;  // 小球的垂直速度
-        score = 0;
+			#catcher {
+				position: absolute;
+				width: 120px;
+				height: 20px;
+				background-color: #3498db;
+				/* 接住器颜色 */
+				border-radius: 10px;
+			}
 
-        ball.style.left = ballPosX + 'px';
-        ball.style.top = ballPosY + 'px';
-        catcher.style.left = catcherPosX + 'px';
+			#startButton {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				padding: 15px 30px;
+				font-size: 20px;
+				background-color: #2ecc71;
+				color: white;
+				border: none;
+				border-radius: 10px;
+				cursor: pointer;
+				box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+			}
 
-        gameOverText.style.display = 'none'; // 隐藏游戏结束提示
-        gameOverText2.style.display = 'none'; // 隐藏游戏结束提示
-    }
+			#startButton:hover {
+				background-color: #27ae60;
+			}
 
-    // 游戏循环
-    function gameLoop() {
-        if (!gameStarted) return;  // 如果游戏未开始，则不继续循环
+			#gameOver,
+			#gameOver2 {
+				position: absolute;
+				transform: translate(-50%, -50%);
+				font-size: 30px;
+				color: white;
+				font-weight: bold;
+				display: none;
+			}
 
-        // 更新小球位置
-        ballPosX += ballSpeedX;
-        ballPosY += ballSpeedY;
+			/* 深色模式 */
+			@media (prefers-color-scheme: dark) {
+				body {
+					background: #1a1a1a;
+				}
 
-        // 小球碰到左边界或右边界反弹
-        if (ballPosX <= 0 || ballPosX >= gameArea.clientWidth - 30) {
-            ballSpeedX = -ballSpeedX;
-        }
+				#gameArea {
+					background: #2d2d2d;
+				}
 
-        // 小球碰到顶部边界反弹
-        if (ballPosY <= 0) {
-            ballSpeedY = -ballSpeedY;
-        }
+				#catcher {
+					background-color: #4db8ff;
+				}
 
-        // 判断小球是否到达接住器
-        if (ballPosY + 30 >= gameArea.clientHeight - 30 &&
-            ballPosX + 30 > catcherPosX &&
-            ballPosX < catcherPosX + 120) {
-            // 接住小球，增加得分
-            score++;
-            // 反弹小球：反转垂直速度
-            ballSpeedY = -ballSpeedY;
-            // 加一点水平速度偏移，模拟反弹效果
-            ballSpeedX += (Math.random() - 0.5) * 2;  // 稍微加入水平方向的变化
+				#startButton {
+					background-color: #0d6efd;
+				}
 
-            // 重新设置小球位置，避免小球穿透接住器
-            ballPosY = gameArea.clientHeight - 60; // 小球正好停在接住器上方
-        }
+				#startButton:hover {
+					background-color: #0a58ca;
+				}
+			}
+		</style>
+	</head>
 
-        // 小球掉落至底部，游戏结束
-        if (ballPosY >= gameArea.clientHeight) {
-            gameStarted = false;
-            gameOverText.style.display = 'block'; // 显示游戏结束提示
-            gameOverText2.style.display = 'block'; // 显示游戏结束提示
-        }
+	<body>
+		<div id="gameArea">
+			<div id="ball"><img src="/images/logo.png" width="100%" height="auto" /></div>
+			<div id="catcher"></div>
+			<button id="startButton">开始游戏</button>
+			<div id="gameOver" style="top: 30%; left: 50%">游戏结束</div>
+			<div id="gameOver2" style="top: 50%; left: 50%">你不能再摸鱼了</div>
+		</div>
 
-        // 更新小球位置
-        ball.style.left = ballPosX + 'px';
-        ball.style.top = ballPosY + 'px';
-        requestAnimationFrame(gameLoop);
-    }
+		<script>
+			const gameArea = document.getElementById('gameArea');
+			const ball = document.getElementById('ball');
+			const catcher = document.getElementById('catcher');
+			const startButton = document.getElementById('startButton');
+			const gameOverText = document.getElementById('gameOver');
+			const gameOverText2 = document.getElementById('gameOver2');
+			let ballPosX, ballPosY, ballSpeedX, ballSpeedY;
+			let catcherPosX = (gameArea.clientWidth - 120) / 2;
+			let score = 0;
+			let isMouseDown = false;
+			let gameStarted = false;
 
-    // 控制接住器的移动
-    document.addEventListener('mousedown', (e) => {
-        isMouseDown = true;
-    });
+			// 游戏初始化
+			function initializeGame() {
+				ballPosX = Math.random() * (gameArea.clientWidth - 30);
+				ballPosY = 0;
+				ballSpeedX = 2; // 小球的水平速度
+				ballSpeedY = 2; // 小球的垂直速度
+				score = 0;
 
-    document.addEventListener('mousemove', (e) => {
-        if (isMouseDown) {
-            catcherPosX = e.clientX - catcher.clientWidth / 2;
-            if (catcherPosX < 0) catcherPosX = 0;
-            if (catcherPosX > gameArea.clientWidth - 120) catcherPosX = gameArea.clientWidth - 120;
-            catcher.style.left = catcherPosX + 'px';
-        }
-    });
+				ball.style.left = ballPosX + 'px';
+				ball.style.top = ballPosY + 'px';
+				catcher.style.left = catcherPosX + 'px';
 
-    document.addEventListener('mouseup', () => {
-        isMouseDown = false;
-    });
+				gameOverText.style.display = 'none'; // 隐藏游戏结束提示
+				gameOverText2.style.display = 'none'; // 隐藏游戏结束提示
+			}
 
-    // 启动游戏
-    startButton.addEventListener('click', () => {
-        gameStarted = true;
-        startButton.style.display = 'none'; // 隐藏开始按钮
-        initializeGame();  // 初始化游戏
-        gameLoop();        // 启动游戏循环
-    });
-</script>
-</body>
+			// 游戏循环
+			function gameLoop() {
+				if (!gameStarted) return; // 如果游戏未开始，则不继续循环
+
+				// 更新小球位置
+				ballPosX += ballSpeedX;
+				ballPosY += ballSpeedY;
+
+				// 小球碰到左边界或右边界反弹
+				if (ballPosX <= 0 || ballPosX >= gameArea.clientWidth - 30) {
+					ballSpeedX = -ballSpeedX;
+				}
+
+				// 小球碰到顶部边界反弹
+				if (ballPosY <= 0) {
+					ballSpeedY = -ballSpeedY;
+				}
+
+				// 判断小球是否到达接住器
+				if (ballPosY + 30 >= gameArea.clientHeight - 30 && ballPosX + 30 > catcherPosX && ballPosX < catcherPosX + 120) {
+					// 接住小球，增加得分
+					score++;
+					// 反弹小球：反转垂直速度
+					ballSpeedY = -ballSpeedY;
+					// 加一点水平速度偏移，模拟反弹效果
+					ballSpeedX += (Math.random() - 0.5) * 2; // 稍微加入水平方向的变化
+
+					// 重新设置小球位置，避免小球穿透接住器
+					ballPosY = gameArea.clientHeight - 60; // 小球正好停在接住器上方
+				}
+
+				// 小球掉落至底部，游戏结束
+				if (ballPosY >= gameArea.clientHeight) {
+					gameStarted = false;
+					gameOverText.style.display = 'block'; // 显示游戏结束提示
+					gameOverText2.style.display = 'block'; // 显示游戏结束提示
+				}
+
+				// 更新小球位置
+				ball.style.left = ballPosX + 'px';
+				ball.style.top = ballPosY + 'px';
+				requestAnimationFrame(gameLoop);
+			}
+
+			// 控制接住器的移动
+			document.addEventListener('mousedown', (e) => {
+				isMouseDown = true;
+			});
+
+			document.addEventListener('mousemove', (e) => {
+				if (isMouseDown) {
+					catcherPosX = e.clientX - catcher.clientWidth / 2;
+					if (catcherPosX < 0) catcherPosX = 0;
+					if (catcherPosX > gameArea.clientWidth - 120) catcherPosX = gameArea.clientWidth - 120;
+					catcher.style.left = catcherPosX + 'px';
+				}
+			});
+
+			document.addEventListener('mouseup', () => {
+				isMouseDown = false;
+			});
+
+			// 启动游戏
+			startButton.addEventListener('click', () => {
+				gameStarted = true;
+				startButton.style.display = 'none'; // 隐藏开始按钮
+				initializeGame(); // 初始化游戏
+				gameLoop(); // 启动游戏循环
+			});
+		</script>
+	</body>
 </html>

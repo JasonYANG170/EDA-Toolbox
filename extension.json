@@ -2,11 +2,11 @@
 	"name": "eda-toolbox",
 	"uuid": "f306c3c4639f4378b5dc194976524205",
 	"displayName": "Toolbox工具箱",
-	"description": "嘉立创EDA & EasyEDA 专业版工具箱",
-	"version": "2.2.0",
+	"description": "嘉立创EDA及EasyEDA的专业版工具箱",
+	"version": "3.0.0",
 	"publisher": "JasonYANG170",
 	"engines": {
-		"eda": "^2.3"
+		"eda": "^3.0"
 	},
 	"license": "Apache-2.0",
 	"repository": {

@@ -1,277 +1,352 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8">
-	<title>串联和并联电阻计算器</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
+	<head>
+		<meta charset="UTF-8" />
+		<title>串联和并联电阻计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
 
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #eef2f7;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
 
-		.container {
-			background-color: #fff;
-			padding: 25px 30px;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			width: 430px;
-			height: 320px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-			overflow-y: auto; /* 启用垂直滚动 */
-			position: relative;
-		}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 320px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				overflow-y: auto;
+				/* 启用垂直滚动 */
+				position: relative;
+			}
 
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			font-size: 20px;
-		}
-		/* 公式默认隐藏 */
-		.formula {
-			display: none;
-			text-align: center;
-			margin: 20px 0;
-			font-weight: bold;
-			font-size: 14px;
-			line-height: 1.5;
-		}
-		/* 显示公式按钮样式 */
-		.show-formula-button {
-			background-color: #007bff;
-			color: white;
-			border: none;
-			border-radius: 6px;
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			cursor: pointer;
-			margin-bottom: 10px;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				font-size: 20px;
+			}
 
+			/* 公式默认隐藏 */
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
 
+			/* 显示公式按钮样式 */
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
 
-		.field-group {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin-bottom: 15px;
-		}
+			.field-group {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
 
-		.field-group label {
-			width: 100px;
-			font-weight: 500;
-		}
+			.field-group label {
+				width: 100px;
+				font-weight: 500;
+			}
 
-		.field-group input,
-		.field-group select {
-			flex: 1;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-			margin-left: 10px;
-		}
+			.field-group input,
+			.field-group select {
+				flex: 1;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+				margin-left: 10px;
+			}
 
-		.resistor-group {
-			display: flex;
-			align-items: center;
-			margin-bottom: 10px;
-		}
+			.resistor-group {
+				display: flex;
+				align-items: center;
+				margin-bottom: 10px;
+			}
 
-		.resistor-group label {
-			width: 100px;
-		}
+			.resistor-group label {
+				width: 100px;
+			}
 
-		.resistor-group input {
-			flex: 1;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			margin-left: 10px;
-		}
+			.resistor-group input {
+				flex: 1;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				margin-left: 10px;
+			}
 
-		.add-remove-container {
-			display: flex;
-			justify-content: center;
-			gap: 10px;
-			margin-bottom: 15px;
-		}
+			.add-remove-container {
+				display: flex;
+				justify-content: center;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
 
-		.add-button,
-		.remove-button {
-			width: 32px;
-			height: 32px;
-			background-color: #007bff;
-			color: white;
-			border-radius: 50%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			cursor: pointer;
-			font-weight: bold;
-			user-select: none;
-		}
+			.add-button,
+			.remove-button {
+				width: 32px;
+				height: 32px;
+				background-color: #007bff;
+				color: white;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				cursor: pointer;
+				font-weight: bold;
+				user-select: none;
+			}
 
-		.buttons {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
 
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
 
-		button {
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			color: white;
-			background-color: #007bff;
-			border: none;
-			border-radius: 6px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
+			button.clear {
+				background-color: #6c757d;
+			}
 
-		button.clear {
-			background-color: #6c757d;
-		}
+			button:hover,
+			.add-button:hover,
+			.remove-button:hover {
+				opacity: 0.9;
+			}
 
-		button:hover,
-		.add-button:hover,
-		.remove-button:hover {
-			opacity: 0.9;
-		}
+			.alert {
+				color: red;
+				font-size: 13px;
+				text-align: center;
+				margin-top: 10px;
+			}
 
-		.alert {
-			color: red;
-			font-size: 13px;
-			text-align: center;
-			margin-top: 10px;
-		}
-	</style>
-</head>
-<body>
-<div class="container">
+			/* 深色模式 */
+			@media (prefers-color-scheme: dark) {
+				body {
+					background-color: #1a1a1a;
+					color: #e0e0e0;
+				}
 
-	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+				.container {
+					background-color: #2d2d2d;
+					border: 1px solid #555;
+					box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+				}
 
-	<div class="formula">
-		<p>串联：R<sub>总</sub> = R1 + R2 + ... + Rn</p>
-		<p>并联：1 / R<sub>总</sub> = 1 / R1 + 1 / R2 + ... + 1 / Rn</p>
-	</div>
+				h2 {
+					color: #4db8ff;
+				}
 
-	<div class="field-group">
-		<label for="mode">计算模式</label>
-		<select id="mode">
-			<option value="series">串联</option>
-			<option value="parallel">并联</option>
-		</select>
-	</div>
+				.field-group label,
+				.resistor-group label {
+					color: #4db8ff;
+				}
 
-	<div id="resistor-inputs">
-		<div class="resistor-group">
-			<label>电阻 1 (Ω)</label>
-			<input type="number" class="resistor" placeholder="请输入电阻值">
+				.field-group input,
+				.field-group select,
+				.resistor-group input {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
+
+				.field-group input::placeholder,
+				.resistor-group input::placeholder {
+					color: #888;
+				}
+
+				.formula {
+					color: #4db8ff;
+				}
+
+				.formula p {
+					color: #4db8ff;
+				}
+
+				button {
+					background-color: #0d6efd;
+				}
+
+				button:hover {
+					background-color: #0a58ca;
+				}
+
+				button.clear {
+					background-color: #dc3545;
+				}
+
+				button.clear:hover {
+					background-color: #bb2d3b;
+				}
+
+				.show-formula-button {
+					background-color: #0d6efd;
+				}
+
+				.add-button,
+				.remove-button {
+					background-color: #0d6efd;
+				}
+
+				.alert {
+					color: #ff6b6b;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+
+			<div class="formula">
+				<p>串联：R<sub>总</sub> = R1 + R2 + ... + Rn</p>
+				<p>并联：1 / R<sub>总</sub> = 1 / R1 + 1 / R2 + ... + 1 / Rn</p>
+			</div>
+
+			<div class="field-group">
+				<label for="mode">计算模式</label>
+				<select id="mode">
+					<option value="series">串联</option>
+					<option value="parallel">并联</option>
+				</select>
+			</div>
+
+			<div id="resistor-inputs">
+				<div class="resistor-group">
+					<label>电阻 1 (Ω)</label>
+					<input type="number" class="resistor" placeholder="请输入电阻值" />
+				</div>
+			</div>
+
+			<div class="add-remove-container">
+				<div class="add-button" onclick="addResistor()">+</div>
+				<div class="remove-button" onclick="removeResistor()">−</div>
+			</div>
+
+			<div class="field-group">
+				<label for="total">总电阻 (Ω)</label>
+				<input type="number" id="total" placeholder="计算结果将在此显示" readonly />
+			</div>
+
+			<div id="error-message" class="alert" style="display: none">请输入有效的电阻值！</div>
+
+			<div class="buttons">
+				<button onclick="resistorCalculate()">计算</button>
+				<button class="clear" onclick="resistorClear()">清空</button>
+			</div>
 		</div>
-	</div>
 
-	<div class="add-remove-container">
-		<div class="add-button" onclick="addResistor()">+</div>
-		<div class="remove-button" onclick="removeResistor()">−</div>
-	</div>
-
-	<div class="field-group">
-		<label for="total">总电阻 (Ω)</label>
-		<input type="number" id="total" placeholder="计算结果将在此显示" readonly>
-	</div>
-
-	<div id="error-message" class="alert" style="display: none;">请输入有效的电阻值！</div>
-
-	<div class="buttons">
-		<button onclick="resistorCalculate()">计算</button>
-		<button class="clear" onclick="resistorClear()">清空</button>
-	</div>
-</div>
-
-<script>
-	function addResistor() {
-		const count = document.querySelectorAll('.resistor-group').length + 1;
-		const group = document.createElement('div');
-		group.className = 'resistor-group';
-		group.innerHTML = `
+		<script>
+			function addResistor() {
+				const count = document.querySelectorAll('.resistor-group').length + 1;
+				const group = document.createElement('div');
+				group.className = 'resistor-group';
+				group.innerHTML = `
 			<label>电阻 ${count} (Ω)</label>
 			<input type="number" class="resistor" placeholder="请输入电阻值">
 		`;
-		document.getElementById('resistor-inputs').appendChild(group);
-	}
-
-	function removeResistor() {
-		const groups = document.querySelectorAll('.resistor-group');
-		if (groups.length > 1) {
-			groups[groups.length - 1].remove();
-		}
-	}
-
-	function resistorCalculate() {
-		const mode = document.getElementById('mode').value;
-		const resistors = Array.from(document.querySelectorAll('.resistor'))
-			.map(input => parseFloat(input.value))
-			.filter(val => !isNaN(val));
-
-		const error = document.getElementById('error-message');
-		if (resistors.length > 0) {
-			let result = 0;
-			if (mode === 'series') {
-				result = resistors.reduce((a, b) => a + b, 0);
-			} else {
-				result = 1 / resistors.reduce((a, b) => a + 1 / b, 0);
+				document.getElementById('resistor-inputs').appendChild(group);
 			}
-			document.getElementById('total').value = result.toFixed(2);
-			error.style.display = 'none';
-		} else {
-			error.style.display = 'block';
-		}
-	}
 
-	function resistorClear() {
-		document.getElementById('resistor-inputs').innerHTML = `
+			function removeResistor() {
+				const groups = document.querySelectorAll('.resistor-group');
+				if (groups.length > 1) {
+					groups[groups.length - 1].remove();
+				}
+			}
+
+			function resistorCalculate() {
+				const mode = document.getElementById('mode').value;
+				const resistors = Array.from(document.querySelectorAll('.resistor'))
+					.map((input) => parseFloat(input.value))
+					.filter((val) => !isNaN(val));
+
+				const error = document.getElementById('error-message');
+				if (resistors.length > 0) {
+					let result = 0;
+					if (mode === 'series') {
+						result = resistors.reduce((a, b) => a + b, 0);
+					} else {
+						result = 1 / resistors.reduce((a, b) => a + 1 / b, 0);
+					}
+					document.getElementById('total').value = result.toFixed(2);
+					error.style.display = 'none';
+				} else {
+					error.style.display = 'block';
+				}
+			}
+
+			function resistorClear() {
+				document.getElementById('resistor-inputs').innerHTML = `
 			<div class="resistor-group">
 				<label>电阻 1 (Ω)</label>
 				<input type="number" class="resistor" placeholder="请输入电阻值">
 			</div>
 		`;
-		document.getElementById('total').value = '';
-		document.getElementById('error-message').style.display = 'none';
-	}
-	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
-		const formula = document.querySelector('.formula');
-		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group,.resistor-group, .buttons,.add-remove-container');
+				document.getElementById('total').value = '';
+				document.getElementById('error-message').style.display = 'none';
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll(
+					'#monostable-inputs, #astable-inputs, .field-group,.resistor-group, .buttons,.add-remove-container',
+				);
 
-		const isVisible = formula.style.display === 'block';
+				const isVisible = formula.style.display === 'block';
 
-		if (isVisible) {
-			formula.style.display = 'none';
-			this.textContent = '显示公式';
-			inputs.forEach(el => el.style.display = '');
-		} else {
-			formula.style.display = 'block';
-			this.textContent = '关闭公式';
-			inputs.forEach(el => el.style.display = 'none');
-		}
-	});
-</script>
-</body>
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
 </html>
