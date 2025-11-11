@@ -1,246 +1,306 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8" />
-	<title>PCB 线宽与电流计算器</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
+	<head>
+		<meta charset="UTF-8" />
+		<title>PCB 线宽与电流计算器</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
 
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #eef2f7;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
+			body {
+				font-family: 'Segoe UI', sans-serif;
+				background-color: #eef2f7;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
 
-		.container {
-			background-color: #fff;
-			padding: 25px 30px;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			width: 430px;
-			height: 290px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-			position: relative;
-		}
+			.container {
+				background-color: #fff;
+				padding: 25px 30px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				width: 430px;
+				height: 290px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+				position: relative;
+			}
 
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			font-size: 20px;
-		}
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				font-size: 20px;
+			}
 
-		.row {
-			display: flex;
-			justify-content: space-between;
-			margin-bottom: 15px;
-		}
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+			}
 
-		.field-group {
-			display: flex;
-			align-items: center;
-			width: 100%;
-			margin-bottom: 10px;
-		}
+			.field-group {
+				display: flex;
+				align-items: center;
+				width: 100%;
+				margin-bottom: 10px;
+			}
 
-		.field-group label {
-			width: 130px;
-			font-weight: 500;
-		}
+			.field-group label {
+				width: 130px;
+				font-weight: 500;
+			}
 
-		.field-group input {
-			flex: 1;
-			padding: 5px 8px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-		}
+			.field-group input {
+				flex: 1;
+				padding: 5px 8px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: none;
+			}
 
-		/* 公式默认隐藏 */
-		.formula {
-			display: none;
-			text-align: center;
-			margin: 20px 0;
-			font-weight: bold;
-			font-size: 14px;
-			line-height: 1.5;
-		}
-		/* 显示公式按钮样式 */
-		.show-formula-button {
-			background-color: #007bff;
-			color: white;
-			border: none;
-			border-radius: 6px;
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			cursor: pointer;
-			margin-bottom: 10px;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
+			/* 公式默认隐藏 */
+			.formula {
+				display: none;
+				text-align: center;
+				margin: 20px 0;
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 1.5;
+			}
 
-		.result {
-			text-align: center;
-			font-size: 14px;
-			color: #333;
-			margin-top: 10px;
-		}
+			/* 显示公式按钮样式 */
+			.show-formula-button {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+				margin-bottom: 10px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+			}
 
-				.buttons {
-			margin-top: 20px;
-			display: flex;
-			justify-content: flex-end;
-		}
+			.result {
+				text-align: center;
+				font-size: 14px;
+				color: #333;
+				margin-top: 10px;
+			}
 
+			.buttons {
+				margin-top: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
 
-		button {
-			padding: 6px 16px;
-			font-size: 14px;
-			font-weight: 600;
-			color: white;
-			background-color: #007bff;
-			border: none;
-			border-radius: 6px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
+			button {
+				padding: 6px 16px;
+				font-size: 14px;
+				font-weight: 600;
+				color: white;
+				background-color: #007bff;
+				border: none;
+				border-radius: 6px;
+				margin-left: 10px;
+				cursor: pointer;
+			}
 
-		button.clear {
-			background-color: #6c757d;
-		}
+			button.clear {
+				background-color: #6c757d;
+			}
 
-		button:hover {
-			opacity: 0.9;
-		}
-	</style>
-</head>
-<body>
-<div class="container">
+			button:hover {
+				opacity: 0.9;
+			}
 
-	<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
-
-	<div class="formula">
-		A = (I / (k × T<sub>Rise</sub><sup>b</sup>))<sup>(1 / c)</sup><br>
-		W = A / (t × 1.378)
-	</div>
-
-	<div class="field-group">
-		<label for="current">电流 (A):</label>
-		<input type="number" id="current" placeholder="输入电流" min="0">
-	</div>
-
-	<div class="field-group">
-		<label for="temperature">温升 (℃):</label>
-		<input type="number" id="temperature" placeholder="输入温升" min="0">
-	</div>
-
-	<div class="field-group">
-		<label for="thickness">铜厚 (oz):</label>
-		<input type="number" id="thickness" placeholder="输入铜厚" min="0" step="0.01" value="1">
-	</div>
-
-	<div class="result" id="result"></div>
-
-	<div class="buttons">
-		<button onclick="calculateWidth()">计算</button>
-		<button onclick="applyTrackWidth(WInner, WOuter)">应用</button>
-		<button class="clear" onclick="clearInputs()">清空</button>
-	</div>
-</div>
-
-<script>
-	const TRACK_EVENT_ID = '1';
-	let WInner = 0;
-	let WOuter = 0;
-
-	function clearInputs() {
-		document.getElementById('current').value = '';
-		document.getElementById('temperature').value = '';
-		document.getElementById('thickness').value = '1';
-		document.getElementById('result').innerHTML = '';
-		eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
-	}
-
-	function applyTrackWidth(WInner, WOuter) {
-		calculateWidth();
-		console.log('WInner:', WInner);
-		console.log('WOuter:', WOuter);
-		eda.pcb_Event.addMouseEventListener(
-			TRACK_EVENT_ID,
-			'selected',
-			async (eventType) => {
-				const selectedPrimitives = await eda.pcb_SelectControl.getSelectedPrimitives();
-				if (selectedPrimitives.length === 1) {
-					const track = selectedPrimitives[0];
-					console.log('was ok：', track);
-					if (track['pcbItemPrimitiveType'] === 'Track') {
-						const layerId = track['layerId'];
-						const globalIndex = track['globalIndex'];
-						if (layerId >= 1 && layerId <= 2) {
-							console.log(WOuter/10);
-							console.log('eda.pcb_PrimitiveLine.modify("' + globalIndex + '", { lineWidth: "' + WOuter/10 + '" });');
-							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter });
-						} else if (layerId >= 15 && layerId <= 46) {
-							console.log(WInner/10);
-							eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner });
-						}
-					}
+			/* 深色模式 */
+			@media (prefers-color-scheme: dark) {
+				body {
+					background-color: #1a1a1a;
+					color: #e0e0e0;
 				}
-			},
-			1,
-		);
-	}
 
-	function calculateWidth() {
-		const kInner = 0.024;
-		const kOuter = 0.048;
-		const b = 0.44;
-		const c = 0.725;
+				.container {
+					background-color: #2d2d2d;
+					border: 1px solid #555;
+					box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+				}
 
-		const current = parseFloat(document.getElementById('current').value);
-		const temperature = parseFloat(document.getElementById('temperature').value);
-		const thickness = parseFloat(document.getElementById('thickness').value);
+				h2 {
+					color: #4db8ff;
+				}
 
-		if (isNaN(current) || isNaN(temperature) || isNaN(thickness) || current <= 0 || temperature <= 0 || thickness <= 0) {
-			alert('请输入有效的电流、温升和铜厚值！');
-			return;
-		}
+				.field-group label {
+					color: #4db8ff;
+				}
 
-		const AInner = Math.pow(current / (kInner * Math.pow(temperature, b)), 1 / c);
-		const AOuter = Math.pow(current / (kOuter * Math.pow(temperature, b)), 1 / c);
+				.field-group input {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
 
-		WInner = (AInner / (thickness * 1.378)).toFixed(2);
-		WOuter = (AOuter / (thickness * 1.378)).toFixed(2);
+				.field-group input::placeholder {
+					color: #888;
+				}
 
-		document.getElementById('result').innerHTML = `
+				.formula {
+					color: #4db8ff;
+				}
+
+				.result {
+					color: #e0e0e0;
+				}
+
+				button {
+					background-color: #0d6efd;
+				}
+
+				button:hover {
+					background-color: #0a58ca;
+				}
+
+				button.clear {
+					background-color: #dc3545;
+				}
+
+				button.clear:hover {
+					background-color: #bb2d3b;
+				}
+
+				.show-formula-button {
+					background-color: #0d6efd;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
+
+			<div class="formula">
+				A = (I / (k × T<sub>Rise</sub><sup>b</sup>))<sup>(1 / c)</sup><br />
+				W = A / (t × 1.378)
+			</div>
+
+			<div class="field-group">
+				<label for="current">电流 (A):</label>
+				<input type="number" id="current" placeholder="输入电流" min="0" />
+			</div>
+
+			<div class="field-group">
+				<label for="temperature">温升 (℃):</label>
+				<input type="number" id="temperature" placeholder="输入温升" min="0" />
+			</div>
+
+			<div class="field-group">
+				<label for="thickness">铜厚 (oz):</label>
+				<input type="number" id="thickness" placeholder="输入铜厚" min="0" step="0.01" value="1" />
+			</div>
+
+			<div class="result" id="result"></div>
+
+			<div class="buttons">
+				<button onclick="calculateWidth()">计算</button>
+				<button onclick="applyTrackWidth(WInner, WOuter)">应用</button>
+				<button class="clear" onclick="clearInputs()">清空</button>
+			</div>
+		</div>
+
+		<script>
+			const TRACK_EVENT_ID = '1';
+			let WInner = 0;
+			let WOuter = 0;
+
+			function clearInputs() {
+				document.getElementById('current').value = '';
+				document.getElementById('temperature').value = '';
+				document.getElementById('thickness').value = '1';
+				document.getElementById('result').innerHTML = '';
+				eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
+			}
+
+			function applyTrackWidth(WInner, WOuter) {
+				calculateWidth();
+				console.log('WInner:', WInner);
+				console.log('WOuter:', WOuter);
+				eda.pcb_Event.addMouseEventListener(
+					TRACK_EVENT_ID,
+					'selected',
+					async (eventType) => {
+						const selectedPrimitives = await eda.pcb_SelectControl.getSelectedPrimitives();
+						if (selectedPrimitives.length === 1) {
+							const track = selectedPrimitives[0];
+							console.log('was ok：', track);
+							if (track['pcbItemPrimitiveType'] === 'Track') {
+								const layerId = track['layerId'];
+								const globalIndex = track['globalIndex'];
+								if (layerId >= 1 && layerId <= 2) {
+									console.log(WOuter / 10);
+									console.log('eda.pcb_PrimitiveLine.modify("' + globalIndex + '", { lineWidth: "' + WOuter / 10 + '" });');
+									eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter });
+								} else if (layerId >= 15 && layerId <= 46) {
+									console.log(WInner / 10);
+									eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner });
+								}
+							}
+						}
+					},
+					1,
+				);
+			}
+
+			function calculateWidth() {
+				const kInner = 0.024;
+				const kOuter = 0.048;
+				const b = 0.44;
+				const c = 0.725;
+
+				const current = parseFloat(document.getElementById('current').value);
+				const temperature = parseFloat(document.getElementById('temperature').value);
+				const thickness = parseFloat(document.getElementById('thickness').value);
+
+				if (isNaN(current) || isNaN(temperature) || isNaN(thickness) || current <= 0 || temperature <= 0 || thickness <= 0) {
+					alert('请输入有效的电流、温升和铜厚值！');
+					return;
+				}
+
+				const AInner = Math.pow(current / (kInner * Math.pow(temperature, b)), 1 / c);
+				const AOuter = Math.pow(current / (kOuter * Math.pow(temperature, b)), 1 / c);
+
+				WInner = (AInner / (thickness * 1.378)).toFixed(2);
+				WOuter = (AOuter / (thickness * 1.378)).toFixed(2);
+
+				document.getElementById('result').innerHTML = `
 			内层所需线宽：${WInner} mil<br>
 			外层所需线宽：${WOuter} mil
 		`;
-	}
-	document.getElementById('toggleFormulaButton').addEventListener('click', function () {
-		const formula = document.querySelector('.formula');
-		const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
+			}
+			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
+				const formula = document.querySelector('.formula');
+				const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
 
-		const isVisible = formula.style.display === 'block';
+				const isVisible = formula.style.display === 'block';
 
-		if (isVisible) {
-			formula.style.display = 'none';
-			this.textContent = '显示公式';
-			inputs.forEach(el => el.style.display = '');
-		} else {
-			formula.style.display = 'block';
-			this.textContent = '关闭公式';
-			inputs.forEach(el => el.style.display = 'none');
-		}
-	});
-</script>
-</body>
+				if (isVisible) {
+					formula.style.display = 'none';
+					this.textContent = '显示公式';
+					inputs.forEach((el) => (el.style.display = ''));
+				} else {
+					formula.style.display = 'block';
+					this.textContent = '关闭公式';
+					inputs.forEach((el) => (el.style.display = 'none'));
+				}
+			});
+		</script>
+	</body>
 </html>

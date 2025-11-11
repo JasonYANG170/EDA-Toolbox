@@ -57,7 +57,7 @@ export function sch_lm317VoltagecCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/lm317VoltagecCalculate.html', 430, 200);
 }
 export function sch_timer555Calculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 430, 270);
+	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 430, 300);
 }
 export function sch_capacitorCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 430, 300);

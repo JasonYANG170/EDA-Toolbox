@@ -7,6 +7,7 @@
 			* {
 				box-sizing: border-box;
 			}
+
 			body {
 				font-family: 'Segoe UI', sans-serif;
 				background-color: #eef2f7;
@@ -16,6 +17,7 @@
 				height: 100vh;
 				margin: 0;
 			}
+
 			.formula {
 				display: none;
 				text-align: center;
@@ -24,6 +26,7 @@
 				font-size: 14px;
 				line-height: 1.5;
 			}
+
 			.show-formula-button {
 				background-color: #007bff;
 				color: white;
@@ -38,36 +41,42 @@
 				margin-left: auto;
 				margin-right: auto;
 			}
+
 			.container {
 				background-color: #fff;
 				padding: 25px 30px;
 				border: 1px solid #ccc;
 				border-radius: 8px;
-				height: 270px;
+				height: 300px;
 				width: 430px;
 				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 				position: relative;
 			}
+
 			h2 {
 				text-align: center;
 				margin-bottom: 20px;
 				font-size: 20px;
 			}
+
 			.row {
 				display: flex;
 				justify-content: space-between;
 				margin-bottom: 15px;
 			}
+
 			.field-group {
 				display: flex;
 				align-items: center;
 				width: 100%;
 				margin-bottom: 10px;
 			}
+
 			.field-group label {
 				width: 120px;
 				font-weight: 500;
 			}
+
 			.field-group input,
 			select {
 				width: 100%;
@@ -77,21 +86,25 @@
 				font-size: 14px;
 				outline: none;
 			}
+
 			.formula {
 				font-size: 14px;
 				margin-bottom: 15px;
 				font-weight: bold;
 			}
+
 			.alert {
 				color: red;
 				font-size: 13px;
 				margin-bottom: 10px;
 			}
+
 			.buttons {
 				margin-top: 20px;
 				display: flex;
 				justify-content: flex-end;
 			}
+
 			button {
 				padding: 6px 16px;
 				font-size: 14px;
@@ -103,14 +116,82 @@
 				margin-left: 10px;
 				cursor: pointer;
 			}
+
 			button.clear {
 				background-color: #6c757d;
 			}
+
 			button:hover {
 				opacity: 0.9;
 			}
+
+			/* 深色模式 */
+			@media (prefers-color-scheme: dark) {
+				body {
+					background-color: #1a1a1a;
+					color: #e0e0e0;
+				}
+
+				.container {
+					background-color: #2d2d2d;
+					border: 1px solid #555;
+					box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+				}
+
+				h2 {
+					color: #4db8ff;
+				}
+
+				.field-group label {
+					color: #4db8ff;
+				}
+
+				.field-group input,
+				select {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
+
+				.field-group input::placeholder {
+					color: #888;
+				}
+
+				.formula {
+					color: #4db8ff;
+				}
+
+				.formula p {
+					color: #4db8ff;
+				}
+
+				button {
+					background-color: #0d6efd;
+				}
+
+				button:hover {
+					background-color: #0a58ca;
+				}
+
+				button.clear {
+					background-color: #dc3545;
+				}
+
+				button.clear:hover {
+					background-color: #bb2d3b;
+				}
+
+				.show-formula-button {
+					background-color: #0d6efd;
+				}
+
+				.alert {
+					color: #ff6b6b;
+				}
+			}
 		</style>
 	</head>
+
 	<body>
 		<div class="container">
 			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>

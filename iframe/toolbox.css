@@ -38,7 +38,8 @@ label {
 	color: #00796b;
 }
 
-input, select {
+input,
+select {
 	width: 100%;
 	padding: 12px;
 	margin-bottom: 15px;
@@ -49,7 +50,8 @@ input, select {
 	box-sizing: border-box;
 	transition: all 0.3s ease;
 }
-input:focus, select:focus {
+input:focus,
+select:focus {
 	border-color: #004d40;
 	outline: none;
 }
@@ -84,7 +86,8 @@ button.clear:hover {
 	justify-content: center;
 	align-items: center;
 }
-.add-button, .remove-button {
+.add-button,
+.remove-button {
 	width: 40px;
 	height: 40px;
 	display: inline-block;
@@ -101,7 +104,8 @@ button.clear:hover {
 .remove-button {
 	background-color: #f44336;
 }
-.remove-button:hover, .add-button:hover {
+.remove-button:hover,
+.add-button:hover {
 	opacity: 0.8;
 }
 
@@ -123,7 +127,6 @@ button.clear:hover {
 	border: 1px solid #00796b;
 }
 
-
 .resistor-group {
 	display: flex;
 	justify-content: space-between;
@@ -132,4 +135,72 @@ button.clear:hover {
 }
 .resistor-group input {
 	width: calc(100% - 45px);
+}
+
+/* 深色模式自适应 */
+@media (prefers-color-scheme: dark) {
+	body {
+		background-color: #1a1a1a;
+		color: #e0e0e0;
+	}
+
+	.container {
+		background: #2d2d2d;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+		color: #e0e0e0;
+	}
+
+	h1 {
+		color: #4db8ff;
+	}
+
+	label {
+		color: #4db8ff;
+	}
+
+	input,
+	select {
+		background-color: #3a3a3a;
+		color: #e0e0e0;
+		border: 1px solid #555;
+	}
+
+	input:focus,
+	select:focus {
+		border-color: #4db8ff;
+	}
+
+	input::placeholder {
+		color: #888;
+	}
+
+	button.calculate {
+		background-color: #0d6efd;
+	}
+
+	button.calculate:hover {
+		background-color: #0a58ca;
+	}
+
+	button.clear {
+		background-color: #dc3545;
+	}
+
+	button.clear:hover {
+		background-color: #bb2d3b;
+	}
+
+	.add-button {
+		background-color: #0d6efd;
+	}
+
+	.remove-button {
+		background-color: #dc3545;
+	}
+
+	.formula {
+		background-color: #3a3a3a;
+		color: #4db8ff;
+		border: 1px solid #555;
+	}
 }

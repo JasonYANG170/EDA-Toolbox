@@ -1,422 +1,516 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>个人器件库</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			margin: 20px;
-		}
-		.container {
-			max-width: 800px;
-			margin: auto;
-		}
-		h1 {
-			text-align: center;
-			color: #333;
-		}
-		table {
-			width: 100%;
-			border-collapse: collapse;
-			margin-top: 20px;
-		}
-		th, td {
-			border: 1px solid #ddd;
-			padding: 8px;
-			text-align: left;
-		}
-		th {
-			background-color: #f4f4f4;
-		}
-		.设置 {
-			margin-top: 20px;
-		}
-		.设置 button {
-			margin-right: 10px;
-			padding: 10px 15px;
-			background-color: #007bff;
-			color: white;
-			border: none;
-			cursor: pointer;
-			border-radius: 5px;
-		}
-		.设置 button:hover {
-			background-color: #0056b3;
-		}
-		input[type="file"] {
-			display: none;
-		}
-		.custom-file-upload {
-			padding: 10px 15px;
-			background-color: #007bff;
-			color: white;
-			cursor: pointer;
-			border-radius: 5px;
-		}
-		.search-box {
-			margin-top: 20px;
-			display: flex;
-			align-items: center;
-		}
-		.search-box input {
-			flex-grow: 1;
-			padding: 10px;
-			border: 1px solid #ddd;
-			border-radius: 5px;
-		}
-		.search-box button {
-			margin-left: 10px;
-			padding: 10px;
-			background-color: #007bff;
-			color: white;
-			border: none;
-			cursor: pointer;
-			border-radius: 5px;
-		}
-		.search-box button:hover {
-			background-color: #0056b3;
-		}
-		.edit-input {
-			width: 100%;
-			padding: 5px;
-		}
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>个人器件库</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
 
-		/* 卡片样式 */
-		.details-card {
-			display: none;
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 400px;
-			padding: 20px;
-			background-color: #fff;
-			border: 1px solid #ddd;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-			z-index: 1000;
-		}
-		.details-card img {
-			width: 100px;
-			height: 100px;
-			object-fit: cover;
-		}
-		.details-card .close-btn {
-			position: absolute;
-			top: 10px;
-			right: 10px;
-			background-color: red;
-			color: white;
-			border: none;
-			padding: 5px 10px;
-			cursor: pointer;
-			border-radius: 50%;
-		}
-		.details-card .content {
-			display: flex;
-			align-items: center;
-			margin-top: 20px;
-		}
-		.details-card .content div {
-			margin-left: 20px;
-		}
-	</style>
-</head>
-<body>
-<div class="container">
-	<h1>个人器件库</h1>
-	<div class="设置">
-		<label for="file-upload" class="custom-file-upload">导入立创商城订单</label>
-		<input id="file-upload" type="file" accept=".xls,.xlsx" multiple />
-		<button id="export-data">备份</button>
-		<button id="import-data">恢复</button>
-		<button id="delete-all-data">清空</button>
-		<button id="add-data">添加</button>
-		<button id="refresh-data">刷新</button>
-	</div>
-	<div class="search-box">
-		<input type="text" id="search-bar" placeholder="搜索...">
-		<button id="search-btn">搜索</button>
-		<button id="clear-search-btn">清除</button>
-	</div>
-	<table id="data-table">
-		<thead>
-		<tr>
-			<th>编号</th>
-			<th>厂商</th>
-			<th>型号</th>
-			<th>封装</th>
-			<th>名称</th>
-			<th>数量</th>
-			<th>设置</th>
-		</tr>
-		</thead>
-		<tbody>
-		<!-- Data rows will be dynamically inserted here -->
-		</tbody>
-	</table>
-</div>
+			.container {
+				max-width: 800px;
+				margin: auto;
+			}
 
-<!-- 卡片模态框 -->
-<div class="details-card" id="details-card">
-	<button class="close-btn" onclick="closeDetailsCard()">X</button>
-	<div class="content">
-		<img id="card-image" src="" alt="Product Image">
-		<div>
-			<h2 id="card-product-number">编号: </h2>
-			<p id="card-description">Description: </p>
+			h1 {
+				text-align: center;
+				color: #333;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 20px;
+			}
+
+			th,
+			td {
+				border: 1px solid #ddd;
+				padding: 8px;
+				text-align: left;
+			}
+
+			th {
+				background-color: #f4f4f4;
+			}
+
+			.设置 {
+				margin-top: 20px;
+			}
+
+			.设置 button {
+				margin-right: 10px;
+				padding: 10px 15px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				cursor: pointer;
+				border-radius: 5px;
+			}
+
+			.设置 button:hover {
+				background-color: #0056b3;
+			}
+
+			input[type='file'] {
+				display: none;
+			}
+
+			.custom-file-upload {
+				padding: 10px 15px;
+				background-color: #007bff;
+				color: white;
+				cursor: pointer;
+				border-radius: 5px;
+			}
+
+			.search-box {
+				margin-top: 20px;
+				display: flex;
+				align-items: center;
+			}
+
+			.search-box input {
+				flex-grow: 1;
+				padding: 10px;
+				border: 1px solid #ddd;
+				border-radius: 5px;
+			}
+
+			.search-box button {
+				margin-left: 10px;
+				padding: 10px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				cursor: pointer;
+				border-radius: 5px;
+			}
+
+			.search-box button:hover {
+				background-color: #0056b3;
+			}
+
+			.edit-input {
+				width: 100%;
+				padding: 5px;
+			}
+
+			/* 卡片样式 */
+			.details-card {
+				display: none;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 400px;
+				padding: 20px;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				border-radius: 10px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+				z-index: 1000;
+			}
+
+			.details-card img {
+				width: 100px;
+				height: 100px;
+				object-fit: cover;
+			}
+
+			.details-card .close-btn {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background-color: red;
+				color: white;
+				border: none;
+				padding: 5px 10px;
+				cursor: pointer;
+				border-radius: 50%;
+			}
+
+			.details-card .content {
+				display: flex;
+				align-items: center;
+				margin-top: 20px;
+			}
+
+			.details-card .content div {
+				margin-left: 20px;
+			}
+
+			/* 深色模式 */
+			@media (prefers-color-scheme: dark) {
+				body {
+					background-color: #1a1a1a;
+					color: #e0e0e0;
+				}
+
+				.container {
+					background-color: #2d2d2d;
+				}
+
+				h1 {
+					color: #4db8ff;
+				}
+
+				table {
+					background-color: #2d2d2d;
+					color: #e0e0e0;
+				}
+
+				th {
+					background-color: #3a3a3a;
+					color: #4db8ff;
+				}
+
+				td {
+					border: 1px solid #555;
+				}
+
+				.设置 button {
+					background-color: #0d6efd;
+				}
+
+				.设置 button:hover {
+					background-color: #0a58ca;
+				}
+
+				.custom-file-upload {
+					background-color: #0d6efd;
+				}
+
+				.search-box input {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
+
+				.search-box input::placeholder {
+					color: #888;
+				}
+
+				.search-box button {
+					background-color: #0d6efd;
+				}
+
+				.search-box button:hover {
+					background-color: #0a58ca;
+				}
+
+				.edit-input {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
+
+				.details-card {
+					background-color: #2d2d2d;
+					border: 1px solid #555;
+					color: #e0e0e0;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<h1>个人器件库</h1>
+			<div class="设置">
+				<label for="file-upload" class="custom-file-upload">导入立创商城订单</label>
+				<input id="file-upload" type="file" accept=".xls,.xlsx" multiple />
+				<button id="export-data">备份</button>
+				<button id="import-data">恢复</button>
+				<button id="delete-all-data">清空</button>
+				<button id="add-data">添加</button>
+				<button id="refresh-data">刷新</button>
+			</div>
+			<div class="search-box">
+				<input type="text" id="search-bar" placeholder="搜索..." />
+				<button id="search-btn">搜索</button>
+				<button id="clear-search-btn">清除</button>
+			</div>
+			<table id="data-table">
+				<thead>
+					<tr>
+						<th>编号</th>
+						<th>厂商</th>
+						<th>型号</th>
+						<th>封装</th>
+						<th>名称</th>
+						<th>数量</th>
+						<th>设置</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Data rows will be dynamically inserted here -->
+				</tbody>
+			</table>
 		</div>
-	</div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script>
-	const refreshDataButton = document.getElementById('refresh-data');  // 刷新按钮
-	const fileUpload = document.getElementById('file-upload');
-	const dataTable = document.getElementById('data-table').querySelector('tbody');
-	const searchBar = document.getElementById('search-bar');
-	const searchBtn = document.getElementById('search-btn');
-	const clearSearchBtn = document.getElementById('clear-search-btn');
-	const deleteAllButton = document.getElementById('delete-all-data');
-	const addDataButton = document.getElementById('add-data');
-	const importDataButton = document.getElementById('import-data');  // 导入按钮
-	let dataStore = JSON.parse(localStorage.getItem('tableData')) || [];
-	let filteredData = dataStore;  // Store filtered data for search functionality
-	importDataButton.addEventListener('click', () => {
-		const input = document.createElement('input');
-		input.type = 'file';
-		input.accept = '.json';
-		input.onchange = (event) => {
-			const file = event.target.files[0];
-			if (file) {
-				const reader = new FileReader();
-				reader.onload = function (e) {
-					try {
-						const importedData = JSON.parse(e.target.result);
-						dataStore = importedData;
-						localStorage.setItem('tableData', JSON.stringify(dataStore));
-						updateTable();
-						location.reload();  // 刷新页面
-					} catch (error) {
-						alert('Invalid JSON file');
+		<!-- 卡片模态框 -->
+		<div class="details-card" id="details-card">
+			<button class="close-btn" onclick="closeDetailsCard()">X</button>
+			<div class="content">
+				<img id="card-image" src="" alt="Product Image" />
+				<div>
+					<h2 id="card-product-number">编号:</h2>
+					<p id="card-description">Description:</p>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+		<script>
+			const refreshDataButton = document.getElementById('refresh-data'); // 刷新按钮
+			const fileUpload = document.getElementById('file-upload');
+			const dataTable = document.getElementById('data-table').querySelector('tbody');
+			const searchBar = document.getElementById('search-bar');
+			const searchBtn = document.getElementById('search-btn');
+			const clearSearchBtn = document.getElementById('clear-search-btn');
+			const deleteAllButton = document.getElementById('delete-all-data');
+			const addDataButton = document.getElementById('add-data');
+			const importDataButton = document.getElementById('import-data'); // 导入按钮
+			let dataStore = JSON.parse(localStorage.getItem('tableData')) || [];
+			let filteredData = dataStore; // Store filtered data for search functionality
+			importDataButton.addEventListener('click', () => {
+				const input = document.createElement('input');
+				input.type = 'file';
+				input.accept = '.json';
+				input.onchange = (event) => {
+					const file = event.target.files[0];
+					if (file) {
+						const reader = new FileReader();
+						reader.onload = function (e) {
+							try {
+								const importedData = JSON.parse(e.target.result);
+								dataStore = importedData;
+								localStorage.setItem('tableData', JSON.stringify(dataStore));
+								updateTable();
+								location.reload(); // 刷新页面
+							} catch (error) {
+								alert('Invalid JSON file');
+							}
+						};
+						reader.readAsText(file);
 					}
 				};
-				reader.readAsText(file);
-			}
-		};
-		input.click();
-	});
-	// 更新表格
-	function updateTable() {
-		dataTable.innerHTML = '';
-		filteredData.forEach((row, index) => {
-			const tr = document.createElement('tr');
-			Object.values(row).forEach((cell, i) => {
-				const td = document.createElement('td');
-				td.textContent = cell;
-				tr.appendChild(td);
+				input.click();
 			});
-			const actionTd = document.createElement('td');
+			// 更新表格
+			function updateTable() {
+				dataTable.innerHTML = '';
+				filteredData.forEach((row, index) => {
+					const tr = document.createElement('tr');
+					Object.values(row).forEach((cell, i) => {
+						const td = document.createElement('td');
+						td.textContent = cell;
+						tr.appendChild(td);
+					});
+					const actionTd = document.createElement('td');
 
-			// 编辑按钮
-			const editButton = document.createElement('button');
-			editButton.textContent = '编辑';
-			editButton.onclick = () => {
-				editRow(index);
-			};
-
-			// 使用按钮
-			const useButton = document.createElement('button');
-			useButton.textContent = '使用';
-			useButton.onclick = () => {
-				useItem(index);
-			};
-
-			// 详情按钮
-			const detailsButton = document.createElement('button');
-			detailsButton.textContent = '详情';
-			detailsButton.onclick = () => {
-				showDetailsCard(row);  // 显示详情卡片
-			};
-
-			// 删除按钮
-			const deleteButton = document.createElement('button');
-			deleteButton.textContent = '删除';
-			deleteButton.onclick = () => {
-				dataStore.splice(index, 1);
-				localStorage.setItem('tableData', JSON.stringify(dataStore));
-				updateTable();
-			};
-
-			actionTd.appendChild(editButton);
-			actionTd.appendChild(useButton);
-			actionTd.appendChild(detailsButton);
-			actionTd.appendChild(deleteButton);
-			tr.appendChild(actionTd);
-			dataTable.appendChild(tr);
-		});
-	}
-	refreshDataButton.addEventListener('click', () => {
-		location.reload();  // 刷新页面
-	});
-	// 编辑当前行
-	function editRow(index) {
-		const row = dataStore[index];
-		const tr = dataTable.rows[index];
-
-		// 显示编辑输入框
-		Object.keys(row).forEach((key, i) => {
-			const td = tr.cells[i];
-			const input = document.createElement('input');
-			input.classList.add('edit-input');
-			input.value = row[key];
-			input.onchange = (e) => {
-				row[key] = e.target.value; // 更新行数据
-			};
-			td.innerHTML = '';
-			td.appendChild(input);
-		});
-
-		const actionTd = tr.cells[6];
-		actionTd.innerHTML = ''; // 清除按钮
-		const saveButton = document.createElement('button');
-		saveButton.textContent = '保存';
-		saveButton.onclick = () => {
-			localStorage.setItem('tableData', JSON.stringify(dataStore));
-			updateTable();
-		};
-		actionTd.appendChild(saveButton);
-	}
-
-	// 使用当前行
-	function useItem(index) {
-		const row = dataStore[index];
-		if (row.orderQuantity > 0) {
-			row.orderQuantity -= 1; // 减少数量
-			localStorage.setItem('tableData', JSON.stringify(dataStore));
-			updateTable();
-		} else {
-			alert('你的库存不足了!');
-		}
-	}
-
-	async function showDetailsCard(row) {
-		console.log("开始查询");
-		console.log(row.productNumber);
-		const lib= await  eda.lib_Device.getByLcscIds(row.productNumber);
-		console.log(lib);
-		const card = document.getElementById('details-card');
-		document.getElementById('card-product-number').textContent = `编号: ${row.productNumber}`;
-		document.getElementById('card-description').textContent = `名称: ${row.productName}`;  // 示例，实际可以根据需要修改
-		document.getElementById('card-image').src = ''; // 可以用图片URL替换
-
-		card.style.display = 'block';  // 显示卡片
-	}
-
-	// 关闭详情卡片
-	function closeDetailsCard() {
-		document.getElementById('details-card').style.display = 'none';  // 隐藏卡片
-	}
-
-	// 处理上传文件并累加数据
-	fileUpload.addEventListener('change', event => {
-		const files = event.target.files;
-		if (!files.length) return;
-
-		Array.from(files).forEach(file => {
-			const reader = new FileReader();
-			reader.onload = e => {
-				const workbook = XLSX.read(e.target.result, { type: 'binary' });
-				const sheet = workbook.Sheets[workbook.SheetNames[0]];
-				const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(16); // 从第16行开始
-
-				const formattedData = jsonData.map((row) => {
-					if (row.length < 7) return null; // 处理无效的行
-					return {
-						productNumber: row[1]?.toString().trim() || '',       // 商品编号在第二列
-						brand: row[2]?.toString().trim() || '',              // 品牌在第三列
-						manufacturerModel: row[3]?.toString().trim() || '',  // 厂家型号在第四列
-						package: row[4]?.toString().trim() || '',            // 封装在第五列
-						productName: row[5]?.toString().trim() || '',        // 商品名称在第六列
-						orderQuantity: parseInt(row[6]?.replace(/[^\d]/g, '') || 0, 10) // 数量在第七列
+					// 编辑按钮
+					const editButton = document.createElement('button');
+					editButton.textContent = '编辑';
+					editButton.onclick = () => {
+						editRow(index);
 					};
-				}).filter(row => row !== null); // 移除无效的行
 
-				// 合并数据，按商品编号累加数量
-				formattedData.forEach(newRow => {
-					const existingRow = dataStore.find(row => row.productNumber === newRow.productNumber);
-					if (existingRow) {
-						existingRow.orderQuantity += newRow.orderQuantity; // 累加数量
-					} else {
-						dataStore.push(newRow); // 添加新行
-					}
+					// 使用按钮
+					const useButton = document.createElement('button');
+					useButton.textContent = '使用';
+					useButton.onclick = () => {
+						useItem(index);
+					};
+
+					// 详情按钮
+					const detailsButton = document.createElement('button');
+					detailsButton.textContent = '详情';
+					detailsButton.onclick = () => {
+						showDetailsCard(row); // 显示详情卡片
+					};
+
+					// 删除按钮
+					const deleteButton = document.createElement('button');
+					deleteButton.textContent = '删除';
+					deleteButton.onclick = () => {
+						dataStore.splice(index, 1);
+						localStorage.setItem('tableData', JSON.stringify(dataStore));
+						updateTable();
+					};
+
+					actionTd.appendChild(editButton);
+					actionTd.appendChild(useButton);
+					actionTd.appendChild(detailsButton);
+					actionTd.appendChild(deleteButton);
+					tr.appendChild(actionTd);
+					dataTable.appendChild(tr);
+				});
+			}
+			refreshDataButton.addEventListener('click', () => {
+				location.reload(); // 刷新页面
+			});
+			// 编辑当前行
+			function editRow(index) {
+				const row = dataStore[index];
+				const tr = dataTable.rows[index];
+
+				// 显示编辑输入框
+				Object.keys(row).forEach((key, i) => {
+					const td = tr.cells[i];
+					const input = document.createElement('input');
+					input.classList.add('edit-input');
+					input.value = row[key];
+					input.onchange = (e) => {
+						row[key] = e.target.value; // 更新行数据
+					};
+					td.innerHTML = '';
+					td.appendChild(input);
 				});
 
-				// 更新localStorage
-				localStorage.setItem('tableData', JSON.stringify(dataStore));
+				const actionTd = tr.cells[6];
+				actionTd.innerHTML = ''; // 清除按钮
+				const saveButton = document.createElement('button');
+				saveButton.textContent = '保存';
+				saveButton.onclick = () => {
+					localStorage.setItem('tableData', JSON.stringify(dataStore));
+					updateTable();
+				};
+				actionTd.appendChild(saveButton);
+			}
 
-				// 调用updateTable以刷新表格
+			// 使用当前行
+			function useItem(index) {
+				const row = dataStore[index];
+				if (row.orderQuantity > 0) {
+					row.orderQuantity -= 1; // 减少数量
+					localStorage.setItem('tableData', JSON.stringify(dataStore));
+					updateTable();
+				} else {
+					alert('你的库存不足了!');
+				}
+			}
+
+			async function showDetailsCard(row) {
+				console.log('开始查询');
+				console.log(row.productNumber);
+				const lib = await eda.lib_Device.getByLcscIds(row.productNumber);
+				console.log(lib);
+				const card = document.getElementById('details-card');
+				document.getElementById('card-product-number').textContent = `编号: ${row.productNumber}`;
+				document.getElementById('card-description').textContent = `名称: ${row.productName}`; // 示例，实际可以根据需要修改
+				document.getElementById('card-image').src = ''; // 可以用图片URL替换
+
+				card.style.display = 'block'; // 显示卡片
+			}
+
+			// 关闭详情卡片
+			function closeDetailsCard() {
+				document.getElementById('details-card').style.display = 'none'; // 隐藏卡片
+			}
+
+			// 处理上传文件并累加数据
+			fileUpload.addEventListener('change', (event) => {
+				const files = event.target.files;
+				if (!files.length) return;
+
+				Array.from(files).forEach((file) => {
+					const reader = new FileReader();
+					reader.onload = (e) => {
+						const workbook = XLSX.read(e.target.result, { type: 'binary' });
+						const sheet = workbook.Sheets[workbook.SheetNames[0]];
+						const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(16); // 从第16行开始
+
+						const formattedData = jsonData
+							.map((row) => {
+								if (row.length < 7) return null; // 处理无效的行
+								return {
+									productNumber: row[1]?.toString().trim() || '', // 商品编号在第二列
+									brand: row[2]?.toString().trim() || '', // 品牌在第三列
+									manufacturerModel: row[3]?.toString().trim() || '', // 厂家型号在第四列
+									package: row[4]?.toString().trim() || '', // 封装在第五列
+									productName: row[5]?.toString().trim() || '', // 商品名称在第六列
+									orderQuantity: parseInt(row[6]?.replace(/[^\d]/g, '') || 0, 10), // 数量在第七列
+								};
+							})
+							.filter((row) => row !== null); // 移除无效的行
+
+						// 合并数据，按商品编号累加数量
+						formattedData.forEach((newRow) => {
+							const existingRow = dataStore.find((row) => row.productNumber === newRow.productNumber);
+							if (existingRow) {
+								existingRow.orderQuantity += newRow.orderQuantity; // 累加数量
+							} else {
+								dataStore.push(newRow); // 添加新行
+							}
+						});
+
+						// 更新localStorage
+						localStorage.setItem('tableData', JSON.stringify(dataStore));
+
+						// 调用updateTable以刷新表格
+						updateTable();
+					};
+					reader.readAsBinaryString(file);
+				});
+			});
+
+			// 清空所有数据
+			deleteAllButton.addEventListener('click', () => {
+				if (confirm('你确定要删除全部数据吗?')) {
+					dataStore = [];
+					localStorage.setItem('tableData', JSON.stringify(dataStore));
+					updateTable();
+					location.reload(); // 刷新页面
+				}
+			});
+
+			// 搜索功能
+			searchBtn.addEventListener('click', () => {
+				const query = searchBar.value.toLowerCase();
+				filteredData = dataStore.filter(
+					(row) => row.productNumber.toLowerCase().includes(query) || row.productName.toLowerCase().includes(query),
+				);
 				updateTable();
-			};
-			reader.readAsBinaryString(file);
-		});
-	});
+			});
 
-	// 清空所有数据
-	deleteAllButton.addEventListener('click', () => {
-		if (confirm('你确定要删除全部数据吗?')) {
-			dataStore = [];
-			localStorage.setItem('tableData', JSON.stringify(dataStore));
+			// 清除搜索框并显示所有数据
+			clearSearchBtn.addEventListener('click', () => {
+				searchBar.value = '';
+				filteredData = dataStore;
+				updateTable();
+			});
+
+			// 导出数据
+			document.getElementById('export-data').addEventListener('click', () => {
+				const ws = XLSX.utils.json_to_sheet(dataStore);
+				const wb = XLSX.utils.book_new();
+				XLSX.utils.book_append_sheet(wb, ws, 'Data');
+				XLSX.writeFile(wb, 'data.xlsx');
+			});
+
+			// 添加新数据
+			addDataButton.addEventListener('click', () => {
+				const newRow = {
+					productNumber: '',
+					厂商: '',
+					manufacturerModel: '',
+					封装: '',
+					productName: '',
+					orderQuantity: 0,
+				};
+				dataStore.push(newRow);
+				localStorage.setItem('tableData', JSON.stringify(dataStore));
+				updateTable();
+				location.reload(); // 刷新页面
+			});
+
+			// 初始化表格
 			updateTable();
-			location.reload();  // 刷新页面
-		}
-	});
-
-	// 搜索功能
-	searchBtn.addEventListener('click', () => {
-		const query = searchBar.value.toLowerCase();
-		filteredData = dataStore.filter(row =>
-			row.productNumber.toLowerCase().includes(query) ||
-			row.productName.toLowerCase().includes(query)
-		);
-		updateTable();
-	});
-
-	// 清除搜索框并显示所有数据
-	clearSearchBtn.addEventListener('click', () => {
-		searchBar.value = '';
-		filteredData = dataStore;
-		updateTable();
-	});
-
-	// 导出数据
-	document.getElementById('export-data').addEventListener('click', () => {
-		const ws = XLSX.utils.json_to_sheet(dataStore);
-		const wb = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, 'Data');
-		XLSX.writeFile(wb, 'data.xlsx');
-	});
-
-	// 添加新数据
-	addDataButton.addEventListener('click', () => {
-		const newRow = {
-			productNumber: '',
-			厂商: '',
-			manufacturerModel: '',
-			封装: '',
-			productName: '',
-			orderQuantity: 0
-		};
-		dataStore.push(newRow);
-		localStorage.setItem('tableData', JSON.stringify(dataStore));
-		updateTable();
-		location.reload();  // 刷新页面
-	});
-
-	// 初始化表格
-	updateTable();
-</script>
-</body>
+		</script>
+	</body>
 </html>
