@@ -63,7 +63,7 @@ export function sch_capacitorCalculate(): void {
 	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 430, 300);
 }
 export function pcb_currentcalCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 430, 290);
+	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 430, 370);
 }
 export function pcb_resistorColorCalculator(): void {
 	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 500, 240);
