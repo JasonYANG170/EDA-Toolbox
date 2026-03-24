@@ -23,8 +23,7 @@
 				padding: 25px 30px;
 				border: 1px solid #ccc;
 				border-radius: 8px;
-				width: 430px;
-				height: 290px;
+				width: 460px;
 				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 				position: relative;
 			}
@@ -35,10 +34,28 @@
 				font-size: 20px;
 			}
 
-			.row {
+			.mode-switch {
 				display: flex;
-				justify-content: space-between;
+				justify-content: center;
 				margin-bottom: 15px;
+				gap: 10px;
+			}
+
+			.mode-switch button {
+				padding: 6px 18px;
+				font-size: 13px;
+				font-weight: 600;
+				border: 2px solid #007bff;
+				border-radius: 6px;
+				cursor: pointer;
+				background-color: #fff;
+				color: #007bff;
+				transition: all 0.2s;
+			}
+
+			.mode-switch button.active {
+				background-color: #007bff;
+				color: #fff;
 			}
 
 			.field-group {
@@ -51,6 +68,7 @@
 			.field-group label {
 				width: 130px;
 				font-weight: 500;
+				font-size: 14px;
 			}
 
 			.field-group input {
@@ -62,7 +80,16 @@
 				outline: none;
 			}
 
-			/* 公式默认隐藏 */
+			.field-group select {
+				padding: 5px 6px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				font-size: 13px;
+				outline: none;
+				margin-left: 6px;
+				cursor: pointer;
+			}
+
 			.formula {
 				display: none;
 				text-align: center;
@@ -72,7 +99,6 @@
 				line-height: 1.5;
 			}
 
-			/* 显示公式按钮样式 */
 			.show-formula-button {
 				background-color: #007bff;
 				color: white;
@@ -93,6 +119,7 @@
 				font-size: 14px;
 				color: #333;
 				margin-top: 10px;
+				line-height: 1.8;
 			}
 
 			.buttons {
@@ -119,6 +146,13 @@
 
 			button:hover {
 				opacity: 0.9;
+			}
+
+			.note {
+				text-align: center;
+				font-size: 11px;
+				color: #999;
+				margin-top: 8px;
 			}
 
 			/* 深色模式 */
@@ -148,6 +182,12 @@
 					border: 1px solid #555;
 				}
 
+				.field-group select {
+					background-color: #3a3a3a;
+					color: #e0e0e0;
+					border: 1px solid #555;
+				}
+
 				.field-group input::placeholder {
 					color: #888;
 				}
@@ -158,6 +198,10 @@
 
 				.result {
 					color: #e0e0e0;
+				}
+
+				.note {
+					color: #777;
 				}
 
 				button {
@@ -179,6 +223,17 @@
 				.show-formula-button {
 					background-color: #0d6efd;
 				}
+
+				.mode-switch button {
+					background-color: #2d2d2d;
+					color: #4db8ff;
+					border-color: #4db8ff;
+				}
+
+				.mode-switch button.active {
+					background-color: #4db8ff;
+					color: #1a1a1a;
+				}
 			}
 		</style>
 	</head>
@@ -188,29 +243,61 @@
 			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
 
 			<div class="formula">
-				A = (I / (k × T<sub>Rise</sub><sup>b</sup>))<sup>(1 / c)</sup><br />
-				W = A / (t × 1.378)
+				IPC-2221 标准公式：<br />
+				I = k × ΔT<sup>0.44</sup> × A<sup>0.725</sup><br />
+				A = W × t × 1.378 (mil² → 截面积)<br />
+				内层 k = 0.024，外层 k = 0.048
 			</div>
 
-			<div class="field-group">
-				<label for="current">电流 (A):</label>
-				<input type="number" id="current" placeholder="输入电流" min="0" />
+			<div class="mode-switch">
+				<button id="modeCurrentToWidth" class="active" onclick="switchMode('currentToWidth')">电流 → 线宽</button>
+				<button id="modeWidthToCurrent" onclick="switchMode('widthToCurrent')">线宽 → 电流</button>
 			</div>
 
+			<!-- 电流→线宽模式 -->
+			<div id="currentToWidthFields">
+				<div class="field-group">
+					<label for="current">电流 (A):</label>
+					<input type="number" id="current" placeholder="输入电流" min="0" step="0.1" />
+				</div>
+			</div>
+
+			<!-- 线宽→电流模式 -->
+			<div id="widthToCurrentFields" style="display: none">
+				<div class="field-group">
+					<label for="traceWidth">线宽:</label>
+					<input type="number" id="traceWidth" placeholder="输入线宽" min="0" step="0.1" />
+					<select id="widthUnit" onchange="onWidthUnitChange()">
+						<option value="mil">mil</option>
+						<option value="mm">mm</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- 公共参数 -->
 			<div class="field-group">
 				<label for="temperature">温升 (℃):</label>
-				<input type="number" id="temperature" placeholder="输入温升" min="0" />
+				<input type="number" id="temperature" placeholder="输入温升" min="0" step="1" value="10" />
 			</div>
 
 			<div class="field-group">
 				<label for="thickness">铜厚 (oz):</label>
-				<input type="number" id="thickness" placeholder="输入铜厚" min="0" step="0.01" value="1" />
+				<input type="number" id="thickness" placeholder="输入铜厚" min="0" step="0.5" value="1" />
+			</div>
+
+			<div class="field-group" id="resultUnitGroup">
+				<label>结果单位:</label>
+				<select id="resultUnit">
+					<option value="mil">mil</option>
+					<option value="mm">mm</option>
+				</select>
 			</div>
 
 			<div class="result" id="result"></div>
+			<div class="note">基于 IPC-2221 标准，仅供参考</div>
 
 			<div class="buttons">
-				<button onclick="calculateWidth()">计算</button>
+				<button onclick="calculate()">计算</button>
 				<button onclick="applyTrackWidth(WInner, WOuter)">应用</button>
 				<button class="clear" onclick="clearInputs()">清空</button>
 			</div>
@@ -220,19 +307,121 @@
 			const TRACK_EVENT_ID = '1';
 			let WInner = 0;
 			let WOuter = 0;
+			let currentMode = 'currentToWidth';
+
+			// IPC-2221 标准常数
+			const K_INNER = 0.024;
+			const K_OUTER = 0.048;
+			const B = 0.44;
+			const C = 0.725;
+			const MIL_PER_MM = 39.3701;
+			const OZ_TO_MIL = 1.378;
+
+			function switchMode(mode) {
+				currentMode = mode;
+				document.getElementById('modeCurrentToWidth').classList.toggle('active', mode === 'currentToWidth');
+				document.getElementById('modeWidthToCurrent').classList.toggle('active', mode === 'widthToCurrent');
+				document.getElementById('currentToWidthFields').style.display = mode === 'currentToWidth' ? '' : 'none';
+				document.getElementById('widthToCurrentFields').style.display = mode === 'widthToCurrent' ? '' : 'none';
+				document.getElementById('resultUnitGroup').style.display = mode === 'currentToWidth' ? '' : 'none';
+				document.getElementById('result').innerHTML = '';
+			}
+
+			function onWidthUnitChange() {
+				// 切换单位时自动转换已输入的值
+				const input = document.getElementById('traceWidth');
+				const unit = document.getElementById('widthUnit').value;
+				const val = parseFloat(input.value);
+				if (!isNaN(val) && val > 0) {
+					if (unit === 'mm') {
+						// 从 mil 转到 mm
+						input.value = (val / MIL_PER_MM).toFixed(4);
+					} else {
+						// 从 mm 转到 mil
+						input.value = (val * MIL_PER_MM).toFixed(2);
+					}
+				}
+			}
+
+			// 电流 → 线宽 (IPC-2221)
+			// I = k * dT^b * A^c  =>  A = (I / (k * dT^b))^(1/c)
+			// A(mil²) = W(mil) * t(oz) * 1.378
+			// W(mil) = A / (t * 1.378)
+			function currentToWidth(current, tempRise, thicknessOz) {
+				const aInner = Math.pow(current / (K_INNER * Math.pow(tempRise, B)), 1 / C);
+				const aOuter = Math.pow(current / (K_OUTER * Math.pow(tempRise, B)), 1 / C);
+				const wInner = aInner / (thicknessOz * OZ_TO_MIL);
+				const wOuter = aOuter / (thicknessOz * OZ_TO_MIL);
+				return { wInner, wOuter };
+			}
+
+			// 线宽 → 电流 (IPC-2221 反推)
+			// I = k * dT^b * A^c
+			// A(mil²) = W(mil) * t(oz) * 1.378
+			function widthToCurrent(widthMil, tempRise, thicknessOz) {
+				const area = widthMil * thicknessOz * OZ_TO_MIL;
+				const iInner = K_INNER * Math.pow(tempRise, B) * Math.pow(area, C);
+				const iOuter = K_OUTER * Math.pow(tempRise, B) * Math.pow(area, C);
+				return { iInner, iOuter };
+			}
+
+			function formatWidth(mil, unit) {
+				if (unit === 'mm') {
+					return (mil / MIL_PER_MM).toFixed(4) + ' mm';
+				}
+				return mil.toFixed(2) + ' mil';
+			}
+
+			function calculate() {
+				const tempRise = parseFloat(document.getElementById('temperature').value);
+				const thicknessOz = parseFloat(document.getElementById('thickness').value);
+
+				if (isNaN(tempRise) || isNaN(thicknessOz) || tempRise <= 0 || thicknessOz <= 0) {
+					alert('请输入有效的温升和铜厚值！');
+					return;
+				}
+
+				if (currentMode === 'currentToWidth') {
+					const current = parseFloat(document.getElementById('current').value);
+					if (isNaN(current) || current <= 0) {
+						alert('请输入有效的电流值！');
+						return;
+					}
+					const { wInner, wOuter } = currentToWidth(current, tempRise, thicknessOz);
+					WInner = wInner;
+					WOuter = wOuter;
+					const unit = document.getElementById('resultUnit').value;
+					document.getElementById('result').innerHTML =
+						'内层所需线宽：' + formatWidth(wInner, unit) + '<br>' + '外层所需线宽：' + formatWidth(wOuter, unit);
+				} else {
+					let widthVal = parseFloat(document.getElementById('traceWidth').value);
+					const widthUnit = document.getElementById('widthUnit').value;
+					if (isNaN(widthVal) || widthVal <= 0) {
+						alert('请输入有效的线宽值！');
+						return;
+					}
+					// 统一转为 mil 计算
+					const widthMil = widthUnit === 'mm' ? widthVal * MIL_PER_MM : widthVal;
+					const { iInner, iOuter } = widthToCurrent(widthMil, tempRise, thicknessOz);
+					// 反推模式下清除线宽缓存
+					WInner = widthMil;
+					WOuter = widthMil;
+					document.getElementById('result').innerHTML =
+						'内层最大电流：' + iInner.toFixed(3) + ' A<br>' + '外层最大电流：' + iOuter.toFixed(3) + ' A';
+				}
+			}
 
 			function clearInputs() {
 				document.getElementById('current').value = '';
-				document.getElementById('temperature').value = '';
+				document.getElementById('traceWidth').value = '';
+				document.getElementById('temperature').value = '10';
 				document.getElementById('thickness').value = '1';
 				document.getElementById('result').innerHTML = '';
 				eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
 			}
 
 			function applyTrackWidth(WInner, WOuter) {
-				calculateWidth();
-				console.log('WInner:', WInner);
-				console.log('WOuter:', WOuter);
+				calculate();
 				eda.pcb_Event.addMouseEventListener(
 					TRACK_EVENT_ID,
 					'selected',
@@ -240,16 +429,12 @@
 						const selectedPrimitives = await eda.pcb_SelectControl.getSelectedPrimitives();
 						if (selectedPrimitives.length === 1) {
 							const track = selectedPrimitives[0];
-							console.log('was ok：', track);
 							if (track['pcbItemPrimitiveType'] === 'Track') {
 								const layerId = track['layerId'];
 								const globalIndex = track['globalIndex'];
 								if (layerId >= 1 && layerId <= 2) {
-									console.log(WOuter / 10);
-									console.log('eda.pcb_PrimitiveLine.modify("' + globalIndex + '", { lineWidth: "' + WOuter / 10 + '" });');
 									eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter });
 								} else if (layerId >= 15 && layerId <= 46) {
-									console.log(WInner / 10);
 									eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner });
 								}
 							}
@@ -259,42 +444,18 @@
 				);
 			}
 
-			function calculateWidth() {
-				const kInner = 0.024;
-				const kOuter = 0.048;
-				const b = 0.44;
-				const c = 0.725;
-
-				const current = parseFloat(document.getElementById('current').value);
-				const temperature = parseFloat(document.getElementById('temperature').value);
-				const thickness = parseFloat(document.getElementById('thickness').value);
-
-				if (isNaN(current) || isNaN(temperature) || isNaN(thickness) || current <= 0 || temperature <= 0 || thickness <= 0) {
-					alert('请输入有效的电流、温升和铜厚值！');
-					return;
-				}
-
-				const AInner = Math.pow(current / (kInner * Math.pow(temperature, b)), 1 / c);
-				const AOuter = Math.pow(current / (kOuter * Math.pow(temperature, b)), 1 / c);
-
-				WInner = (AInner / (thickness * 1.378)).toFixed(2);
-				WOuter = (AOuter / (thickness * 1.378)).toFixed(2);
-
-				document.getElementById('result').innerHTML = `
-			内层所需线宽：${WInner} mil<br>
-			外层所需线宽：${WOuter} mil
-		`;
-			}
+			// 公式显示切换
 			document.getElementById('toggleFormulaButton').addEventListener('click', function () {
 				const formula = document.querySelector('.formula');
-				const inputs = document.querySelectorAll('#monostable-inputs, #astable-inputs, .field-group, .buttons,.add-remove-container');
-
+				const inputs = document.querySelectorAll('.mode-switch, #currentToWidthFields, #widthToCurrentFields, .field-group, .buttons, .note');
 				const isVisible = formula.style.display === 'block';
 
 				if (isVisible) {
 					formula.style.display = 'none';
 					this.textContent = '显示公式';
 					inputs.forEach((el) => (el.style.display = ''));
+					// 恢复模式对应的显示状态
+					switchMode(currentMode);
 				} else {
 					formula.style.display = 'block';
 					this.textContent = '关闭公式';
