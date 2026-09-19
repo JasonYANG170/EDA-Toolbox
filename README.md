@@ -10,7 +10,7 @@
 
 | 1                            | 2                              |
 | ---------------------------- | ------------------------------ |
-| ![alt text](images/image.png) | ![alt text](images/image.png)   |
+| ![alt text](images/image1.png) | ![alt text](images/image.png)   |
 | ![img.png](images/img.png)   | ![img_1.png](images/img_1.png) |
 
 ### 电路基础
