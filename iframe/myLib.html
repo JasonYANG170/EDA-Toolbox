@@ -215,9 +215,10 @@
 				}
 			}
 		</style>
+		<link rel="stylesheet" href="/iframe/toolbox-shell.css" />
 	</head>
 
-	<body>
+	<body data-diagram="library">
 		<div class="container">
 			<h1>个人器件库</h1>
 			<div class="设置">
@@ -275,7 +276,10 @@
 			const deleteAllButton = document.getElementById('delete-all-data');
 			const addDataButton = document.getElementById('add-data');
 			const importDataButton = document.getElementById('import-data'); // 导入按钮
-			let dataStore = JSON.parse(localStorage.getItem('tableData')) || [];
+			let dataStore = [];
+            let storageBroken = false;
+            try { const stored = JSON.parse(localStorage.getItem('tableData') || '[]'); if (Array.isArray(stored) && stored.every(row => row && typeof row === 'object')) dataStore = stored; else { storageBroken = true; alert('库存格式异常，原始数据已保留，请先备份。'); } } catch { storageBroken = true; alert('库存数据无法读取，原始数据已保留，请先备份。'); }
+            if (storageBroken) { addDataButton.disabled = true; deleteAllButton.disabled = true; fileUpload.disabled = true; }
 			let filteredData = dataStore; // Store filtered data for search functionality
 			importDataButton.addEventListener('click', () => {
 				const input = document.createElement('input');
@@ -288,6 +292,8 @@
 						reader.onload = function (e) {
 							try {
 								const importedData = JSON.parse(e.target.result);
+                                if (!Array.isArray(importedData) || importedData.some(row => !row || typeof row !== "object" || typeof row.productNumber !== "string" || !Number.isInteger(Number(row.orderQuantity)) || Number(row.orderQuantity) < 0)) throw new Error("库存格式无效");
+                                if (!confirm("导入将替换当前库存，是否继续？")) return;
 								dataStore = importedData;
 								localStorage.setItem('tableData', JSON.stringify(dataStore));
 								updateTable();
@@ -303,10 +309,12 @@
 			});
 			// 更新表格
 			function updateTable() {
-				dataTable.innerHTML = '';
+				const query = searchBar.value.toLowerCase();
+                filteredData = dataStore.filter(row => String(row.productNumber).toLowerCase().includes(query) || String(row.productName).toLowerCase().includes(query));
+                dataTable.innerHTML = '';
 				filteredData.forEach((row, index) => {
 					const tr = document.createElement('tr');
-					Object.values(row).forEach((cell, i) => {
+					['productNumber','brand','manufacturerModel','package','productName','orderQuantity'].map(key => row[key] ?? (key === 'brand' ? row.厂商 : key === 'package' ? row.封装 : '') ?? '').forEach((cell, i) => {
 						const td = document.createElement('td');
 						td.textContent = cell;
 						tr.appendChild(td);
@@ -317,14 +325,14 @@
 					const editButton = document.createElement('button');
 					editButton.textContent = '编辑';
 					editButton.onclick = () => {
-						editRow(index);
+						editRow(row, tr);
 					};
 
 					// 使用按钮
 					const useButton = document.createElement('button');
 					useButton.textContent = '使用';
 					useButton.onclick = () => {
-						useItem(index);
+						useItem(row);
 					};
 
 					// 详情按钮
@@ -338,7 +346,7 @@
 					const deleteButton = document.createElement('button');
 					deleteButton.textContent = '删除';
 					deleteButton.onclick = () => {
-						dataStore.splice(index, 1);
+						dataStore.splice(dataStore.indexOf(row), 1);
 						localStorage.setItem('tableData', JSON.stringify(dataStore));
 						updateTable();
 					};
@@ -355,18 +363,16 @@
 				location.reload(); // 刷新页面
 			});
 			// 编辑当前行
-			function editRow(index) {
-				const row = dataStore[index];
-				const tr = dataTable.rows[index];
+			function editRow(row, tr) {
 
 				// 显示编辑输入框
-				Object.keys(row).forEach((key, i) => {
+				['productNumber','brand','manufacturerModel','package','productName','orderQuantity'].forEach((key, i) => {
 					const td = tr.cells[i];
 					const input = document.createElement('input');
 					input.classList.add('edit-input');
-					input.value = row[key];
+					input.value = row[key] ?? (key === 'brand' ? row.厂商 : key === 'package' ? row.封装 : '') ?? '';
 					input.onchange = (e) => {
-						row[key] = e.target.value; // 更新行数据
+						if (key === "orderQuantity") { const quantity = Number(e.target.value); if (!Number.isInteger(quantity) || quantity < 0) { alert("库存必须为非负整数"); e.target.value = row[key]; return; } row[key] = quantity; } else row[key] = e.target.value; // 更新行数据
 					};
 					td.innerHTML = '';
 					td.appendChild(input);
@@ -384,8 +390,7 @@
 			}
 
 			// 使用当前行
-			function useItem(index) {
-				const row = dataStore[index];
+			function useItem(row) {
 				if (row.orderQuantity > 0) {
 					row.orderQuantity -= 1; // 减少数量
 					localStorage.setItem('tableData', JSON.stringify(dataStore));
@@ -398,7 +403,7 @@
 			async function showDetailsCard(row) {
 				console.log('开始查询');
 				console.log(row.productNumber);
-				const lib = await eda.lib_Device.getByLcscIds(row.productNumber);
+				let lib; try { if (typeof eda !== 'undefined') lib = await eda.lib_Device.getByLcscIds(row.productNumber); } catch { alert('器件查询失败，可继续查看本地库存信息'); }
 				console.log(lib);
 				const card = document.getElementById('details-card');
 				document.getElementById('card-product-number').textContent = `编号: ${row.productNumber}`;
@@ -417,6 +422,7 @@
 			fileUpload.addEventListener('change', (event) => {
 				const files = event.target.files;
 				if (!files.length) return;
+                if (typeof XLSX === 'undefined') { alert('订单解析组件未加载，请检查网络后重试；JSON 备份仍可使用。'); return; }
 
 				Array.from(files).forEach((file) => {
 					const reader = new FileReader();
@@ -434,7 +440,7 @@
 									manufacturerModel: row[3]?.toString().trim() || '', // 厂家型号在第四列
 									package: row[4]?.toString().trim() || '', // 封装在第五列
 									productName: row[5]?.toString().trim() || '', // 商品名称在第六列
-									orderQuantity: parseInt(row[6]?.replace(/[^\d]/g, '') || 0, 10), // 数量在第七列
+									orderQuantity: parseInt(String(row[6] ?? '').replace(/[^\d]/g, '') || '0', 10), // 数量在第七列
 								};
 							})
 							.filter((row) => row !== null); // 移除无效的行
@@ -443,7 +449,7 @@
 						formattedData.forEach((newRow) => {
 							const existingRow = dataStore.find((row) => row.productNumber === newRow.productNumber);
 							if (existingRow) {
-								existingRow.orderQuantity += newRow.orderQuantity; // 累加数量
+								existingRow.orderQuantity = Number(existingRow.orderQuantity) + newRow.orderQuantity; // 累加数量
 							} else {
 								dataStore.push(newRow); // 添加新行
 							}
@@ -487,10 +493,8 @@
 
 			// 导出数据
 			document.getElementById('export-data').addEventListener('click', () => {
-				const ws = XLSX.utils.json_to_sheet(dataStore);
-				const wb = XLSX.utils.book_new();
-				XLSX.utils.book_append_sheet(wb, ws, 'Data');
-				XLSX.writeFile(wb, 'data.xlsx');
+                const url = URL.createObjectURL(new Blob([storageBroken ? localStorage.getItem('tableData') : JSON.stringify(dataStore, null, 2)], {type:'application/json'}));
+                const link=document.createElement('a');link.href=url;link.download='eda-toolbox-inventory.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 			});
 
 			// 添加新数据
@@ -512,5 +516,7 @@
 			// 初始化表格
 			updateTable();
 		</script>
-	</body>
+		<script src="/iframe/toolbox-ui.js"></script>
+	<script src="/iframe/utility-navigation.bundle.js"></script>
+</body>
 </html>

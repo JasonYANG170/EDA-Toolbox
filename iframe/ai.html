@@ -180,10 +180,11 @@
 				}
 			}
 		</style>
-		<script src="marked.min.js"></script>
+		<script src="/iframe/marked.min.js"></script>
+		<link rel="stylesheet" href="/iframe/toolbox-shell.css" />
 	</head>
 
-	<body>
+	<body data-diagram="ai">
 		<div class="container">
 			<h2>AI-HELP智能助手</h2>
 			<div id="chat-box" class="chat-box"></div>
@@ -256,7 +257,22 @@
 				}
 			});
 
-			async function sendMessage() {
+            function renderMarkdownSafely(text) {
+                const template = document.createElement('template');
+                template.innerHTML = marked.parse(text);
+                const allowed = new Set(['P','BR','STRONG','B','EM','I','DEL','CODE','PRE','BLOCKQUOTE','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','H1','H2','H3','H4','H5','H6','HR','A']);
+                for (const element of [...template.content.querySelectorAll('*')]) {
+                    if (['SCRIPT','STYLE','IFRAME','OBJECT','EMBED'].includes(element.tagName)) { element.remove(); continue; }
+                    if (!allowed.has(element.tagName)) { element.replaceWith(document.createTextNode(element.textContent)); continue; }
+                    const href = element.getAttribute('href');
+                    for (const attribute of [...element.attributes]) element.removeAttribute(attribute.name);
+                    if (element.tagName === 'A' && /^https?:\/\//i.test(href || '')) { element.setAttribute('href',href); element.setAttribute('target','_blank'); element.setAttribute('rel','noopener noreferrer'); }
+                }
+                return template.content;
+            }
+			let sending = false;
+            async function sendMessage() {
+                if (sending) return;
 				const messageInput = document.getElementById('message');
 				const chatBox = document.getElementById('chat-box');
 				const ollamaUrl = localStorage.getItem('ollamaUrl') || 'http://localhost:11434/api/generate';
@@ -267,8 +283,10 @@
 					return;
 				}
 
-				const message = messageInput.value;
-				chatBox.innerHTML += `<div class='user-message'>你: ${message}</div>`;
+				const message = messageInput.value.trim();
+                if (!message && !pastedImage) return;
+                sending = true;
+                const userMessage = document.createElement('div'); userMessage.className = 'user-message'; userMessage.textContent = `你: ${message}`; chatBox.append(userMessage);
 				chatBox.scrollTop = chatBox.scrollHeight;
 
 				const requestBody = { model: model, prompt: message, stream: false };
@@ -285,19 +303,24 @@
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify(requestBody),
+                        signal: AbortSignal.timeout(60000),
 					});
 
-					const jsonData = await response.json();
+					if (!response.ok) throw new Error(`服务返回 ${response.status}`);
+                    const jsonData = await response.json();
+                    if (typeof jsonData.response !== "string") throw new Error(jsonData.error || "服务未返回有效回答");
 					if (jsonData.response) {
 						const aiResponse = jsonData.response;
 						const aiMessageDiv = document.createElement('div');
 						aiMessageDiv.classList.add('markdown-output', 'ai-message');
-						aiMessageDiv.innerHTML = marked.parse(aiResponse);
+						aiMessageDiv.append(renderMarkdownSafely(aiResponse));
 						chatBox.appendChild(aiMessageDiv);
 						chatBox.scrollTop = chatBox.scrollHeight;
 					}
 				} catch (error) {
-					console.error('请求失败:', error);
+					const errorBox = document.createElement('div'); errorBox.className = 'ai-message'; errorBox.textContent = `请求失败：${error.message}。请检查服务地址与模型配置。`; chatBox.append(errorBox);
+                } finally {
+                    sending = false;
 				}
 			}
 
@@ -314,5 +337,7 @@
 				toggleSettings();
 			}
 		</script>
-	</body>
+		<script src="/iframe/toolbox-ui.js"></script>
+	<script src="/iframe/utility-navigation.bundle.js"></script>
+</body>
 </html>

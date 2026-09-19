@@ -6,3 +6,8 @@
 /node_modules/
 /.eslintcache
 debug.log
+
+/test-results/
+/playwright-report/
+
+/iframe/*.bundle.js

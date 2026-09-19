@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EDA 计算工具</title><link rel="stylesheet" href="/iframe/eda-tools.css"></head>
+<body data-eda-mode="tool">
+<main><form id="toolForm" class="eda-panel eda-unified" novalidate>
+<div id="stageEditor" hidden></div>
+<div id="networkEditor" hidden></div>
+<div id="fieldGrid" class="eda-field-grid"></div>
+<div id="answerGrid" class="eda-field-grid"></div>
+<div class="eda-actions"><button id="calculateButton" class="eda-primary" type="submit">计算</button><button id="clearAnswers" class="eda-ghost" type="button">清空计算量</button><button id="resetButton" class="eda-ghost" type="button">恢复默认值</button><button id="hostButton" class="eda-ghost" type="button" hidden>EDA 选中对象</button><button id="copyButton" class="eda-ghost" type="button">复制结果</button></div>
+<p id="calculationStatus" role="status">待计算</p><div id="warningBox" class="eda-warning" role="alert" hidden></div><div id="solutionChoices"></div>
+<label id="touchstoneBox" class="eda-file-box" hidden><input id="touchstoneInput" type="file" accept=".s1p,.s2p">导入 Touchstone 1.x .s1p / .s2p</label><p id="fileStatus" role="status"></p>
+<details id="auxiliaryResults"><summary aria-label="展开或收起辅助结果" title="展开或收起辅助结果">辅助结果</summary><div id="auxiliaryGrid" class="eda-field-grid"></div><div id="resultGrid" class="eda-result-grid"></div></details>
+<details id="calculationFormula"><summary>计算公式</summary><p id="formulaText"></p></details>
+</form></main><script src="/iframe/eda-tools.bundle.js"></script></body></html>

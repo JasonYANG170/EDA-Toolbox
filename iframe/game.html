@@ -95,9 +95,10 @@
 				}
 			}
 		</style>
+		<link rel="stylesheet" href="/iframe/toolbox-shell.css" />
 	</head>
 
-	<body>
+	<body data-diagram="game">
 		<div id="gameArea">
 			<div id="ball"><img src="/images/logo.png" width="100%" height="auto" /></div>
 			<div id="catcher"></div>
@@ -169,6 +170,7 @@
 				// 小球掉落至底部，游戏结束
 				if (ballPosY >= gameArea.clientHeight) {
 					gameStarted = false;
+                    startButton.style.display = ''; startButton.textContent = '再玩一次';
 					gameOverText.style.display = 'block'; // 显示游戏结束提示
 					gameOverText2.style.display = 'block'; // 显示游戏结束提示
 				}
@@ -186,7 +188,7 @@
 
 			document.addEventListener('mousemove', (e) => {
 				if (isMouseDown) {
-					catcherPosX = e.clientX - catcher.clientWidth / 2;
+					catcherPosX = e.clientX - gameArea.getBoundingClientRect().left - catcher.clientWidth / 2;
 					if (catcherPosX < 0) catcherPosX = 0;
 					if (catcherPosX > gameArea.clientWidth - 120) catcherPosX = gameArea.clientWidth - 120;
 					catcher.style.left = catcherPosX + 'px';
@@ -205,5 +207,7 @@
 				gameLoop(); // 启动游戏循环
 			});
 		</script>
-	</body>
+		<script src="/iframe/toolbox-ui.js"></script>
+	<script src="/iframe/utility-navigation.bundle.js"></script>
+</body>
 </html>

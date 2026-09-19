@@ -1,48 +1,14 @@
+import path from 'node:path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import fs from 'fs-extra';
-import ignore from 'ignore';
-import JSZip from 'jszip';
 
-import * as extensionConfig from '../extension.json';
+import extensionConfig from '../extension.json' with { type: 'json' };
 
-/**
- * 将多行字符串拆分成字符串数组
- *
- * @param str - 多行字符串
- * @returns 字符串数组
- */
-function multiLineStrToArray(str: string): Array<string> {
-	return str.split(/[\r\n]+/);
-}
+import { fixUuid, packageExtension, testUuid } from './utils.ts';
 
-/**
- * 检查 UUID 是否合法
- *
- * @param uuid - UUID
- * @returns 是否合法
- */
-function testUuid(uuid?: string): uuid is string {
-	const regExp = /^[a-z0-9]{32}$/g;
-	if (uuid && uuid !== '00000000000000000000000000000000') {
-		return regExp.test(uuid.trim());
-	} else {
-		return false;
-	}
-}
-
-/**
- * 获取正确的 UUID
- *
- * @param uuid - UUID
- * @returns UUID
- */
-function fixUuid(uuid?: string): string {
-	uuid = uuid?.trim() || undefined;
-	if (testUuid(uuid)) {
-		return uuid.trim();
-	} else {
-		return crypto.randomUUID().replaceAll('-', '');
-	}
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * 主逻辑方法
@@ -50,41 +16,23 @@ function fixUuid(uuid?: string): string {
 function main() {
 	if (!testUuid(extensionConfig.uuid)) {
 		const newExtensionConfig = { ...extensionConfig };
-		// @ts-ignore
+		// @ts-expect-error - Removing default property from extension config
 		delete newExtensionConfig.default;
 		newExtensionConfig.uuid = fixUuid(extensionConfig.uuid);
-		fs.writeJsonSync(__dirname + '/../extension.json', newExtensionConfig, { spaces: '\t', EOL: '\n', encoding: 'utf-8' });
-	}
-	const filepathListWithoutFilter = fs.readdirSync(__dirname + '/../', { encoding: 'utf-8', recursive: true });
-	const edaignoreListWithoutResolve = multiLineStrToArray(fs.readFileSync(__dirname + '/../.edaignore', { encoding: 'utf-8' }));
-	const edaignoreList: Array<string> = [];
-	for (const edaignoreLine of edaignoreListWithoutResolve) {
-		if (edaignoreLine.endsWith('/') || edaignoreLine.endsWith('\\')) {
-			edaignoreList.push(edaignoreLine.slice(0, edaignoreLine.length - 1));
-		} else {
-			edaignoreList.push(edaignoreLine);
-		}
-	}
-	const edaignore = ignore().add(edaignoreList);
-	const filepathListWithoutResolve = edaignore.filter(filepathListWithoutFilter);
-	const fileList: Array<string> = [];
-	const folderList: Array<string> = []; // 无用数据
-	for (const filepath of filepathListWithoutResolve) {
-		if (fs.lstatSync(filepath).isFile()) {
-			fileList.push(filepath.replace(/\\/g, '/'));
-		} else {
-			folderList.push(filepath.replace(/\\/g, '/'));
-		}
+		fs.writeJsonSync(path.join(__dirname, '../extension.json'), newExtensionConfig, { spaces: '\t', EOL: '\n', encoding: 'utf-8' });
 	}
 
-	const zip = new JSZip();
-	for (const file of fileList) {
-		zip.file(file, fs.createReadStream(__dirname + '/../' + file));
-	}
+	const rootDir = path.join(__dirname, '../');
+	const extensionName = extensionConfig.name ?? 'extension';
+	const extensionVersion = extensionConfig.version ?? '1.0.0';
+	const outputPath = path.join(__dirname, 'dist', `${extensionName}_v${extensionVersion}.eext`);
 
-	zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true }).pipe(
-		fs.createWriteStream(__dirname + '/dist/' + extensionConfig.name + '_v' + extensionConfig.version + '.eext'),
-	);
+	packageExtension(rootDir, outputPath).then(() => {
+		console.log(`Packaging complete: ${outputPath}`);
+	}).catch((err) => {
+		console.error('Packaging failed:', err);
+		process.exit(1);
+	});
 }
 
 main();

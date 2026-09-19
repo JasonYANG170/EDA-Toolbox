@@ -236,9 +236,10 @@
 				}
 			}
 		</style>
+		<link rel="stylesheet" href="/iframe/toolbox-shell.css" />
 	</head>
 
-	<body>
+	<body data-diagram="currentTrace">
 		<div class="container">
 			<button class="show-formula-button" id="toggleFormulaButton" type="button">显示公式</button>
 
@@ -298,7 +299,7 @@
 
 			<div class="buttons">
 				<button onclick="calculate()">计算</button>
-				<button onclick="applyTrackWidth(WInner, WOuter)">应用</button>
+				<button onclick="applyTrackWidth()">应用</button>
 				<button class="clear" onclick="clearInputs()">清空</button>
 			</div>
 		</div>
@@ -378,14 +379,14 @@
 
 				if (isNaN(tempRise) || isNaN(thicknessOz) || tempRise <= 0 || thicknessOz <= 0) {
 					alert('请输入有效的温升和铜厚值！');
-					return;
+					return false;
 				}
 
 				if (currentMode === 'currentToWidth') {
 					const current = parseFloat(document.getElementById('current').value);
 					if (isNaN(current) || current <= 0) {
 						alert('请输入有效的电流值！');
-						return;
+						return false;
 					}
 					const { wInner, wOuter } = currentToWidth(current, tempRise, thicknessOz);
 					WInner = wInner;
@@ -398,7 +399,7 @@
 					const widthUnit = document.getElementById('widthUnit').value;
 					if (isNaN(widthVal) || widthVal <= 0) {
 						alert('请输入有效的线宽值！');
-						return;
+						return false;
 					}
 					// 统一转为 mil 计算
 					const widthMil = widthUnit === 'mm' ? widthVal * MIL_PER_MM : widthVal;
@@ -409,6 +410,7 @@
 					document.getElementById('result').innerHTML =
 						'内层最大电流：' + iInner.toFixed(3) + ' A<br>' + '外层最大电流：' + iOuter.toFixed(3) + ' A';
 				}
+				return true;
 			}
 
 			function clearInputs() {
@@ -420,27 +422,34 @@
 				eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
 			}
 
-			function applyTrackWidth(WInner, WOuter) {
-				calculate();
+			function applyTrackWidth() {
+				if (!calculate()) {
+					return;
+				}
+				// 避免重复注册同名监听器。
+				if (eda.pcb_Event.isEventListenerAlreadyExist(TRACK_EVENT_ID)) {
+					eda.pcb_Event.removeEventListener(TRACK_EVENT_ID);
+				}
 				eda.pcb_Event.addMouseEventListener(
 					TRACK_EVENT_ID,
-					'selected',
-					async (eventType) => {
-						const selectedPrimitives = await eda.pcb_SelectControl.getSelectedPrimitives();
-						if (selectedPrimitives.length === 1) {
-							const track = selectedPrimitives[0];
-							if (track['pcbItemPrimitiveType'] === 'Track') {
-								const layerId = track['layerId'];
-								const globalIndex = track['globalIndex'];
-								if (layerId >= 1 && layerId <= 2) {
-									eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WOuter });
-								} else if (layerId >= 15 && layerId <= 46) {
-									eda.pcb_PrimitiveLine.modify(globalIndex, { lineWidth: WInner });
-								}
-							}
+					EPCB_MouseEventType.SELECTED,
+					async (eventType, props) => {
+						if (props.length !== 1 || props[0].primitiveType !== EPCB_PrimitiveType.LINE) {
+							return;
+						}
+						const track = await eda.pcb_PrimitiveLine.get(props[0].primitiveId);
+						if (!track) {
+							return;
+						}
+						const layerId = track.getState_Layer();
+						if (layerId === EPCB_LayerId.TOP || layerId === EPCB_LayerId.BOTTOM) {
+							await eda.pcb_PrimitiveLine.modify(track, { lineWidth: WOuter });
+						}
+						else if (layerId >= EPCB_LayerId.INNER_1 && layerId <= EPCB_LayerId.INNER_30) {
+							await eda.pcb_PrimitiveLine.modify(track, { lineWidth: WInner });
 						}
 					},
-					1,
+					true,
 				);
 			}
 
@@ -463,5 +472,6 @@
 				}
 			});
 		</script>
+		<script src="/iframe/toolbox-ui.js"></script>
 	</body>
 </html>

@@ -1,3 +1,4 @@
+import extensionConfig from '../extension.json' with { type: 'json' };
 /**
  * 入口文件
  *
@@ -10,86 +11,124 @@
  * 如需了解更多开发细节，请阅读：
  * https://prodocs.lceda.cn/cn/api/guide/
  */
-import * as extensionConfig from '../extension.json';
+import { restoreCenterOnClose } from '../iframe/tool-close.js';
+import { calculationWindowSize } from '../iframe/tool-window.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface ToolWindowSpec {
+	html: string;
+	width: number;
+	height: number;
+	id: string;
+	title?: string;
+}
+
+const TOOL_WINDOWS = {
+	ai: { html: '/iframe/ai.html', width: 680, height: 620, id: 'eda-toolbox-ai' },
+	myLib: { html: '/iframe/myLib.html', width: 860, height: 500, id: 'eda-toolbox-library' },
+	home: { html: '/iframe/home.html', width: 640, height: 560, id: 'eda-toolbox-home' },
+	game: { html: '/iframe/game.html', width: 420, height: 600, id: 'eda-toolbox-game' },
+	edaCenter: { html: '/iframe/eda-center.html', width: 900, height: 660, id: 'eda-toolbox-center', title: 'EDA 工具中心' },
+} as const satisfies Record<string, ToolWindowSpec>;
+
+async function openToolboxFrame(spec: ToolWindowSpec): Promise<void> {
+	const viewport = eda.sys_Window.getViewportSize();
+	const width = Math.max(280, Math.min(spec.width, viewport.width - 32));
+	const height = Math.max(spec.id === 'eda-toolbox-tool' ? 160 : 280, Math.min(spec.height, viewport.height - 32));
+	const opened = await eda.sys_IFrame.openIFrame(spec.html, width, height, spec.id, {
+		title: spec.title,
+		maximizeButton: true,
+		onBeforeCloseCallFn: spec.id === 'eda-toolbox-tool' ? restoreCenterOnClose : undefined,
+	});
+	if (!opened)
+		throw new Error('工具窗口未能打开，请重试');
+}
+
+async function openRegisteredTool(toolId: string, title: string): Promise<void> {
+	await eda.sys_Storage.setExtensionUserConfig('eda-toolbox-active-tool', toolId);
+	await openToolboxFrame({ html: '/iframe/eda-tool.html', ...calculationWindowSize(toolId, eda.sys_Window.getViewportSize()), id: 'eda-toolbox-tool', title });
+}
+
+// eslint-disable-next-line unused-imports/no-unused-vars
 export function activate(status?: 'onStartupFinished', arg?: string): void {
-	eda.sys_MessageBox.showInformationMessage(
+	eda.sys_Dialog.showInformationMessage(
 		eda.sys_I18n.text('EasyEDA extension SDK v', undefined, undefined, extensionConfig.version),
 		eda.sys_I18n.text('About'),
 	);
 }
 export function home_update(): void {
-	eda.sys_MessageBox.showInformationMessage(
+	eda.sys_Dialog.showInformationMessage(
 		eda.sys_I18n.text('即将支持...', undefined, undefined),
 		eda.sys_I18n.text('检测更新'),
 		eda.sys_I18n.text('确认'),
 	);
 }
 export async function ai(): Promise<void> {
-	eda.sys_IFrame.openIFrame('/iframe/ai.html', 400, 570);
+	await openToolboxFrame(TOOL_WINDOWS.ai);
 }
-export function myLib(): void {
-	eda.sys_IFrame.openIFrame('/iframe/myLib.html', 600, 800);
+export async function myLib(): Promise<void> {
+	await openToolboxFrame(TOOL_WINDOWS.myLib);
 }
-export function home_help(): void {
-	eda.sys_IFrame.openIFrame('/iframe/home.html', 550, 550);
+export async function home_help(): Promise<void> {
+	await openToolboxFrame(TOOL_WINDOWS.home);
 }
-export function home_game(): void {
-	eda.sys_IFrame.openIFrame('/iframe/game.html', 300, 550);
+export async function home_game(): Promise<void> {
+	await openToolboxFrame(TOOL_WINDOWS.game);
 }
-export function sch_ohmCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/ohmCalculate.html', 430, 260);
+export async function eda_tool_center(): Promise<void> {
+	await openToolboxFrame(TOOL_WINDOWS.edaCenter);
 }
-export function sch_voltageDividerCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/voltageDividerCalculator.html', 430, 200);
+export async function sch_ohmCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-ohm', '欧姆定律');
 }
-export function sch_batteryCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/batteryCalculate.html', 420, 200);
+export async function sch_voltageDividerCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-voltage-divider', '分压计算器');
 }
-export function sch_resistorCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/resistorCalculate.html', 430, 320);
+export async function sch_batteryCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-battery', '电池续航');
 }
-export function sch_ledResistorCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/ledResistorCalculate.html', 430, 240);
+export async function sch_resistorCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-resistor', '串并联电阻');
 }
-export function sch_lm317VoltagecCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/lm317VoltagecCalculate.html', 430, 200);
+export async function sch_ledResistorCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-led', 'LED 串联电阻');
 }
-export function sch_timer555Calculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/timer555Calculate.html', 430, 300);
+export async function sch_lm317VoltagecCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-lm317', 'LM317 稳压器');
 }
-export function sch_capacitorCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/capacitorCalculate.html', 430, 300);
+export async function sch_timer555Calculate(): Promise<void> {
+	await openRegisteredTool('legacy-555', '555 定时器');
 }
-export function pcb_currentcalCalculate(): void {
-	eda.sys_IFrame.openIFrame('/iframe/currentcalCalculate.html', 430, 370);
+export async function sch_capacitorCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-capacitor', '串并联电容');
 }
-export function pcb_resistorColorCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/resistorColorCalculator.html', 500, 240);
+export async function pcb_currentcalCalculate(): Promise<void> {
+	await openRegisteredTool('legacy-current', 'PCB 走线载流');
 }
-export function sch_transistorAmplifierCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/transistorAmplifierCalculator.html', 430, 250);
+export async function pcb_resistorColorCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-resistor-color', '色环电阻');
 }
-export function sch_rcFilterCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/rcFilterCalculator.html', 430, 240);
+export async function sch_transistorAmplifierCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-transistor', '晶体管增益与偏置');
 }
-export function sch_dbCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/dbCalculator.html', 430, 240);
+export async function sch_rcFilterCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-rc-filter', 'RC / RL / LC 滤波器');
 }
-export function sch_rcTimeConstantCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/rcTimeConstantCalculator.html', 430, 240);
+export async function sch_dbCalculator(): Promise<void> {
+	await openRegisteredTool('db-power', 'dB / 功率换算');
+}
+export async function sch_rcTimeConstantCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-rc-time', 'RC 时间常数');
 }
 // PCB相关
-export function pcb_pcbImpedanceCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/pcbImpedanceCalculator.html', 430, 240);
+export async function pcb_pcbImpedanceCalculator(): Promise<void> {
+	await openRegisteredTool('microstrip', '微带线阻抗');
 }
-export function pcb_pcbViaCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/pcbViaCalculator.html', 430, 290);
+export async function pcb_pcbViaCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-via', 'PCB 过孔载流');
 }
-export function pcb_pcbSignalIntegrityCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/pcbSignalIntegrityCalculator.html', 430, 300);
+export async function pcb_pcbSignalIntegrityCalculator(): Promise<void> {
+	await openRegisteredTool('sigintegrity', '群延迟、TDR 与 SI');
 }
-export function pcb_pcbThermalCalculator(): void {
-	eda.sys_IFrame.openIFrame('/iframe/pcbThermalCalculator.html', 430, 240);
+export async function pcb_pcbThermalCalculator(): Promise<void> {
+	await openRegisteredTool('legacy-thermal', 'PCB 热管理');
 }

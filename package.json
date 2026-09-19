@@ -1,47 +1,55 @@
 {
 	"name": "pro-api-sdk",
-	"version": "0.0.0",
-	"description": "嘉立创EDA & EasyEDA 专业版扩展 API 开发工具",
+	"type": "module",
+	"version": "1.6.19",
+	"description": "JLCEDA & EasyEDA Professional Extension API Development Toolkit",
 	"author": "JLCEDA <support@lceda.cn>",
 	"license": "Apache-2.0",
 	"homepage": "https://pro.lceda.cn/",
-	"scripts": {
-		"compile": "rimraf ./dist/ && ts-node ./config/esbuild.prod.ts",
-		"prepare": "husky",
-		"prettier:all": "prettier --write .",
-		"eslint:all": "eslint --ext .ts --fix .",
-		"fix": "npm run prettier:all && npm run eslint:all",
-		"build": "npm run compile && ts-node ./build/packaged.ts"
-	},
-	"devDependencies": {
-		"@jlceda/pro-api-types": "^0.1.100",
-		"@microsoft/tsdoc": "^0.15.0",
-		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
-		"@types/fs-extra": "^11.0.4",
-		"@typescript-eslint/eslint-plugin": "^7.18.0",
-		"@typescript-eslint/parser": "^7.18.0",
-		"esbuild": "^0.23.1",
-		"eslint": "^8.57.0",
-		"eslint-config-alloy": "^5.1.2",
-		"eslint-plugin-tsdoc": "^0.3.0",
-		"fs-extra": "^11.2.0",
-		"husky": "^9.1.6",
-		"ignore": "^6.0.2",
-		"jszip": "^3.10.1",
-		"lint-staged": "^15.2.10",
-		"prettier": "^3.3.3",
-		"rimraf": "^6.0.1",
-		"ts-node": "^10.9.2",
-		"typescript": "^5.6.2"
-	},
-	"lint-staged": {
-		"*.ts": "eslint --cache --fix",
-		"*.{js,ts,html,css,json,md}": "prettier --write"
+	"bin": {
+		"create-easyeda-api-sdk": "./build/create.js"
 	},
 	"engines": {
-		"node": ">=20.5.0"
+		"node": ">=20.17.0"
 	},
-	"dependencies": {
-		"json-loader": "^0.5.7"
+	"scripts": {
+		"test": "node --test tests/*.test.mjs",
+		"compile": "rimraf ./dist/ && node ./build/ui.mjs && ts-node ./config/esbuild.prod.ts",
+		"lint": "eslint",
+		"fix": "eslint --fix",
+		"build": "npm run compile && ts-node ./build/packaged.ts",
+		"debug": "npm run bundle:ui && ts-node ./build/dev.ts",
+		"update:check": "ts-node ./build/update.ts check",
+		"update": "ts-node ./build/update.ts update && npm install",
+		"manifest:generate": "npm install && ts-node ./build/manifest.ts generate",
+		"manifest:bump": "npm install && ts-node ./build/manifest.ts bump && npm install",
+		"test:browser": "playwright test",
+		"test:all": "npm test && npm run test:browser",
+		"bundle:ui": "node build/ui.mjs",
+		"measure:windows": "node build/measure-windows.mjs"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "^5.4.1",
+		"@jlceda/pro-api-types": "^0.4.17",
+		"@playwright/test": "^1.63.0",
+		"@types/fs-extra": "^11.0.4",
+		"@types/ws": "^8.5.13",
+		"esbuild": "^0.24.2",
+		"eslint": "^9.37.0",
+		"fs-extra": "^11.3.0",
+		"ignore": "^7.0.3",
+		"jszip": "^3.10.1",
+		"lint-staged": "^16.2.3",
+		"rimraf": "^6.0.1",
+		"simple-git-hooks": "^2.13.1",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.7.3",
+		"ws": "^8.18.0"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "npx lint-staged"
+	},
+	"lint-staged": {
+		"*": "eslint --fix"
 	}
 }
